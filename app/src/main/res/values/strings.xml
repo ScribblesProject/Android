@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TAMS</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_list">List</string>
+    <string name="action_filter">Filter</string>
+    <string name="title_activity_maps">Map</string>
+</resources>
