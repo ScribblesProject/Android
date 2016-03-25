@@ -1,13 +1,13 @@
 package com.scribblesinc.tams;
 
-import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-
-import com.google.android.gms.maps.MapFragment;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
 
+        /*BELOW IS COMMENTED FROM THE TEMPLATE IT CAME. MIGHT HELP WITH US IN KNOWING
+        * HOW TO CALL VARIABLES. DON'T ERASE UNTIL ALL OF US HAVE THIS DOWN*/
 
         //setTitle(null);
 
@@ -49,10 +51,23 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
-            return true;
-        }*/
+        /*check if the list or filter options where tapped*/
+        //if(id == R.id.action_list){
+            //return true; //do something here
+
+            /*IDEA: When LIST is tapped, have it go to
+            * to a new activity that has a list view of
+            * the nodes that have been implemented.
+            * In this activity, there should also be an add node
+            * option available (perhaps on the top right or as a FAB)?*/
+        //}
+
+        //if(id == R.id.action_filter){
+            //return true; //do something here
+            /*IDEA: Similar to LIST except, we filter out the type of objects
+            * (lines, points, poly-lines, and polygons) We may have to implement
+            * this within the map activity for a visual*/
+        //}
 
         return super.onOptionsItemSelected(item);
     }
