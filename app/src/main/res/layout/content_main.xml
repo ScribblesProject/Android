@@ -9,15 +9,12 @@
     tools:showIn="@layout/activity_main">
 
     <fragment
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:name="com.google.android.gms.maps.MapFragment"
-        android:id="@+id/fragment"
-        android:layout_alignParentStart="false"
-        android:layout_alignParentLeft="false"
-        android:layout_alignParentBottom="false"
-        android:layout_alignWithParentIfMissing="false"
-        tools:layout="@layout/abc_screen_simple"
-        android:layout_alignParentTop="false"
-        android:layout_alignParentEnd="false" />
+        android:id="@+id/map"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
 </RelativeLayout>
