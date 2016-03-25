@@ -7,7 +7,7 @@ The Android version of the TAMS application.
   - Fork the repo
   - Clone the repo onto your system
   - Download Android Studio (if you haven't done so)
-  - Make sure that you have API 17 and above downloaded on your system
+  - Make sure that you have API 19 and above downloaded on your system
   - To run the project, click on import existing project on Android Studio
   - Find the directory in which the project is saved to (the cloned repo directory)
   
