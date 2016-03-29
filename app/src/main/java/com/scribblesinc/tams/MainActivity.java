@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -59,23 +60,31 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        /*check if the list or filter options where tapped*/
-        //if(id == R.id.action_list){
-        //return true; //do something here
-
+        //when the list button is pressed
+        if(id == R.id.action_list){
             /*IDEA: When LIST is tapped, have it go to
             * to a new activity that has a list view of
             * the nodes that have been implemented.
             * In this activity, there should also be an add node
             * option available (perhaps on the top right or as a FAB)?*/
-        //}
+            Toast.makeText(getApplicationContext(), "Not Working Yet",
+                    Toast.LENGTH_SHORT).show();
+        }
 
-        //if(id == R.id.action_filter){
-        //return true; //do something here
+        //when the filter button is pressed
+        if(id == R.id.action_filter){
             /*IDEA: Similar to LIST except, we filter out the type of objects
             * (lines, points, poly-lines, and polygons) We may have to implement
             * this within the map activity for a visual*/
-        //}
+            Toast.makeText(getApplicationContext(), "Not Working Yet",
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        //if the current location button is pressed
+        if(id == R.id.action_current_location){
+            Toast.makeText(getApplicationContext(), "Not Working Yet",
+                    Toast.LENGTH_SHORT).show();
+        }
 
         return super.onOptionsItemSelected(item);
     }

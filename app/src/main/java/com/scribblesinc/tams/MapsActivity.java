@@ -37,8 +37,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
+        // Add a marker in csus and move the camera
         LatLng csus = new LatLng(38.5591398, -121.4256621);
+
+        //could we use google.map.getLangented(); and latitude instead of predefined variables? above
         mMap.addMarker(new MarkerOptions().position(csus).title("Sacramento State University"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(csus));
     }
