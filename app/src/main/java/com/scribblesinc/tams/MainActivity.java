@@ -1,5 +1,7 @@
 package com.scribblesinc.tams;
 
+import android.content.Context;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;

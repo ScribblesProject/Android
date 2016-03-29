@@ -16,4 +16,9 @@
         android:title="@string/action_list"
         app:showAsAction="ifRoom" />
 
+    <item android:id="@+id/action_current_location"
+        android:icon="@drawable/ic_current_location"
+        android:title="@string/action_current_location"
+        app:showAsAction="ifRoom" />
+
 </menu>
