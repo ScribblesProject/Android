@@ -9,4 +9,5 @@
     <string name="title_activity_add_asset">Add Asset</string>
     <string name="action_add_asset">Add Asset</string>
     <string name="action_edit_asset">Edit</string>
+    <string name="action_asset_list">Asset List</string>
 </resources>
