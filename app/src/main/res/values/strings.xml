@@ -10,5 +10,5 @@
     <string name="action_add_asset">Add Asset</string>
     <string name="action_edit_asset">Edit</string>
     <string name="action_asset_list">Asset List</string>
-    <string name="title_activity_asset_add">AssetAdd</string>
+    <string name="title_activity_asset_add">Add Asset</string>
 </resources>

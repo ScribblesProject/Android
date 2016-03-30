@@ -35,7 +35,7 @@ public class AssetList extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_asset, menu);
+        getMenuInflater().inflate(R.menu.menu_asset_list, menu);
         return true;
     }
 
@@ -54,14 +54,15 @@ public class AssetList extends AppCompatActivity {
 
         //if the add asset button is pressed
         if(id == R.id.action_add_asset){
-            Toast.makeText(getApplicationContext(), "Not Working Yet",
-                    Toast.LENGTH_SHORT).show();
+            /*Toast.makeText(getApplicationContext(), "Not Working Yet",
+                    Toast.LENGTH_SHORT).show();*/
+            Intent intent = new Intent(this, AssetAdd.class);
+            startActivity(intent);
         }
 
         //if the back button is pressed
         if(item.getItemId() == android.R.id.home){
-            Intent intent = new Intent(this, MainActivity.class);
-            startActivity(intent);
+            finish(); //goes back to the previous activity
         }
 
         return super.onOptionsItemSelected(item);
