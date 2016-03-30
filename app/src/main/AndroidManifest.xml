@@ -60,9 +60,13 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".AddAsset"
+            android:name=".AssetList"
             android:label="@string/action_asset_list"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AssetAdd"
+            android:label="@string/title_activity_asset_add"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
