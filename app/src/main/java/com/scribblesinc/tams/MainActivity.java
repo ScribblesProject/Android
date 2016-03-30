@@ -2,6 +2,7 @@ package com.scribblesinc.tams;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
 
+
+
         /*BELOW IS COMMENTED FROM THE TEMPLATE IT CAME. MIGHT HELP WITH US IN KNOWING
         * HOW TO CALL VARIABLES. DON'T ERASE UNTIL ALL OF US HAVE THIS DOWN*/
 
@@ -107,8 +110,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             * the nodes that have been implemented.
             * In this activity, there should also be an add node
             * option available (perhaps on the top right or as a FAB)?*/
-            Toast.makeText(getApplicationContext(), "Not Working Yet",
-                    Toast.LENGTH_SHORT).show();
+            /*Toast.makeText(getApplicationContext(), "Not Working Yet",
+                    Toast.LENGTH_SHORT).show();*/
+            Intent intent = new Intent(this, AddAsset.class);
+            startActivity(intent);
         }
 
         //when the filter button is pressed
@@ -136,8 +141,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Add a marker in Sydney and move the camera
 
         LatLng csus = new LatLng(38.559144, -121.4256621);
-        mMap.addMarker(new MarkerOptions().position(csus).title("CSUS"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(csus));
+        mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(csus));
+
+        // Move the camera instantly to location with a zoom of 15.
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
+
+        // Zoom in, animating the camera.
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
     }
 
     @Override

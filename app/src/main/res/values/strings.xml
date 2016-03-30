@@ -5,4 +5,8 @@
     <string name="action_filter">Filter</string>
     <string name="title_activity_maps">Map</string>
     <string name="action_current_location">Current Location</string>
+    <string name="title_activity_main">Asset Map</string>
+    <string name="title_activity_add_asset">Add Asset</string>
+    <string name="action_add_asset">Add Asset</string>
+    <string name="action_edit_asset">Edit</string>
 </resources>
