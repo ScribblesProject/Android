@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final String TAG = MainActivity.class.getSimpleName();
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
-
     private Toolbar toolbar;
 
     @Override
@@ -50,21 +49,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
-        /*BELOW IS COMMENTED FROM THE TEMPLATE IT CAME. MIGHT HELP WITH US IN KNOWING
-        * HOW TO CALL VARIABLES. DON'T ERASE UNTIL ALL OF US HAVE THIS DOWN*/
-
-        //setTitle(null);
-
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
     }
 
 
@@ -77,29 +61,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //when the list button is pressed
         if(id == R.id.action_list){
-            /*IDEA: When LIST is tapped, have it go to
-            * to a new activity that has a list view of
-            * the nodes that have been implemented.
-            * In this activity, there should also be an add node
-            * option available (perhaps on the top right or as a FAB)?*/
-            /*Toast.makeText(getApplicationContext(), "Not Working Yet",
-                    Toast.LENGTH_SHORT).show();*/
             Intent intent = new Intent(this, AssetList.class);
             startActivity(intent);
         }
 
         //when the filter button is pressed
         if(id == R.id.action_filter){
-            /*IDEA: Similar to LIST except, we filter out the type of objects
-            * (lines, points, poly-lines, and polygons) We may have to implement
-            * this within the map activity for a visual*/
             Toast.makeText(getApplicationContext(), "Not Working Yet",
                     Toast.LENGTH_SHORT).show();
         }
@@ -117,11 +88,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-
+        // Hard-code marker by CSUS to test maps
         LatLng csus = new LatLng(38.559144, -121.4256621);
         mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(csus));
 
         // Move the camera instantly to location with a zoom of 15.
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
