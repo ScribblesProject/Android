@@ -33,6 +33,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleApiClient mGoogleApiClient;
     private Toolbar toolbar;
 
+    private double latitude, longitude;
+
+    private MyLocationListener locationListener;
+
     /* Request constants used for permission reasons. */
     private static final int REQUEST_LOCATION_RESULT = 1;
 
@@ -96,39 +100,58 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         // Hard-code marker by CSUS to test maps
-        LatLng csus = new LatLng(38.559144, -121.4256621);
-        mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
+        //LatLng csus = new LatLng(38.559144, -121.4256621);
+        //mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
 
         // Move the camera instantly to location with a zoom of 15.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
 
         // Zoom in, animating the camera.
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
 
     //this method is called when the current location menu item is tapped
     public void currentLocationAction(MenuItem item){
         //Toast.makeText(getApplicationContext(), "Location Not Yet Working", Toast.LENGTH_SHORT).show();
 
-        if(Build.VERSION.SDK_INT >= 23){
+        if(Build.VERSION.SDK_INT >= 23){ //6.0+
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 //calculate current location
-                Toast.makeText(getApplicationContext(), "Locating Permission Granted", Toast.LENGTH_SHORT).show();
+                getCurrentLocation();
+                //Toast.makeText(getApplicationContext(), "Locating Permission Granted", Toast.LENGTH_SHORT).show();
             }else {
                 //rejected permission request
                 if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
-                    Toast.makeText(getApplicationContext(), "Location Permission Required", Toast.LENGTH_SHORT).show();
-
+                    //Toast.makeText(getApplicationContext(), "Location Permission Required", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Location Permission Required");
                 }
                 requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_RESULT);
             }
-        }else{
-            Toast.makeText(getApplicationContext(), "Locating Permission Granted", Toast.LENGTH_SHORT).show();
+        }else{ // < 6.0
+            //Toast.makeText(getApplicationContext(), "Location Permission Granted", Toast.LENGTH_SHORT).show();
+            getCurrentLocation();
         }
     }
 
     public void getCurrentLocation(){
 
+
+        /*locationListener = new MyLocationListener(MainActivity.this);
+
+        mMap.clear();
+
+        if(locationListener.canGetLocation){
+            this.latitude = locationListener.getLatitude();
+            this.longitude = locationListener.getLongitude();
+            LatLng currentLocation = new LatLng(latitude, longitude);
+            mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location")).setVisible(true);
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+
+
+            Toast.makeText(MainActivity.this, "Location: \nLat: " + latitude + "\nLong: "
+                    + longitude, Toast.LENGTH_LONG).show();
+        }*/
     }
 
     @Override
@@ -136,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if(requestCode == REQUEST_LOCATION_RESULT){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
                 //calculate current location
-                Toast.makeText(getApplicationContext(),"Permission Granted", Toast.LENGTH_SHORT).show();
+                getCurrentLocation();
             } else {
                 Toast.makeText(getApplicationContext(), "Location Permission Required", Toast.LENGTH_SHORT).show();
 
@@ -148,7 +171,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        Toast.makeText(MainActivity.this, "Map Connected", Toast.LENGTH_SHORT).show();
     }
 
     @Override
