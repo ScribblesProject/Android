@@ -11,4 +11,8 @@
     <string name="action_edit_asset">Edit</string>
     <string name="action_asset_list">Asset List</string>
     <string name="title_activity_asset_add">Add Asset</string>
+    <string name="action_done">Done</string>
+    <string name="action_type">Type</string>
+    <string name="camera_mic">camera_mic</string>
+    <string name="icon_mic">icon_mic</string>
 </resources>
