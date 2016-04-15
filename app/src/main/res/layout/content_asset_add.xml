@@ -36,11 +36,11 @@
         android:textColor="@color/Black"
         />
 
-        <!--Voice recording Icon-->
-        <ImageView
-            android:id="@+id/mic_icon"
-            android:contentDescription="@string/icon_mic"
-            android:layout_width="wrap_content"
+    <!--Voice recording Icon-->
+    <ImageView
+        android:id="@+id/mic_icon"
+        android:contentDescription="@string/icon_mic"
+        android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="150dp"
             android:layout_marginEnd="20dp"
