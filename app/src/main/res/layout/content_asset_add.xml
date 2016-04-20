@@ -46,11 +46,11 @@
             android:layout_marginEnd="20dp"
             android:layout_marginTop="32dp"
             />
-        <ImageView
-            android:contentDescription="@string/camera_mic"
-            android:id="@+id/mic_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <ImageView
+        android:contentDescription="@string/camera_mic"
+        android:id="@+id/mic_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
     <ListView

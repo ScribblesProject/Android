@@ -5,6 +5,9 @@ public class Item {
     private String title;//title of row layout
     private String description;//description
     private int icon;//icon for row layout
+    private int viewType;
+
+
     public Item(String title, String description){
         super();
         this.title = title;

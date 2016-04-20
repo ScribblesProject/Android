@@ -8,10 +8,10 @@
         android:title="@string/action_settings"
         app:showAsAction="never" />-->
 
-    <item android:id="@+id/action_done"
-        android:title="@string/action_done"
-        app:showAsAction="ifRoom" />
 
-
+    <item android:id="@+id/stop_light"
+        android:title="@string/stop_light"/>
+    <item android:id="@+id/road_sign"
+        android:title="@string/road_sign"/>
 
 </menu>
