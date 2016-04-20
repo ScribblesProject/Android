@@ -137,9 +137,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         /*locationListener = new MyLocationListener(MainActivity.this);
-
         mMap.clear();
-
         if(locationListener.canGetLocation){
             this.latitude = locationListener.getLatitude();
             this.longitude = locationListener.getLongitude();
@@ -147,8 +145,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMap.addMarker(new MarkerOptions().position(currentLocation).title("Current Location")).setVisible(true);
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 15));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-
-
             Toast.makeText(MainActivity.this, "Location: \nLat: " + latitude + "\nLong: "
                     + longitude, Toast.LENGTH_LONG).show();
         }*/

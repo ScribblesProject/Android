@@ -18,6 +18,9 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-feature android:name="android.hardware.camera" />
+
 
     <application
         android:allowBackup="true"
@@ -69,6 +72,14 @@
         <activity
             android:name=".AssetAdd"
             android:label="@string/title_activity_asset_add"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".CameraCapture"
+            android:label="@string/action_camera"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".AudioCapture"
+            android:label="@string/action_audio"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
