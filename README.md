@@ -1,4 +1,6 @@
-## Transportation Asset Management (TAMS) Android Application 
+## Transportation Asset Management (TAMS) Android Application ![AppIcon](/app/src/main/res/mipmap-mdpi/ic_launcher.png "AppIcon")
+
+
 
 This is the Android version of the TAMS application. If you are looking for the iOS version, please click [here](https://github.com/ScribblesProject/iOS).
 
