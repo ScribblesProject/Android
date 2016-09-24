@@ -12,38 +12,51 @@
     tools:context=".AudioCapture"
     tools:showIn="@layout/activity_audio">
 
-    <ImageView
-        android:layout_width="match_parent"
+
+    <Button
+        android:id="@+id/record_sound"
+        android:textColor="@color/recRed"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/mic_img"
-        android:src="@drawable/ic_mic"
-
-        android:scaleType="center"
-
-        />
-
+        android:text="@string/record_sound"
+        android:layout_marginStart="26dp"
+        android:layout_alignBaseline="@+id/stop_sound"
+        android:layout_alignBottom="@+id/stop_sound"
+        android:layout_toEndOf="@+id/stop_sound" />
 
     <Button
         android:id="@+id/play_sound_"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/play_sound"
-        android:layout_alignParentRight="true"
 
-        />
+        android:layout_alignBaseline="@+id/record_sound"
+        android:layout_alignBottom="@+id/record_sound"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="26dp" />
+
     <Button
         android:id="@+id/stop_sound"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/stop_sound"
-        android:layout_centerHorizontal="true"
-        />
-    <Button
-        android:id="@+id/record_sound"
+        android:layout_marginBottom="73dp"
+        android:layout_marginStart="22dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/record_sound"
-        />
+        android:id="@+id/mic_img"
+        android:src = "@drawable/ic_action_voice_rec"
+        android:minWidth="250dp"
+        android:minHeight="250dp"
+        android:contentDescription="@string/voice_over_rec"
+
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp" />
 
 
 </RelativeLayout>
