@@ -29,7 +29,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/play_sound"
-
         android:layout_alignBaseline="@+id/record_sound"
         android:layout_alignBottom="@+id/record_sound"
         android:layout_alignParentEnd="true"
