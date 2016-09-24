@@ -61,7 +61,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                         //Note we have to have an if statement cause API
                         //cant seem to work with ACTION_IMAGE_CAPTURE_SECURE
                         //but yes with the one below
-                        newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
                         startActivity(newActivity);
                         break;
                     case 1://name
@@ -88,7 +88,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                         startActivity(newActivity);
                         break;
                     case 6://description
-                        newActivity = new Intent(AssetAdd.this, AudioCapture.class);
+                        newActivity = new Intent(AssetAdd.this, NotesCapture.class);
                         startActivity(newActivity);
                         //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
                         break;
@@ -130,7 +130,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     }
 
 
-
+ //The array list of items to be added to my ListView
     private ArrayList<Item>generateData(){
         ArrayList<Item> items = new ArrayList<>();
 
