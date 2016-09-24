@@ -1,0 +1,9 @@
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    tools:context=".AssetAdd">
+    <item android:id="@+id/caution_sign"
+        android:title="@string/caution_sign"/>
+    <item android:id="@+id/traffic_sign"
+        android:title="@string/traffic_sign"/>
+
+</menu>
