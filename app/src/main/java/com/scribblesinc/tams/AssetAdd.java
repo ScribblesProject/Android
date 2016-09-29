@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.google.android.gms.appindexing.AndroidAppUri;
 import com.scribblesinc.tams.androidcustom.Item;
 import com.scribblesinc.tams.androidcustom.MyAdapter;
 
@@ -61,12 +63,13 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                         //Note we have to have an if statement cause API
                         //cant seem to work with ACTION_IMAGE_CAPTURE_SECURE
                         //but yes with the one below
+                        
                         newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
-                        startActivity(newActivity);
+                        startActivityForResult(newActivity,1);
                         break;
                     case 1://name
                         newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
-                        startActivity(newActivity);
+                        startActivityForResult(newActivity,2);
                         //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
                         break;
                     case 2://category
@@ -85,11 +88,11 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                     case 5://voice memo
                          newActivity = new Intent(AssetAdd.this,AudioCapture.class);
                         //startActivity for result will be implemented later  to handle info
-                        startActivity(newActivity);
+                        startActivityForResult(newActivity,5);
                         break;
                     case 6://description
                         newActivity = new Intent(AssetAdd.this, NotesCapture.class);
-                        startActivity(newActivity);
+                        startActivityForResult(newActivity,6);
                         //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
                         break;
                     default:
@@ -146,8 +149,39 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     }
 
+    /*Start activityForResult() will call the intent to my photo, notes and audio, whatever is
+    * sent back is receive here onActivityResult(), thus here we process result to be outputted on
+    * addAdd viewlist*/
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case 1:
+                Toast.makeText(getApplicationContext(),"Picture is here",Toast.LENGTH_LONG).show();
+                break;
+            case 2:
+                Toast.makeText(getApplicationContext(), "Name is here", Toast.LENGTH_LONG).show();
+                //adapter.getItem(requestCode).colorchangeType = change;
+                //adapter.notifysetdatachange();
+                //TextView thistextview = (TextView)findViewById(R.id.)
+                break;
+            case 5:
+                Toast.makeText(getApplicationContext(), "Audio is here", Toast.LENGTH_LONG).show();
+                break;
+            case 6:
+                Toast.makeText(getApplicationContext(), "Notes is here", Toast.LENGTH_LONG).show();
+                //Result string is brought back, but dont know yet how to access id-view
+                //of content in the listview to change string
+                //  String newNotes = data.getStringExtra("NOTES");
+                //textNotes.setText(newNotes);
 
+                break;
 
+            default:
+                Toast.makeText(getApplicationContext(), "something else", Toast.LENGTH_LONG).show();
+                break;
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
