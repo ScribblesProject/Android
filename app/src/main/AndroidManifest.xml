@@ -74,14 +74,12 @@
             android:label="@string/title_activity_asset_add"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
+            android:name=".CameraCapture"
+            android:label="@string/action_camera"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
             android:name=".AudioCapture"
             android:label="@string/action_audio"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".NotesCapture"
-            android:label="@string/action_notes"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".TitleofAsset"
-            android:label="@string/action_title"
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 

@@ -20,7 +20,7 @@
         android:layout_marginStart="10dp"
         android:paddingTop="15dp"
         android:paddingBottom="13dp"
-        android:textColor="@color/black"
+        android:textColor="@color/Black"
         />
     <TextView
         android:id="@+id/value"
@@ -33,7 +33,7 @@
         android:layout_marginTop="15dp"
         android:paddingTop="32dp"
         android:paddingBottom="13dp"
-        android:textColor="@color/black"
+        android:textColor="@color/Black"
         />
 
     <!--Voice recording Icon-->
