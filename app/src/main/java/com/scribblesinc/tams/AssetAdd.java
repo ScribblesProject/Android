@@ -60,10 +60,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                 //switch state to change accordingly based on user selection
                 switch(position){
                     case 0: //camera
-                        //Note we have to have an if statement cause API
-                        //cant seem to work with ACTION_IMAGE_CAPTURE_SECURE
-                        //but yes with the one below
-                        
                         newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
                         startActivityForResult(newActivity,1);
                         break;
@@ -155,26 +151,20 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //result of each view in list will come here and here it will be handled
+        //accordingly
         switch (requestCode) {
             case 1:
-                Toast.makeText(getApplicationContext(),"Picture is here",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Picture is to be handled",Toast.LENGTH_LONG).show();
                 break;
             case 2:
-                Toast.makeText(getApplicationContext(), "Name is here", Toast.LENGTH_LONG).show();
-                //adapter.getItem(requestCode).colorchangeType = change;
-                //adapter.notifysetdatachange();
-                //TextView thistextview = (TextView)findViewById(R.id.)
+                Toast.makeText(getApplicationContext(), "Name is to be handled", Toast.LENGTH_LONG).show();
                 break;
             case 5:
-                Toast.makeText(getApplicationContext(), "Audio is here", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Audio is be handled", Toast.LENGTH_LONG).show();
                 break;
             case 6:
-                Toast.makeText(getApplicationContext(), "Notes is here", Toast.LENGTH_LONG).show();
-                //Result string is brought back, but dont know yet how to access id-view
-                //of content in the listview to change string
-                //  String newNotes = data.getStringExtra("NOTES");
-                //textNotes.setText(newNotes);
-
+                Toast.makeText(getApplicationContext(), "Notes is be handled", Toast.LENGTH_LONG).show();
                 break;
 
             default:
