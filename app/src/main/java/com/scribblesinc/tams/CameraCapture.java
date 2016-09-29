@@ -7,7 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
-public class TitleofAsset extends AppCompatActivity{
+public class CameraCapture extends AppCompatActivity{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,7 +15,7 @@ public class TitleofAsset extends AppCompatActivity{
         //class in addition to parent's class
         super.onCreate(savedInstanceState);
         //activity class creates window
-        setContentView(R.layout.activity_titleofasset);
+        setContentView(R.layout.activity_camera);
         //Instantiating the toolbar of adding asset activity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -33,7 +33,7 @@ public class TitleofAsset extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_titleofasset, menu);
+        getMenuInflater().inflate(R.menu.menu_camera, menu);
         return true;
     }
 

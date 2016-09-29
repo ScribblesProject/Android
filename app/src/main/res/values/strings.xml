@@ -15,20 +15,11 @@
     <string name="action_type">Type</string>
     <string name="camera_mic">camera_mic</string>
     <string name="icon_mic">icon_mic</string>
+    <string name="stop_light">stop_light</string>
+    <string name="road_sign">road_sign</string>
     <string name="action_camera">Camera</string>
     <string name="action_audio">Audio Recording</string>
     <string name="play_sound">Play</string>
     <string name="stop_sound">Stop</string>
     <string name="record_sound">Record</string>
-
-    <string name="action_notes">Notes</string>
-    <string name="action_title">Name</string>
-    <string name="stop_light">stop_light</string>
-    <string name="road_sign">road_sign</string>
-    <string name="traffic_sign">Traffic Sign</string>
-    <string name="caution_sign">Caution_Sign</string>
-
-    <!--need to use @string source for providing hints or others -->
-    <string name="voice_over_rec">Voice_Record</string>
-    <string name = "provide_title">Provide a Title</string>
 </resources>
