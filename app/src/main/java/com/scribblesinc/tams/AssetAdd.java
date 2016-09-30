@@ -83,8 +83,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                         break;
                     case 5://voice memo
                          newActivity = new Intent(AssetAdd.this,AudioCapture.class);
-                        //startActivity for result will be implemented later  to handle info
                         startActivityForResult(newActivity,5);
+                        //startActivity for result will be implemented later  to handle info
                         break;
                     case 6://description
                         newActivity = new Intent(AssetAdd.this, NotesCapture.class);
