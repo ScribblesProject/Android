@@ -155,16 +155,16 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         //accordingly
         switch (requestCode) {
             case 1:
-                Toast.makeText(getApplicationContext(),"Picture is to be handled",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Picture to be handled",Toast.LENGTH_LONG).show();
                 break;
             case 2:
-                Toast.makeText(getApplicationContext(), "Name is to be handled", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Name to be handled", Toast.LENGTH_LONG).show();
                 break;
             case 5:
-                Toast.makeText(getApplicationContext(), "Audio is be handled", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Audio to be handled", Toast.LENGTH_LONG).show();
                 break;
             case 6:
-                Toast.makeText(getApplicationContext(), "Notes is be handled", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Notes to be handled", Toast.LENGTH_LONG).show();
                 break;
 
             default:
