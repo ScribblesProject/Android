@@ -100,14 +100,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap = googleMap;
 
         // Hard-code marker by CSUS to test maps
-        //LatLng csus = new LatLng(38.559144, -121.4256621);
-        //mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
+        LatLng csus = new LatLng(38.559144, -121.4256621);
+        mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
 
         // Move the camera instantly to location with a zoom of 15.
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
 
         // Zoom in, animating the camera.
-        //mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
 
     //this method is called when the current location menu item is tapped
@@ -118,17 +118,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 //calculate current location
                 getCurrentLocation();
-                //Toast.makeText(getApplicationContext(), "Locating Permission Granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Location Permission Granted", Toast.LENGTH_SHORT).show();
             }else {
                 //rejected permission request
                 if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
-                    //Toast.makeText(getApplicationContext(), "Location Permission Required", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Location Permission Required", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Location Permission Required");
                 }
                 requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_RESULT);
             }
         }else{ // < 6.0
-            //Toast.makeText(getApplicationContext(), "Location Permission Granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Location Permission Granted", Toast.LENGTH_SHORT).show();
             getCurrentLocation();
         }
     }
