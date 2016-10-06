@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }else{ // < 6.0
             Toast.makeText(getApplicationContext(), "Location Permission Granted", Toast.LENGTH_SHORT).show();
-            //getCurrentLocation();
+            getCurrentLocation();
         }
     }
 
