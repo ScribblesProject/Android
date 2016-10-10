@@ -15,14 +15,9 @@ This is the Android version of the TAMS application. If you are looking for the 
 
 ### How to Import the Project on Android Studio
   *Before continuing, make sure you have done everything above.*
-  
-  - Open the Android Studio IDE.
-  - You should eventually see a screen similar to this:
-![Welcome Screen](http://www.appstoremarketresearch.com/articles/android-studio-tutorial-import-eclipse-project/screenshots/android_studio_welcome.png "Android Studio Welcome Screen")
-  - Make sure to click on `Import project (Eclipse, Gradle, etc.)`.
-  - You should see a windows similar to this:
 
-![Project Screen](http://www.faqdroid.com/wp-content/uploads/2015/11/Gradle-home.jpg "Android Studio Project Screen")
-  - Look for the project under the name `TAMS_Android` in your GitHub directory.
+  - Open the Android Studio IDE.
+  - Make sure to click on `Import project (Eclipse, Gradle, etc.)`.
+  - Look for the project under the name `Android` in your GitHub directory.
   - Click on `OK`.
   - Gradle should start setting up for the project. If it is the first time it is doing it, it should take some time so please be patient.
