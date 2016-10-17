@@ -34,8 +34,13 @@ public class Item {
         this.description = description;
     }
 
-    public int getIcon() {return icon;}
-    public void setIcon(int icon) { this.icon = icon;}
+    public int getIcon() {
+        return icon;
+    }
+
+    public void setIcon(int icon) {
+        this.icon = icon;
+    }
 
     public enum ColorValues{
         ONE,TWO,THREE

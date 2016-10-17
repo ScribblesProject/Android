@@ -88,8 +88,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //when the filter button is pressed
         if(id == R.id.action_filter){
-            Toast.makeText(getApplicationContext(), "Not Working Yet",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "Not Working Yet", Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
