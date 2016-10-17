@@ -1,33 +1,34 @@
 package com.scribblesinc.tams;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
-public class TitleofAsset extends AppCompatActivity{
+
+public class TitleofAsset extends AppCompatActivity {
+    // used to get the entered title by the user
+    private EditText enteredText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //run parents method by extending the existing class or run this
-        //class in addition to parent's class
+        // run parents method by extending the existing class or run this
+        // class in addition to parent's class
         super.onCreate(savedInstanceState);
-        //activity class creates window
+        // activity class creates window
         setContentView(R.layout.activity_titleofasset);
-        //Instantiating the toolbar of adding asset activity
-
+        // Instantiating the toolbar of adding asset activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        // gets the action bar if not found
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-
-
-
+        // initializes the variable
+        enteredText = (EditText) findViewById(R.id.title_name);
     }
 
     @Override
@@ -42,10 +43,31 @@ public class TitleofAsset extends AppCompatActivity{
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-
-        //if the back button is pressed
-        if(item.getItemId() == android.R.id.home){
-            finish(); //goes back to the previous activity
+        int id = item.getItemId();
+        // if the back button is pressed
+        if(id == android.R.id.home) {
+            // goes back to the previous activity
+            finish();
+        }
+        // if done button is done item is pressed
+        if(id == R.id.action_done) {
+            // gets the title entered by the user
+            String title = String.valueOf(enteredText.getText());
+            // if nothing is entered do nothing, else get the title entered by user
+            if(title.isEmpty()){
+                Toast.makeText(this, "No text has been entered ", Toast.LENGTH_SHORT).show();
+            }else{
+                // Creates new intent (an intent means it's something that the program intends to do)
+                Intent sendToPreviousActivity = new Intent();
+                // Used to send back to last activity. A key and whatever is being sent back is provided
+                sendToPreviousActivity.putExtra("assetTitle", title);
+                // RESULT_Ok is used to show that everything is fine, the intent is passed as well
+                setResult(RESULT_OK, sendToPreviousActivity);
+                // Toast to show that it has been saved *will be deleted*
+                Toast.makeText(this, title + " has been saved ", Toast.LENGTH_SHORT).show();
+                // Closes current activity
+                finish();
+            }
         }
 
         return super.onOptionsItemSelected(item);

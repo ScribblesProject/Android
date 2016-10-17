@@ -9,7 +9,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 public class AssetList extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

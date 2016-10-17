@@ -22,19 +22,17 @@ public class MyAdapter extends ArrayAdapter<Item> {
     private final Context context;
     private final ArrayList<Item> itemsArrayList;
 
-    public MyAdapter(Context context, ArrayList<Item> itemsArrayList){
-          super(context, R.layout.content_asset_add, itemsArrayList);
-
-          this.context = context;
-          this.itemsArrayList = itemsArrayList;
+    public MyAdapter(Context context, ArrayList<Item> itemsArrayList) {
+        super(context, R.layout.content_asset_add, itemsArrayList);
+        this.context = context;
+        this.itemsArrayList = itemsArrayList;
     }
 
-    //Get a View that displays the data at the specfied postion in the data set
+    //Get a View that displays the data at the specified position in the data set
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
+    public View getView(int position, View convertView, ViewGroup parent) {
         //View should be created based on the type returned from getItemViewtype(int pos)
-
-        if(convertView == null) {
+        if (convertView == null) {
             //create inflater
             LayoutInflater myinflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             //get rowView from inflater
@@ -58,19 +56,17 @@ public class MyAdapter extends ArrayAdapter<Item> {
 
     //Returns the number of types of Views that will be created by getView(int,View, ViewGroup)
     @Override
-    public int getViewTypeCount(){
+    public int getViewTypeCount() {
         //Returns the # of types of Views that wil be created by this adapter each type
         //represents a set of views that can be converted
-    return 3;
+        return 3;
     }
 
     //Get the type of view that will be created by getView for the specified item
     @Override
-    public int getItemViewType(int position){
+    public int getItemViewType(int position) {
         //Return an integer here representing the type of View, due note that integer must be in the
         //range 9 to getViewTypeCount()-1
-    return 1;//Item.ColorValues.values().length;
+        return 1;//Item.ColorValues.values().length;
     }
-
-
 }
