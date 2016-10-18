@@ -1,6 +1,14 @@
 package com.scribblesinc.tams;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.media.MediaRecorder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.ContextMenu;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,11 +25,15 @@ import com.scribblesinc.tams.androidcustom.MyAdapter;
 import java.util.ArrayList;
 
 public class AssetAdd extends AppCompatActivity {//AppCompatActivity
+
     private MyAdapter adapter;
     private ListView listView;
     private String title = "N/A";
     private String notes = "N/A";
     private boolean isType;
+    private Intent newActivity;
+    private static final int REQUEST_CAMERA = 200;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +56,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         listView = (ListView) findViewById(R.id.listView);
         // setListAdapter aka assign adapter to listview
         listView.setAdapter(adapter);
+
 
 
         // creating a contextmeny for listview
@@ -97,13 +110,38 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                             Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
                             break;
                     }
+
                 }
             }
         );//end of OnItemClickListener
     }//end of onCreate
+    //handle the permissions request response
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull  int[] grantResults){
 
-    /* onCreateContextMenu, responsible for creating contextual menus for type item and category,
-    *  based on a flag the according menu will be shown*/
+        //start audio recording
+        if(requestCode == REQUEST_CAMERA) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getApplicationContext(), "App has microphone capturing permission", Toast.LENGTH_LONG).show();
+                newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(newActivity,1);
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AssetAdd.this, Manifest.permission.CAMERA)) {
+                    //explain user need of permission
+                    Toast.makeText(getApplicationContext(),"Audio Capturing Permission Required", Toast.LENGTH_LONG).show();
+                } else {
+                    //Don't ask again for permission, handle rest of app without this permisson
+                    finish();
+                    Toast.makeText(getApplicationContext(), "App has no audio capturing permission", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }//end of onRequestPermissoinResult
+
+    /*onCreateContextMenu, responsible for creating contextual menus for type item and category,
+    * based on a flag the according menu will be shown
+    * */
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuinfo) {
         super.onCreateContextMenu(menu,v,menuinfo);
