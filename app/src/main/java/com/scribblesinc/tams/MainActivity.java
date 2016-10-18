@@ -24,18 +24,28 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-
+import android.location.Location;
+import android.location.LocationManager;
+import android.location.LocationListener;
+import android.widget.TextView;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int REQUEST_VOICE_RESULT = 5;
+    private static final int REQUEST_IMAGE_RESULT = 0;
+
     private GoogleMap mMap;
     private GoogleApiClient mGoogleApiClient;
     private Toolbar toolbar;
+    private Location mLastLocation;
+    public LocationManager mLocationManager;
 
+    int updates;
     private double latitude, longitude;
 
     private MyLocationListener locationListener;
+    TextView textView;
 
     /* Request constants used for permission reasons. */
     private static final int REQUEST_LOCATION_RESULT = 1;
@@ -57,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -150,7 +161,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }*/
     }
 
-    @Override
+
+        @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         if(requestCode == REQUEST_LOCATION_RESULT){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
@@ -158,6 +170,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getCurrentLocation();
             } else {
                 Toast.makeText(getApplicationContext(), "Location Permission Required", Toast.LENGTH_SHORT).show();
+
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        if(requestCode == REQUEST_VOICE_RESULT){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                //call audiocapture
+
+
+            } else {
+                Toast.makeText(getApplicationContext(), "Voice Permission Required", Toast.LENGTH_SHORT).show();
+
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        if(requestCode == REQUEST_IMAGE_RESULT){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                //call cameracapture
+
+
+            } else {
+                Toast.makeText(getApplicationContext(), "Image Permission Required", Toast.LENGTH_SHORT).show();
 
             }
         } else {
