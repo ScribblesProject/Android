@@ -1,7 +1,14 @@
 package com.scribblesinc.tams;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.media.MediaRecorder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.ContextMenu;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,7 +30,8 @@ import java.util.ArrayList;
 
 public class AssetAdd extends AppCompatActivity {//AppCompatActivity
    private boolean isType;
-
+    private Intent newActivity;
+    private static final int REQUEST_CAMERA = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +64,13 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                Intent newActivity;
+
                 //switch state to change accordingly based on user selection
                 switch(position){
                     case 0: //camera
-                        newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
-                        startActivityForResult(newActivity,1);
+                        //do permission checking
+                            ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+
                         break;
                     case 1://name
                         newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
@@ -101,7 +110,29 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         });//end of OnItemClickListener
 
     }//end of onCreate
+    //handle the permissions request response
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull  int[] grantResults){
 
+        //start audio recording
+        if(requestCode == REQUEST_CAMERA) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getApplicationContext(), "App has microphone capturing permission", Toast.LENGTH_LONG).show();
+                newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(newActivity,1);
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AssetAdd.this, Manifest.permission.CAMERA)) {
+                    //explain user need of permission
+                    Toast.makeText(getApplicationContext(),"Audio Capturing Permission Required", Toast.LENGTH_LONG).show();
+                } else {
+                    //Don't ask again for permission, handle rest of app without this permisson
+                    finish();
+                    Toast.makeText(getApplicationContext(), "App has no audio capturing permission", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+    }//end of onRequestPermissoinResult
 
     /*onCreateContextMenu, responsible for creating contextual menus for type item and category,
     * based on a flag the according menu will be shown
