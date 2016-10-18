@@ -44,6 +44,8 @@ public class AudioCapture extends AppCompatActivity{
         if(ContextCompat.checkSelfPermission(AudioCapture.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
             //if Permission is not granted
             ActivityCompat.requestPermissions(AudioCapture.this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_MIC);
+        }else{
+            ActivityCompat.requestPermissions(AudioCapture.this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_MIC);
         }
 
         //binding buttons to GUI component
@@ -81,6 +83,8 @@ public class AudioCapture extends AppCompatActivity{
     @Override
     protected void onStart(){
         super.onStart();
+        //works but crashes when after play and stop
+        //working on it.
         /*
         record.setOnClickListener((new OnClickListener() {
             @Override
@@ -159,7 +163,7 @@ public class AudioCapture extends AppCompatActivity{
     }
     //handle the permissions request response
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,@NonNull  int[] grantResults){
 
            //start audio recording
             if(requestCode == REQUEST_MIC) {
