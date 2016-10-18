@@ -15,6 +15,7 @@ import java.io.*;
 
 public class CameraCapture extends AppCompatActivity{
     String mCurrentPhotoPath;
+    String meh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
