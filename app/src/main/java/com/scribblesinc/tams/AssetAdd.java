@@ -46,7 +46,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         listView.setAdapter(adapter);
 
 
-        //creating a contextmenu for listview
+        // creating a contextmeny for listview
         this.registerForContextMenu(listView);
         // OnItemClickListener
         listView.setOnItemClickListener (
