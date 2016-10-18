@@ -8,6 +8,49 @@
     tools:context=".AssetList"
     tools:showIn="@layout/activity_asset_list">
 
+  <!--what view layout will contain for AssetList-->
+    <TextView
+        android:id="@+id/label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:paddingStart="5dp"
+        android:paddingEnd="0dp"
+        android:layout_marginStart="10dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="13dp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:id="@+id/value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:paddingStart="5dp"
+        android:paddingEnd="0dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:paddingTop="32dp"
+        android:paddingBottom="13dp"
+        android:textColor="@color/black"
+        />
+
+    <!--Voice recording Icon-->
+    <ImageView
+        android:id="@+id/mic_icon"
+        android:contentDescription="@string/icon_mic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="150dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="32dp"
+        />
+    <ImageView
+        android:contentDescription="@string/camera_mic"
+        android:id="@+id/mic_camera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
