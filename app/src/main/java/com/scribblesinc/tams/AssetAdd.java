@@ -34,7 +34,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         /* run parents method by extending the existing class or run this
@@ -58,58 +57,52 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         listView.setAdapter(adapter);
 
 
-
-        // creating a contextmeny for listview
+        //creating a contextmenu for listview
         this.registerForContextMenu(listView);
-        // OnItemClickListener
-        listView.setOnItemClickListener (
-            new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                    Intent newActivity;
-                    final int result;
-                    // switch state to change accordingly based on user selection
-                    switch(position) {
-                        case 0: // camera
-                            newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
-                            result = 0;
-                            startActivityForResult(newActivity,result);
-                            break;
-                        case 1: // name
-                            newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
-                            result = 1;
-                            startActivityForResult(newActivity,result);
-                            // Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        case 2://category
-                            isType = false;
-                            view.showContextMenu();
-                            // Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        case 3://type
-                            isType = true;
-                            view.showContextMenu();
-                            // Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        case 4:// location
-                            Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        case 5:// voice memo
-                            newActivity = new Intent(AssetAdd.this,AudioCapture.class);
-                            result = 5;
-                            startActivityForResult(newActivity, result);
-                            // startActivity for result will be implemented later  to handle info
-                            break;
-                        case 6:// description
-                            newActivity = new Intent(AssetAdd.this, NotesCapture.class);
-                            result = 6;
-                            startActivityForResult(newActivity,result);
-                            // Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        default:
-                            Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                    }
+
+        //OnItemClickListener
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+
+                //switch state to change accordingly based on user selection
+                switch(position){
+                    case 0: //camera
+                        //do permission checking
+                            ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                        break;
+                    case 1://name
+                        newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
+                        startActivityForResult(newActivity,2);
+                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    case 2://category
+                        isType = false;
+                        view.showContextMenu();
+                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    case 3://type
+                        isType = true;
+                        view.showContextMenu();
+                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    case 4://location
+                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    case 5://voice memo
+                         newActivity = new Intent(AssetAdd.this,AudioCapture.class);
+                        startActivityForResult(newActivity,5);
+                        //startActivity for result will be implemented later  to handle info
+                        break;
+                    case 6://description
+                        newActivity = new Intent(AssetAdd.this, NotesCapture.class);
+                        startActivityForResult(newActivity,6);
+                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                }
 
                 }
             }
