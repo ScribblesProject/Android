@@ -1,6 +1,14 @@
 package com.scribblesinc.tams;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.media.MediaRecorder;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.view.ContextMenu;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -17,11 +25,14 @@ import com.scribblesinc.tams.androidcustom.MyAdapter;
 import java.util.ArrayList;
 
 public class AssetAdd extends AppCompatActivity {//AppCompatActivity
+
     private MyAdapter adapter;
     private ListView listView;
     private String title = "N/A";
     private String notes = "N/A";
     private boolean isType;
+    private Intent newActivity;
+    private static final int REQUEST_CAMERA = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,64 +55,86 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         listView = (ListView) findViewById(R.id.listView);
         // setListAdapter aka assign adapter to listview
         listView.setAdapter(adapter);
-        // creating a contextmeny for listview
+
+
+        //creating a contextmenu for listview
         this.registerForContextMenu(listView);
-        // OnItemClickListener
-        listView.setOnItemClickListener (
-            new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                    Intent newActivity;
-                    final int result;
-                    // switch state to change accordingly based on user selection
-                    switch(position) {
-                        case 0: // camera
-                            newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE);
-                            result = 0;
-                            startActivityForResult(newActivity,result);
-                            break;
-                        case 1: // name
-                            newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
-                            result = 1;
-                            startActivityForResult(newActivity,result);
-                            // Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        case 2://category
-                            isType = false;
-                            view.showContextMenu();
-                            // Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        case 3://type
-                            isType = true;
-                            view.showContextMenu();
-                            // Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        case 4:// location
-                            Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        case 5:// voice memo
-                            newActivity = new Intent(AssetAdd.this,AudioCapture.class);
-                            result = 5;
-                            startActivityForResult(newActivity, result);
-                            // startActivity for result will be implemented later  to handle info
-                            break;
-                        case 6:// description
-                            newActivity = new Intent(AssetAdd.this, NotesCapture.class);
-                            result = 6;
-                            startActivityForResult(newActivity,result);
-                            // Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                        default:
-                            Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                            break;
-                    }
+
+        //OnItemClickListener
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+
+                //switch state to change accordingly based on user selection
+                switch(position){
+                    case 0: //camera
+                        //do permission checking
+                            ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                        break;
+                    case 1://name
+                        newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
+                        startActivityForResult(newActivity,2);
+                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    case 2://category
+                        isType = false;
+                        view.showContextMenu();
+                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    case 3://type
+                        isType = true;
+                        view.showContextMenu();
+                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    case 4://location
+                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    case 5://voice memo
+                         newActivity = new Intent(AssetAdd.this,AudioCapture.class);
+                        startActivityForResult(newActivity,5);
+                        //startActivity for result will be implemented later  to handle info
+                        break;
+                    case 6://description
+                        newActivity = new Intent(AssetAdd.this, NotesCapture.class);
+                        startActivityForResult(newActivity,6);
+                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                    default:
+                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                        break;
+                }
+
                 }
             }
         );//end of OnItemClickListener
     }//end of onCreate
+    //handle the permissions request response
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull  int[] grantResults){
 
-    /* onCreateContextMenu, responsible for creating contextual menus for type item and category,
-    *  based on a flag the according menu will be shown*/
+        //start audio recording
+        if(requestCode == REQUEST_CAMERA) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(getApplicationContext(), "App has microphone capturing permission", Toast.LENGTH_LONG).show();
+                newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(newActivity,1);
+            } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(AssetAdd.this, Manifest.permission.CAMERA)) {
+                    //explain user need of permission
+                    Toast.makeText(getApplicationContext(),"Audio Capturing Permission Required", Toast.LENGTH_LONG).show();
+                } else {
+                    //Don't ask again for permission, handle rest of app without this permisson
+                    finish();
+                    Toast.makeText(getApplicationContext(), "App has no audio capturing permission", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    }//end of onRequestPermissoinResult
+
+    /*onCreateContextMenu, responsible for creating contextual menus for type item and category,
+    * based on a flag the according menu will be shown
+    * */
+
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuinfo) {
         super.onCreateContextMenu(menu,v,menuinfo);
