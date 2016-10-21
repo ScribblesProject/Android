@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 //calculate current location
                 getCurrentLocation();
             } else {
-                Toast.makeText(getApplicationContext(), "Location Permission Required", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Camera Permission Required", Toast.LENGTH_SHORT).show();
 
             }
         } else {
