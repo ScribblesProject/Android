@@ -2,6 +2,7 @@ package com.scribblesinc.tams;
 
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -9,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -32,7 +34,8 @@ public class AudioCapture extends AppCompatActivity{
     //Flag for to check if SD present
     Boolean isSDPresent;
     private static final int REQUEST_MIC = 200;
-
+    private int REQUEST_Audio_RESULT = 1;
+    private static final String TAG = AudioCapture.class.getSimpleName();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //run parents method by extending the existing class or run this
@@ -216,5 +219,26 @@ public class AudioCapture extends AppCompatActivity{
         return super.onOptionsItemSelected(item);
     }
 
+    public void currentAudioAction(MenuItem item){
+
+
+        if(Build.VERSION.SDK_INT >= 23){ //6.0+
+            if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                //calculate current location
+
+                Toast.makeText(getApplicationContext(), "Audio Permission Granted", Toast.LENGTH_SHORT).show();
+            }else {
+                //rejected permission request
+                if(shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)){
+                    Toast.makeText(getApplicationContext(), "Audio Permission Required", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Audio Permission Required");
+                }
+                requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_Audio_RESULT);
+            }
+        }else{ // < 6.0
+            Toast.makeText(getApplicationContext(), "Audio Permission Granted", Toast.LENGTH_SHORT).show();
+
+        }
+    }
 
 }
