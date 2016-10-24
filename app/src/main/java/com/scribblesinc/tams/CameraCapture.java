@@ -1,13 +1,22 @@
 package com.scribblesinc.tams;
 
+import android.*;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 public class CameraCapture extends AppCompatActivity{
+
+    private int REQUEST_Camera_RESULT =1 ;
+    private static final String TAG = CameraCapture.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,5 +58,40 @@ public class CameraCapture extends AppCompatActivity{
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        if(requestCode == REQUEST_Camera_RESULT){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                //use camera
+
+            } else {
+                Toast.makeText(getApplicationContext(), "camera Permission Required", Toast.LENGTH_SHORT).show();
+
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public void currentAudioAction(MenuItem item){
+
+
+        if(Build.VERSION.SDK_INT >= 23){ //6.0+
+            if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                //calculate current location
+
+                Toast.makeText(getApplicationContext(), "Audio Permission Granted", Toast.LENGTH_SHORT).show();
+            }else {
+                //rejected permission request
+                if(shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION)){
+                    Toast.makeText(getApplicationContext(), "Audio Permission Required", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Audio Permission Required");
+                }
+                requestPermissions(new String[] {android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_Camera_RESULT);
+            }
+        }else{ // < 6.0
+            Toast.makeText(getApplicationContext(), "Audio Permission Granted", Toast.LENGTH_SHORT).show();
+
+        }
     }
 }
