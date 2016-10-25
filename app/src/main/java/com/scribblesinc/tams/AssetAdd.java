@@ -244,6 +244,11 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         if (id == R.id.action_done) {
             Toast.makeText(getApplicationContext(), "Not working ", Toast.LENGTH_SHORT).show();
         }
+        if(id == R.id.action_reset){
+            Intent intent = new Intent(this, AssetAdd.class);
+            startActivity(intent);
+            finish(); // This opens a new AssetAdd and closes the current one.
+        }
 
         return super.onOptionsItemSelected(item);
     }
