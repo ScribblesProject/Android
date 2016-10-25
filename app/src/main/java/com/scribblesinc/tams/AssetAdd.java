@@ -122,6 +122,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                 if (ActivityCompat.shouldShowRequestPermissionRationale(AssetAdd.this, Manifest.permission.CAMERA)) {
                     //explain user need of permission
                     Toast.makeText(getApplicationContext(),"Audio Capturing Permission Required", Toast.LENGTH_LONG).show();
+
                 } else {
                     //Don't ask again for permission, handle rest of app without this permisson
                     finish();
@@ -209,7 +210,9 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                     //gets the title from the key that was passed by the activity in TitleofAsset
                     notes = data.getStringExtra("assetNotes");
                     //gets the item at index 1 (the description of the title) and changes it
-                    adapter.getItem(6).setDescription(notes);
+                    if(adapter.getItem(6) != null) {
+                        adapter.getItem(6).setDescription(notes);
+                    }
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
