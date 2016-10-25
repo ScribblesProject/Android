@@ -210,9 +210,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                     //gets the title from the key that was passed by the activity in TitleofAsset
                     notes = data.getStringExtra("assetNotes");
                     //gets the item at index 1 (the description of the title) and changes it
-                    if(adapter.getItem(6) != null) {
-                        adapter.getItem(6).setDescription(notes);
-                    }
+                    adapter.getItem(6).setDescription(notes);
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
