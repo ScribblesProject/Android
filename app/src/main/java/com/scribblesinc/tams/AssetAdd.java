@@ -122,6 +122,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                 if (ActivityCompat.shouldShowRequestPermissionRationale(AssetAdd.this, Manifest.permission.CAMERA)) {
                     //explain user need of permission
                     Toast.makeText(getApplicationContext(),"Audio Capturing Permission Required", Toast.LENGTH_LONG).show();
+
                 } else {
                     //Don't ask again for permission, handle rest of app without this permisson
                     finish();
