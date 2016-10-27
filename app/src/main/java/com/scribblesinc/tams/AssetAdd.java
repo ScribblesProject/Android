@@ -28,6 +28,9 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     private MyAdapter adapter;
     private ListView listView;
+    private int id;
+    private String name;
+    private String description;
     private boolean isType;
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
