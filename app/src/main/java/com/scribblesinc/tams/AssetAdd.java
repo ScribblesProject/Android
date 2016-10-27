@@ -1,14 +1,10 @@
 package com.scribblesinc.tams;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.media.MediaRecorder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.view.ContextMenu;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -20,13 +16,15 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.scribblesinc.tams.adapters.CustomAssetAdapter;
 import com.scribblesinc.tams.androidcustom.Item;
-import com.scribblesinc.tams.androidcustom.MyAdapter;
+
 import java.util.ArrayList;
 
 public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
-    private MyAdapter adapter;
+    private CustomAssetAdapter adapter;
     private ListView listView;
     private String title = "N/A";
     private String notes = "N/A";
@@ -50,7 +48,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         // pass context and data to the custom adapter
-        adapter = new MyAdapter(this, generateData());
+        adapter = new CustomAssetAdapter(this, generateData());
         // Get ListView from content_asset_add
         listView = (ListView) findViewById(R.id.listView);
         // setListAdapter aka assign adapter to listview

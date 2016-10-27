@@ -1,3 +1,5 @@
+package com.scribblesinc.tams.adapters;
+
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,7 +11,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.google.android.gms.vision.text.Text;
 import com.scribblesinc.tams.R;
-
+import com.scribblesinc.tams.Asset;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,17 +27,17 @@ public class CustomListAdapter extends BaseAdapter {
     private List<Asset> assetList;
     //ImageLoader imageLoader
 
-    public CustomListAdapter(Activity activity, List<Asset> assetList){
+    public CustomListAdapter(Activity activity, List<Asset> assetList) {
         this.activity = activity;
         this.assetList = assetList;
     }
 
     @Override
-    public View getView(int position, View convertView,ViewGroup parent){
+    public View getView(int position, View convertView, ViewGroup parent) {
 
-        if(inflater == null)//create one
+        if (inflater == null)//create one
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        if(convertView == null)
+        if (convertView == null)
             convertView = inflater.inflate(R.layout.content_asset_list, parent, false);//will inflate with given parent bu won't attach it to it
 
         //get text view
@@ -52,16 +54,19 @@ public class CustomListAdapter extends BaseAdapter {
         //return row view
         return convertView;
     }
+
     @Override
     public int getCount() {
         return assetList.size();
     }
+
     @Override
-    public long getItemId(int position){
-    return position;
+    public long getItemId(int position) {
+        return position;
     }
+
     @Override
-    public Object getItem(int location){
+    public Object getItem(int location) {
         return assetList.get(location);
     }
 }
