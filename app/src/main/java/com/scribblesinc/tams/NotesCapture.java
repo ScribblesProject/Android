@@ -71,7 +71,11 @@ public class NotesCapture extends AppCompatActivity {
                 finish();
             }
         }
+        if(id == R.id.action_reset) {
 
+            enteredText.setText("");
+
+        }
         return super.onOptionsItemSelected(item);
     }
 }
