@@ -9,7 +9,7 @@
         app:showAsAction="never" />-->
     <item
         android:title="@string/action_reset"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         android:id="@+id/action_reset" />
     <item android:id="@+id/action_done"
         android:title="@string/action_done"
