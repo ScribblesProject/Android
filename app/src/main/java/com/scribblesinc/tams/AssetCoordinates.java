@@ -1,3 +1,5 @@
+package com.scribblesinc.tams;
+
 /**
  * Created by Alejandro on 10/24/2016.
  * Class of coordinates for the assets
