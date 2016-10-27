@@ -28,8 +28,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     private MyAdapter adapter;
     private ListView listView;
-    private String title = "N/A";
-    private String notes = "N/A";
     private boolean isType;
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
@@ -56,7 +54,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         // setListAdapter aka assign adapter to listview
         listView.setAdapter(adapter);
 
-
         //creating a contextmenu for listview
         this.registerForContextMenu(listView);
 
@@ -69,11 +66,11 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                 switch(position){
                     case 0: //camera
                         //do permission checking
-                            ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                        ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
                         break;
                     case 1://name
                         newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
-                        startActivityForResult(newActivity,2);
+                        startActivityForResult(newActivity,1);
                         //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
                         break;
                     case 2://category
@@ -90,7 +87,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                         Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
                         break;
                     case 5://voice memo
-                         newActivity = new Intent(AssetAdd.this,AudioCapture.class);
+                        newActivity = new Intent(AssetAdd.this,AudioCapture.class);
                         startActivityForResult(newActivity,5);
                         //startActivity for result will be implemented later  to handle info
                         break;
@@ -124,7 +121,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                     Toast.makeText(getApplicationContext(),"Audio Capturing Permission Required", Toast.LENGTH_LONG).show();
 
                 } else {
-                    //Don't ask again for permission, handle rest of app without this permisson
+                    //Don't ask again for permission, handle rest of app without this permission
                     finish();
                     Toast.makeText(getApplicationContext(), "App has no audio capturing permission", Toast.LENGTH_LONG).show();
                 }
@@ -163,12 +160,12 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private ArrayList<Item>generateData() {
         ArrayList<Item> items = new ArrayList<>();
         items.add(new Item("Image","Image of Asset",R.drawable.ic_camera_alt));
-        items.add(new Item("Name", title));
+        items.add(new Item("Name", name));
         items.add(new Item("Category","Road Signs"));
         items.add(new Item("Type","Caution Sign"));
         items.add(new Item("Location","Asset location"));
         items.add(new Item("Voice Memo","Record Voice Memo",R.drawable.ic_mic));
-        items.add(new Item("Description", notes));
+        items.add(new Item("Description", description));
         items.add(new Item(" "," "));//empty item to permit scrolling
         return items;
     }
@@ -188,29 +185,26 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                 Toast.makeText(getApplicationContext(), "Picture to be handled", Toast.LENGTH_LONG).show();
                 break;
             case 1:
-                System.out.println("RQC: " + requestCode + " RC: " + resultCode);
-
-                if (data != null) { // data can be null if back button is pressed!!!
-                     //gets the title from the key that was passed by the activity in TitleofAsset
-                    title = data.getStringExtra("assetTitle");
+                if (data != null) { // data can be null if back button is pressed!!
+                    //gets the title from the key that was passed by the activity in TitleofAsset
+                    name = data.getStringExtra("assetTitle");
                     //gets the item at index 1 (the description of the title) and changes it
-                    adapter.getItem(1).setDescription(title);
+                    adapter.getItem(1).setDescription(name);
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
                     this.registerForContextMenu(listView);
                 }
-
                 break;
             case 5:
                 Toast.makeText(getApplicationContext(), "Audio to be handled", Toast.LENGTH_LONG).show();
                 break;
             case 6:
                 if (data != null) { // data can be null if back button is pressed!!!
-                    //gets the title from the key that was passed by the activity in TitleofAsset
-                    notes = data.getStringExtra("assetNotes");
-                    //gets the item at index 1 (the description of the title) and changes it
-                    adapter.getItem(6).setDescription(notes);
+                    //gets the title from the key that was passed by the activity in NotesCaptured
+                    description = data.getStringExtra("assetNotes");
+                    //gets the item at index 6 (the description of the title) and changes it
+                    adapter.getItem(6).setDescription(description);
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
