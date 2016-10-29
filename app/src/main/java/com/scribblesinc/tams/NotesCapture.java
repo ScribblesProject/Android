@@ -51,6 +51,7 @@ public class NotesCapture extends AppCompatActivity {
             // goes back to the previous activity
             finish();
         }
+
         if(id == R.id.my_notes) {
             // gets the notes entered by the user
             String notes = String.valueOf(enteredText.getText());
@@ -71,7 +72,9 @@ public class NotesCapture extends AppCompatActivity {
             }
         }
         if(id == R.id.action_reset) {
+
             enteredText.setText("");
+
         }
         return super.onOptionsItemSelected(item);
     }

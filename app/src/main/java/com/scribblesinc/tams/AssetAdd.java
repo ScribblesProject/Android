@@ -29,8 +29,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private MyAdapter adapter;
     private ListView listView;
     private int id;
-    private String name = "";
-    private String description ="";
+    private String name;
+    private String description;
     private boolean isType;
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
@@ -243,14 +243,9 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         }
 
         if(id == R.id.action_reset){
-            if(!(name.isEmpty() && description.isEmpty())) {
-                name = "";
-                description = "";
-                adapter.getItem(1).setDescription(name);
-                adapter.getItem(6).setDescription(description);
-                //setListAdapter aka assign adapter to listview
-                listView.setAdapter(adapter);
-            }
+            Intent intent = new Intent(this, AssetAdd.class);
+            startActivity(intent);
+            finish(); // This opens a new AssetAdd and closes the current one.
         }
         return super.onOptionsItemSelected(item);
     }
