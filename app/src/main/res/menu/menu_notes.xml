@@ -2,11 +2,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".TitleofAsset">
+    tools:context=".NotesCapture">
 
     <item
-        android:id="@id/my_notes"
-        android:title="Done"
+        android:id="@+id/action_reset"
+        android:title="@string/action_reset"
         app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_done"
+        android:title="@string/action_done"
+        app:showAsAction="ifRoom" />
+
+
+
+
     
 </menu>

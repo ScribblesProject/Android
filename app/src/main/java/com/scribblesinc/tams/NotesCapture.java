@@ -51,8 +51,8 @@ public class NotesCapture extends AppCompatActivity {
             // goes back to the previous activity
             finish();
         }
-
-        if(id == R.id.my_notes) {
+        // create note/description if something has been written
+        if(id == R.id.action_done) {
             // gets the notes entered by the user
             String notes = String.valueOf(enteredText.getText());
             // if nothing is entered do nothing, else get the notes entered by user
@@ -70,6 +70,10 @@ public class NotesCapture extends AppCompatActivity {
                 //Closes current activity
                 finish();
             }
+        }
+        // reset note
+        if(id == R.id.action_reset) {
+            enteredText.setText("");
         }
 
         return super.onOptionsItemSelected(item);
