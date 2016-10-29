@@ -28,8 +28,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     private MyAdapter adapter;
     private ListView listView;
-    private String title = "N/A";
-    private String notes = "N/A";
+    private String name = "";
+    private String description = "";
     private boolean isType;
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
@@ -69,11 +69,11 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                 switch(position){
                     case 0: //camera
                         //do permission checking
-                            ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                        ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
                         break;
                     case 1://name
                         newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
-                        startActivityForResult(newActivity,2);
+                        startActivityForResult(newActivity,1);
                         //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
                         break;
                     case 2://category
@@ -163,12 +163,12 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private ArrayList<Item>generateData() {
         ArrayList<Item> items = new ArrayList<>();
         items.add(new Item("Image","Image of Asset",R.drawable.ic_camera_alt));
-        items.add(new Item("Name", title));
+        items.add(new Item("Name", name));
         items.add(new Item("Category","Road Signs"));
         items.add(new Item("Type","Caution Sign"));
         items.add(new Item("Location","Asset location"));
         items.add(new Item("Voice Memo","Record Voice Memo",R.drawable.ic_mic));
-        items.add(new Item("Description", notes));
+        items.add(new Item("Description", description));
         items.add(new Item(" "," "));//empty item to permit scrolling
         return items;
     }
@@ -192,9 +192,9 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
                 if (data != null) { // data can be null if back button is pressed!!!
                      //gets the title from the key that was passed by the activity in TitleofAsset
-                    title = data.getStringExtra("assetTitle");
+                    name = data.getStringExtra("assetTitle");
                     //gets the item at index 1 (the description of the title) and changes it
-                    adapter.getItem(1).setDescription(title);
+                    adapter.getItem(1).setDescription(name);
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
@@ -208,9 +208,9 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             case 6:
                 if (data != null) { // data can be null if back button is pressed!!!
                     //gets the title from the key that was passed by the activity in TitleofAsset
-                    notes = data.getStringExtra("assetNotes");
+                    description = data.getStringExtra("assetNotes");
                     //gets the item at index 1 (the description of the title) and changes it
-                    adapter.getItem(6).setDescription(notes);
+                    adapter.getItem(6).setDescription(description);
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
@@ -237,12 +237,26 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         *  as you specify a parent activity in AndroidManifest.xml.*/
         int id = item.getItemId();
         // if the back button is pressed
-        if (item.getItemId() == android.R.id.home) {
+        if(id == android.R.id.home) {
             finish(); //goes back to the previous activity
         }
         // when the filter button is pressed
-        if (id == R.id.action_done) {
+        if(id == R.id.action_done) {
             Toast.makeText(getApplicationContext(), "Not working ", Toast.LENGTH_SHORT).show();
+        }
+        // resets the asset being created
+        if (id == R.id.action_reset) {
+            if(!(name.isEmpty() && description.isEmpty())) {
+                name = "";
+                description = "";
+                adapter.getItem(1).setDescription(name);
+                //gets the item at index 1 (the description of the title) and changes it
+                adapter.getItem(6).setDescription(description);
+                //setListAdapter aka assign adapter to listview
+                listView.setAdapter(adapter);
+                //creating a contextmeny for listview
+                this.registerForContextMenu(listView);
+            }
         }
 
         return super.onOptionsItemSelected(item);
