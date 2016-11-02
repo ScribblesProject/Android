@@ -33,6 +33,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private boolean isType;
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
+    private String contextValue = "";
+    private String typeValue = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,12 +152,43 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     *  this method so the appropriate action can be perform*/
     @Override
     public boolean onContextItemSelected(MenuItem item) {
+        int id = item.getItemId();
         if(isType) {
-            Toast.makeText(getApplicationContext(),"isType",Toast.LENGTH_LONG).show();
-        }else{
-            Toast.makeText(getApplicationContext(),"is category",Toast.LENGTH_LONG).show();
-        }
+            //Toast.makeText(getApplicationContext(),"isType",Toast.LENGTH_LONG).show();
 
+
+            if (id == R.id.caution_sign){
+                typeValue = "caution sign";
+
+            }
+            if (id == R.id.traffic_sign) {
+                typeValue = "traffic sign";
+
+            }
+            adapter.getItem(3).setDescription(typeValue);
+            listView.setAdapter(adapter);
+            this.registerForContextMenu(listView);
+            adapter.notifyDataSetChanged();
+
+        }else{
+            //Toast.makeText(getApplicationContext(),"is category",Toast.LENGTH_LONG).show();
+            //probably want another one here as well.
+
+            if (id == R.id.stop_light) {
+                contextValue = "stop light";
+
+            }
+            if (id == R.id.road_sign) {
+                contextValue = "road sign";
+
+            }
+
+            adapter.getItem(2).setDescription(contextValue);
+            listView.setAdapter(adapter);
+            this.registerForContextMenu(listView);
+            adapter.notifyDataSetChanged();
+        }
+        listView.invalidateViews();
         return true;
     }
 
@@ -164,8 +197,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         ArrayList<Item> items = new ArrayList<>();
         items.add(new Item("Image","Image of Asset",R.drawable.ic_camera_alt));
         items.add(new Item("Name", title));
-        items.add(new Item("Category","Road Signs"));
-        items.add(new Item("Type","Caution Sign"));
+        items.add(new Item("Category",contextValue));
+        items.add(new Item("Type",typeValue));
         items.add(new Item("Location","Asset location"));
         items.add(new Item("Voice Memo","Record Voice Memo",R.drawable.ic_mic));
         items.add(new Item("Description", notes));
