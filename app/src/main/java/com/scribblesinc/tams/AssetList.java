@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -18,18 +19,23 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.scribblesinc.tams.androidcustom.AssetItems;
 
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Map;
 
 public class AssetList extends AppCompatActivity {
     public RequestQueue queue;
     public StringRequest stringRequest;
+    private static final String TAG = AssetList.class.getSimpleName();
 
 
     @Override
@@ -38,6 +44,12 @@ public class AssetList extends AppCompatActivity {
         setContentView(R.layout.activity_asset_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //gets action bar that's supported if null
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
 
         queue = Volley.newRequestQueue(this);
         String url = "https://tams-142602.appspot.com/";
@@ -45,9 +57,17 @@ public class AssetList extends AppCompatActivity {
         stringRequest = new StringRequest(Request.Method.GET, url+"api/asset/list/", new Response.Listener<String>(){
                     @Override
                     public void onResponse(String response){
-                      //  Toast.makeText(getApplicationContext(), response,Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getApplicationContext(), response,Toast.LENGTH_SHORT).show();
+
                         //use Gson to do a display of data
                         Gson gson  = new Gson();
+                        Type type = new TypeToken<Map<String,ArrayList<Assets>>>(){}.getType();
+                        Map<String,ArrayList<Assets>> result = gson.fromJson(response, type);
+                        ArrayList<Assets> assets = result.get("assets");
+                        Log.d(TAG, String.valueOf(assets.get(0).sortedLocations()));
+                        Log.d(TAG, String.valueOf(result.get("assets")));
+                        //Log.d(TAG, String.valueOf(result.get("assets").get(0).getName()));
+                        Toast.makeText(getApplicationContext(), result.get("assets").toString(),Toast.LENGTH_LONG).show();
 
                     }
                 }, new Response.ErrorListener(){
