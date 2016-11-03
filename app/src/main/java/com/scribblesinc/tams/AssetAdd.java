@@ -50,7 +50,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         // pass context and data to the custom adapter
         adapter = new CustomAssetAdapter(this, generateData());
         // Get ListView from content_asset_add
-        listView = (ListView) findViewById(R.id.listView);
+        listView = (ListView) findViewById(R.id.listView_aa);
         // setListAdapter aka assign adapter to listview
         listView.setAdapter(adapter);
 

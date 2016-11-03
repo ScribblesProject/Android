@@ -91,7 +91,7 @@ public class AudioCapture extends AppCompatActivity{
         super.onStart();
         //works but crashes when after play and stop
         //working on it.
-        /*
+
         record.setOnClickListener((new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,50 +112,63 @@ public class AudioCapture extends AppCompatActivity{
                 stop(view);
             }
         });
-        */
+
 
     }//endofonStart()
 
 
     public void play(View view){
+        appPlayer= new MediaPlayer();
         try{
-            appPlayer= new MediaPlayer();
             appPlayer.setDataSource(outputFile);
-            appPlayer.prepare();
-            appPlayer.start();
-
-            play.setEnabled(false);
-            stop.setEnabled(true);
-            Toast.makeText(getApplicationContext(),"Playing the recording...",Toast.LENGTH_LONG).show();
         } catch(Exception e){
             //play is called before record
             e.printStackTrace();
         }
+        try{
+            appPlayer.prepare();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        appPlayer.start();
+        play.setEnabled(false);
+        stop.setEnabled(true);
+        Toast.makeText(getApplicationContext(),"Playing the recording...",Toast.LENGTH_LONG).show();
     }
     public void stop(View view){
         try{
             appAudioRecorder.stop();
+            appAudioRecorder.reset();
             appAudioRecorder.release();
-            appAudioRecorder = null;
 
-            stop.setEnabled(false);//disabled stop button
-            play.setEnabled(true);//enabled play button
-            Toast.makeText(getApplicationContext(),"Audio stopped recording",Toast.LENGTH_LONG).show();
+            //the need to start a new MediaRecorder, in case user decides to record a new recording
+            appAudioRecorder = new MediaRecorder();
+            appAudioRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            appAudioRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            appAudioRecorder.setAudioEncoder(MediaRecorder.OutputFormat.AMR_NB);
+            appAudioRecorder.setOutputFile(outputFile);
+
+
+
         }catch(IllegalStateException e){
             e.printStackTrace();
         }
+        stop.setEnabled(false);//disabled stop button
+        play.setEnabled(true);//enabled play button
+        //a
+        record.setEnabled(true);
+        Toast.makeText(getApplicationContext(),"Audio stopped recording",Toast.LENGTH_LONG).show();
     }
     public void record(View view){
         try{
             appAudioRecorder.prepare();
             appAudioRecorder.start();//start recording
-
-            record.setEnabled(false);//disable record button
-            stop.setEnabled(true);//enabled stop button
-            Toast.makeText(getApplicationContext(),"Recording Started",Toast.LENGTH_LONG).show();
         }catch (Exception e){
             e.printStackTrace();
         }
+        record.setEnabled(false);//disable record button
+        stop.setEnabled(true);//enabled stop button
+        Toast.makeText(getApplicationContext(),"Recording Started",Toast.LENGTH_LONG).show();
     }
 
 

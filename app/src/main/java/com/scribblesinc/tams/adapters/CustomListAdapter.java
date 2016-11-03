@@ -9,9 +9,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.vision.text.Text;
 import com.scribblesinc.tams.R;
 import com.scribblesinc.tams.Asset;
+import com.scribblesinc.tams.patterns.AppController;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +27,7 @@ public class CustomListAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
     private List<Asset> assetList;
-    //ImageLoader imageLoader
+    ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
     public CustomListAdapter(Activity activity, List<Asset> assetList) {
         this.activity = activity;
@@ -40,17 +42,22 @@ public class CustomListAdapter extends BaseAdapter {
         if (convertView == null)
             convertView = inflater.inflate(R.layout.content_asset_list, parent, false);//will inflate with given parent bu won't attach it to it
 
+        //image
+        if(imageLoader==null)
+            imageLoader = AppController.getInstance().getImageLoader();
+        NetworkImageView imgAsset= (NetworkImageView) convertView.findViewById(R.id.img_asset);
         //get text view
-        TextView a_title = (TextView) convertView.findViewById(R.id.title_asset);
-        TextView a_notes = (TextView) convertView.findViewById(R.id.notes_asset);
-        TextView a_location = (TextView) convertView.findViewById(R.id.location_asset);
+        TextView assetTitle = (TextView) convertView.findViewById(R.id.title_asset);
+        TextView assetNotes = (TextView) convertView.findViewById(R.id.notes_asset);
+        TextView alocation = (TextView) convertView.findViewById(R.id.location_asset);
 
         //getting asset data for row
         Asset asset = assetList.get(position);
 
         //set text view
-        a_title.setText(asset.getName());
-        a_notes.setText(asset.getDescription());
+        imgAsset.setImageUrl(asset.getMediaImageURL(), imageLoader);
+        assetTitle.setText(asset.getName());
+        assetNotes.setText(asset.getDescription());
         //return row view
         return convertView;
     }
