@@ -3,54 +3,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".AssetList"
     tools:showIn="@layout/activity_asset_list">
 
-  <!--what view layout will contain for AssetList-->
-    <TextView
-        android:id="@+id/label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="22sp"
-        android:paddingStart="5dp"
-        android:paddingEnd="0dp"
-        android:layout_marginStart="10dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="13dp"
-        android:textColor="@color/black"
-        />
-    <TextView
-        android:id="@+id/value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:paddingStart="5dp"
-        android:paddingEnd="0dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:paddingTop="32dp"
-        android:paddingBottom="13dp"
-        android:textColor="@color/black"
-        />
+  <!--The AssetList design components-->
+  <!--Thumbnail Image-->
+  <com.android.volley.toolbox.NetworkImageView
+      android:id="@+id/img_asset"
+      android:layout_width="80dp"
+      android:layout_height="80dp"
+     android:layout_alignParentStart= "true"
+      />
+  <!--Asset tittle-->
+<TextView
+    android:id="@+id/title_asset"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignTop="@+id/img_asset"
+    android:layout_toStartOf="@+id/img_asset"
+    />
+  <!--Any notes on Asset-->
+  <TextView
+      android:id="@+id/notes_asset"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/title_asset"
+      android:layout_toStartOf="@+id/img_asset"
+      />
+  <!--Location of asset-->
+  <TextView
+      android:id="@+id/location_asset"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/notes_asset"
+      android:layout_toStartOf="@+id/img_asset"
+      />
 
-    <!--Voice recording Icon-->
-    <ImageView
-        android:id="@+id/mic_icon"
-        android:contentDescription="@string/icon_mic"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="150dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="32dp"
-        />
-    <ImageView
-        android:contentDescription="@string/camera_mic"
-        android:id="@+id/mic_camera"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
+ <!--ListView elements-->
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

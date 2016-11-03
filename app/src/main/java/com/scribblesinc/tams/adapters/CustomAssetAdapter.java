@@ -1,7 +1,4 @@
-package com.scribblesinc.tams.androidcustom;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
+package com.scribblesinc.tams.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -10,24 +7,23 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import java.util.ArrayList;
 
 import com.scribblesinc.tams.R;
-
+import com.scribblesinc.tams.androidcustom.Item;
 /**
- * Created by Joel on 4/6/2016.
- * custom adapter to be use for adding asset
+ * Created by Joel on 10/26/2016.
  */
 
-public class MyAdapter extends ArrayAdapter<Item> {
+public class CustomAssetAdapter extends ArrayAdapter<Item>{
     private final Context context;
     private final ArrayList<Item> itemsArrayList;
 
-    public MyAdapter(Context context, ArrayList<Item> itemsArrayList) {
-        super(context, R.layout.content_asset_add, itemsArrayList);
+    public CustomAssetAdapter(Context context, ArrayList<Item> itemsArrayList){
+        super(context, R.layout.content_asset_add,itemsArrayList);
         this.context = context;
         this.itemsArrayList = itemsArrayList;
     }
-
     //Get a View that displays the data at the specified position in the data set
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -69,4 +65,5 @@ public class MyAdapter extends ArrayAdapter<Item> {
         //range 9 to getViewTypeCount()-1
         return 1;//Item.ColorValues.values().length;
     }
+
 }

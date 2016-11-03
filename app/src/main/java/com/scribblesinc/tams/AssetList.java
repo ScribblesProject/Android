@@ -1,12 +1,10 @@
 package com.scribblesinc.tams;
 
-import android.app.ProgressDialog;
+
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
@@ -22,6 +20,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.scribblesinc.tams.androidcustom.AssetItems;
 
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -31,6 +30,7 @@ import java.net.URL;
 public class AssetList extends AppCompatActivity {
     public RequestQueue queue;
     public StringRequest stringRequest;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +45,10 @@ public class AssetList extends AppCompatActivity {
         stringRequest = new StringRequest(Request.Method.GET, url+"api/asset/list/", new Response.Listener<String>(){
                     @Override
                     public void onResponse(String response){
-                        Toast.makeText(getApplicationContext(), response,
-                                Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(getApplicationContext(), response,Toast.LENGTH_SHORT).show();
+                        //use Gson to do a display of data
+                        Gson gson  = new Gson();
+
                     }
                 }, new Response.ErrorListener(){
                         @Override
@@ -55,7 +57,7 @@ public class AssetList extends AppCompatActivity {
                                     Toast.LENGTH_SHORT).show();
                         }
                     });
-
+        //add the request to the RequestQueue
         queue.add(stringRequest);
     }
 
