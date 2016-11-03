@@ -8,6 +8,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
+import java.util.List;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,7 +23,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.scribblesinc.tams.androidcustom.AssetItems;
-
+import com.scribblesinc.tams.adapters.CustomListAdapter;
+import com.scribblesinc.tams.patterns.AppController;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -36,7 +39,11 @@ public class AssetList extends AppCompatActivity {
     public RequestQueue queue;
     public StringRequest stringRequest;
     private static final String TAG = AssetList.class.getSimpleName();
-
+    private static final String url = "https://tams-142602.appspot.com/";
+    private CustomListAdapter listadapter;
+    private ListView listview;
+    private Gson gson;
+    private List<Asset>assetlist = new ArrayList<Asset>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,42 +52,41 @@ public class AssetList extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //gets action bar that's supported if null
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-
         queue = Volley.newRequestQueue(this);
         String url = "https://tams-142602.appspot.com/";
 
-        stringRequest = new StringRequest(Request.Method.GET, url+"api/asset/list/", new Response.Listener<String>(){
-                    @Override
-                    public void onResponse(String response){
-                        //Toast.makeText(getApplicationContext(), response,Toast.LENGTH_SHORT).show();
+        stringRequest = new StringRequest(Request.Method.GET, url + "api/asset/list/", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //Toast.makeText(getApplicationContext(), response,Toast.LENGTH_SHORT).show();
 
-                        //use Gson to do a display of data
-                        Gson gson  = new Gson();
-                        Type type = new TypeToken<Map<String,ArrayList<Assets>>>(){}.getType();
-                        Map<String,ArrayList<Assets>> result = gson.fromJson(response, type);
-                        ArrayList<Assets> assets = result.get("assets");
-                        Log.d(TAG, String.valueOf(assets.get(0).sortedLocations()));
-                        Log.d(TAG, String.valueOf(result.get("assets")));
-                        //Log.d(TAG, String.valueOf(result.get("assets").get(0).getName()));
-                        Toast.makeText(getApplicationContext(), result.get("assets").toString(),Toast.LENGTH_LONG).show();
+                //use Gson to do a display of data
+                Gson gson = new Gson();
+                Type type = new TypeToken<Map<String, ArrayList<Assets>>>() {
+                }.getType();
+                Map<String, ArrayList<Assets>> result = gson.fromJson(response, type);
+                ArrayList<Assets> assets = result.get("assets");
+                Log.d(TAG, String.valueOf(assets.get(0).sortedLocations()));
+                Log.d(TAG, String.valueOf(result.get("assets")));
+                //Log.d(TAG, String.valueOf(result.get("assets").get(0).getName()));
+                Toast.makeText(getApplicationContext(), result.get("assets").toString(), Toast.LENGTH_LONG).show();
 
-                    }
-                }, new Response.ErrorListener(){
-                        @Override
-                        public void onErrorResponse(VolleyError error){
-                            Toast.makeText(getApplicationContext(), "Error",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
         //add the request to the RequestQueue
         queue.add(stringRequest);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

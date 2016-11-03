@@ -1,4 +1,6 @@
 package com.scribblesinc.tams;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 
 
@@ -13,10 +15,14 @@ public class Asset {
     private String name;
     private String description;
     private String category;
+    @SerializedName("category-id")
     private String categoryId;
     private String categoryDescription;
+    @SerializedName("asset-type")
     private String assetType;
+    @SerializedName("media-image-url")
     private String mediaImageURL;
+    @SerializedName("media-voice-url")
     private String mediaVoiceURL;
     private ArrayList<AssetCoordinates> locations;
 
@@ -30,7 +36,7 @@ public class Asset {
         assetType = at;
         mediaImageURL = mIU;
         mediaVoiceURL = mVU;
-        locations = locs;
+       // locations = locs;
     }
 
     public long getId(){
@@ -108,8 +114,8 @@ public class Asset {
     public ArrayList<AssetCoordinates> getLocations(){
         return locations;
     }
-
     public void setLocations(ArrayList<AssetCoordinates> locs){
         locations = locs;
     }
+
 }

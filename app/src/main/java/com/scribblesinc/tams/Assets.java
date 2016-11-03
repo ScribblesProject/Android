@@ -1,5 +1,6 @@
 package com.scribblesinc.tams;
 
+
 import android.location.Location;
 import android.nfc.Tag;
 import android.util.Log;
@@ -192,6 +193,5 @@ public class Assets {
                     '}';
         }
     }
-
 }
 
