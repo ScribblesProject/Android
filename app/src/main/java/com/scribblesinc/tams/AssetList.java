@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 import java.util.List;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,8 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
@@ -25,6 +28,8 @@ import com.google.gson.reflect.TypeToken;
 import com.scribblesinc.tams.androidcustom.AssetItems;
 import com.scribblesinc.tams.adapters.CustomListAdapter;
 import com.scribblesinc.tams.patterns.AppController;
+import com.scribblesinc.tams.adapters.CustomListAdapter;
+import com.scribblesinc.tams.androidcustom.AssetItems;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -33,13 +38,13 @@ import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class AssetList extends AppCompatActivity {
     public RequestQueue queue;
     public StringRequest stringRequest;
     private static final String TAG = AssetList.class.getSimpleName();
-    private static final String url = "https://tams-142602.appspot.com/";
     private CustomListAdapter listadapter;
     private ListView listview;
     private Gson gson;
@@ -51,6 +56,7 @@ public class AssetList extends AppCompatActivity {
         setContentView(R.layout.activity_asset_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         //gets action bar that's supported if null
         if (getSupportActionBar() != null) {

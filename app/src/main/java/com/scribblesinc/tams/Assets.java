@@ -48,16 +48,16 @@ public class Assets {
         this.locations = locations;
     }
 
-    public ArrayList<Location> sortedLocations(){
+    public ArrayList<Location> sortedLocations() {
         ArrayList<Location> result = new ArrayList<>();
-        List<String> keyArray = new ArrayList<>( this.locations.keySet() );
+        List<String> keyArray = new ArrayList<>(this.locations.keySet());
         Collections.sort(keyArray, new Comparator<String>() {
             @Override
             public int compare(String s, String t1) {
                 return ((Integer.parseInt(s) < Integer.parseInt(t1)) ? -1 : 1);
             }
         });
-        for(String tempItem : keyArray){
+        for (String tempItem : keyArray) {
             result.add(this.locations.get(tempItem));
         }
 
@@ -160,7 +160,7 @@ public class Assets {
                 '}';
     }
 
-    public class Location{
+    public class Location {
         private double latitude;
         private double longitude;
 
