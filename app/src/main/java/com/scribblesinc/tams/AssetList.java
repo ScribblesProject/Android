@@ -51,6 +51,7 @@ public class AssetList extends AppCompatActivity {
         setContentView(R.layout.activity_asset_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         //gets action bar that's supported if null
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
