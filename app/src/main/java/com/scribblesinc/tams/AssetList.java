@@ -8,29 +8,16 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.scribblesinc.tams.androidcustom.AssetItems;
+import com.scribblesinc.tams.backendapi.Assets;
 
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Map;
 
 public class AssetList extends AppCompatActivity {
     public RequestQueue queue;
@@ -44,41 +31,30 @@ public class AssetList extends AppCompatActivity {
         setContentView(R.layout.activity_asset_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         //gets action bar that's supported if null
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        fetchAssets();
+    }
 
-        queue = Volley.newRequestQueue(this);
-        String url = "https://tams-142602.appspot.com/";
-
-        stringRequest = new StringRequest(Request.Method.GET, url+"api/asset/list/", new Response.Listener<String>(){
-                    @Override
-                    public void onResponse(String response){
-                        //Toast.makeText(getApplicationContext(), response,Toast.LENGTH_SHORT).show();
-
-                        //use Gson to do a display of data
-                        Gson gson  = new Gson();
-                        Type type = new TypeToken<Map<String,ArrayList<Assets>>>(){}.getType();
-                        Map<String,ArrayList<Assets>> result = gson.fromJson(response, type);
-                        ArrayList<Assets> assets = result.get("assets");
-                        Log.d(TAG, String.valueOf(assets.get(0).sortedLocations()));
-                        Log.d(TAG, String.valueOf(result.get("assets")));
-                        //Log.d(TAG, String.valueOf(result.get("assets").get(0).getName()));
-                        Toast.makeText(getApplicationContext(), result.get("assets").toString(),Toast.LENGTH_LONG).show();
-
-                    }
-                }, new Response.ErrorListener(){
-                        @Override
-                        public void onErrorResponse(VolleyError error){
-                            Toast.makeText(getApplicationContext(), "Error",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        //add the request to the RequestQueue
-        queue.add(stringRequest);
+    private void fetchAssets() {
+        Assets.list(new Response.Listener<ArrayList<Assets>>() {
+            @Override
+            public void onResponse(ArrayList<Assets> assets) {
+                Log.d(TAG, String.valueOf(assets.get(0).sortedLocations()));
+                Toast.makeText(getApplicationContext(), assets.toString(),Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
