@@ -1,20 +1,21 @@
-package com.scribblesinc.tams;
+package com.scribblesinc.tams.backendapi;
 
-import android.location.Location;
-import android.nfc.Tag;
-import android.util.Log;
+import android.widget.ImageView;
 
-import com.google.android.gms.fitness.result.ListSubscriptionsResult;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.scribblesinc.tams.patterns.AppRequestManager;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
 
 public class Assets {
     private static final String TAG = Assets.class.getSimpleName();
@@ -61,6 +62,58 @@ public class Assets {
         }
 
         return result;
+    }
+
+    /// This will fetch all assets in the database
+    public static void list(final Response.Listener<ArrayList<Assets>> listener, Response.ErrorListener errorListener) {
+        String url = "https://tams-142602.appspot.com/";
+        String endpoint = url + "api/asset/list/";
+        StringRequest request = new StringRequest(Request.Method.GET, endpoint, new Response.Listener<String>(){
+            @Override
+            public void onResponse(String response){
+
+                // Decode
+                Gson gson  = new Gson();
+                Type type = new TypeToken<Map<String,ArrayList<Assets>>>(){}.getType();
+                Map<String,ArrayList<Assets>> result = gson.fromJson(response, type);
+                ArrayList<Assets> assets = result.get("assets");
+
+                listener.onResponse(assets);
+
+            }
+        }, errorListener);
+
+        AppRequestManager.getInstance().addToRequestQueue(request);
+    }
+
+    /// This will create a new asset on the server and return an initialized asset object
+    public static void create(Response.Listener<Assets> listener, Response.ErrorListener errorListener) {
+
+    }
+
+    /// This will fetch an individual asset
+    public static void fetch(Integer assetId, Response.Listener<Assets> listener, Response.ErrorListener errorListener) {
+
+    }
+
+    /// This will upload and attach an image view to the asset
+    public void attachImage(ImageView image, Response.Listener<Double> progressListener, Response.ErrorListener errorListener) {
+
+    }
+
+    /// This will upload and attach an voice memo to the asset
+    public void attachVoiceMemo(String memoFilePath, Response.Listener<Double> progressListener, Response.ErrorListener errorListener) {
+
+    }
+
+    /// This will update the asset on the server to the current attribute values
+    public void update(Response.ErrorListener errorListener) {
+
+    }
+
+    /// This will delete the asset from the server
+    public void delete(Response.ErrorListener errorListener) {
+
     }
 
     public long getId() {
