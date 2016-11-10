@@ -8,12 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.google.android.gms.vision.text.Text;
 import com.scribblesinc.tams.R;
-import com.scribblesinc.tams.Asset;
+import com.scribblesinc.tams.backendapi.Assets;
+
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by Joel on 10/26/2016.
@@ -24,10 +22,10 @@ import java.util.Objects;
 public class CustomListAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
-    private List<Asset> assetList;
+    private List<Assets> assetList;
     //ImageLoader imageLoader
 
-    public CustomListAdapter(Activity activity, List<Asset> assetList) {
+    public CustomListAdapter(Activity activity, List<Assets> assetList) {
         this.activity = activity;
         this.assetList = assetList;
     }
@@ -46,7 +44,7 @@ public class CustomListAdapter extends BaseAdapter {
         TextView a_location = (TextView) convertView.findViewById(R.id.location_asset);
 
         //getting asset data for row
-        Asset asset = assetList.get(position);
+        Assets asset = assetList.get(position);
 
         //set text view
         a_title.setText(asset.getName());
