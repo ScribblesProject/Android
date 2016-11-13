@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ import javax.net.ssl.HttpsURLConnection;
 public class HttpTask extends AsyncTask<HttpRequest, Double, HttpResponse> {
 
     HttpRequest request;
-    HttpsURLConnection connection;
+    HttpURLConnection connection;
 
     double uploadProgress = 0.0;
     double downloadProgress = 0.0;
@@ -43,7 +44,7 @@ public class HttpTask extends AsyncTask<HttpRequest, Double, HttpResponse> {
     @Override
     protected HttpResponse doInBackground(HttpRequest... httpRequests) {
         HttpResponse result = null;
-        System.out.println("[TASK] STARTING CONNECTION");
+//        System.out.println("[TASK] STARTING CONNECTION");
 
         try {
             String response = performConnection();
@@ -98,7 +99,7 @@ public class HttpTask extends AsyncTask<HttpRequest, Double, HttpResponse> {
         validate();
 
         // SETUP ----------
-        connection = (HttpsURLConnection) new URL(request.url).openConnection();
+        connection = (HttpURLConnection) new URL(request.url).openConnection();
         connection.setRequestMethod(methodToString(request.method));
         if (request.headers != null) {
             for (String key : request.headers.keySet()) {
@@ -122,7 +123,7 @@ public class HttpTask extends AsyncTask<HttpRequest, Double, HttpResponse> {
 
         // RESPONSE -----------
         String response;
-        if (connection.getResponseCode() == HttpsURLConnection.HTTP_OK) {
+        if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
             response = readStream(connection.getInputStream());
         }
         else {

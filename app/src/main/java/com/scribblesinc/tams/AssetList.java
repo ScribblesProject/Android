@@ -42,31 +42,82 @@ public class AssetList extends AppCompatActivity {
         }
 
         fetchAssets();
+//        testAssetsEndpoints();
     }
 
     private void fetchAssets() {
-        try {
-            String url = "https://tams-142602.appspot.com/api/asset/list/";
-            HttpJson.requestJSON(Request.Method.GET, url, null, null, new Response.Listener<HttpResponse>() {
-                @Override
-                public void onResponse(HttpResponse result) {
-
-                    System.out.println("RESULT [" + result.getResponseCode() + "]");
-
-                    if (result.getText() != null) {
-                        System.out.println("TEXT: " + result.getText());
-                    }
-
-                    if (result.getJsonElement() != null) {
-                        System.out.println("JSON: " + result.getJsonElement().getAsJsonObject().getAsJsonArray("assets").toString());
-                    }
-
+        Assets.list(new Response.Listener<ArrayList<Assets>>() {
+            @Override
+            public void onResponse(ArrayList<Assets> response) {
+                if (response != null) {
+                    // ... Display this...
+                    System.out.println("ASSET LIST RESPONSE: " + response);
                 }
-            });
-        }
-        catch (Exception e) {
+            }
+        }, null);
+    }
 
-        }
+    private void testAssetsEndpoints() {
+
+        System.out.println("CREATING....");
+        //Create TEST
+        ArrayList<AssetLocation> locations = new ArrayList<AssetLocation>();
+        locations.add(new AssetLocation(0.1, 0.2));
+        locations.add(new AssetLocation(0.3, 0.4));
+        Assets.create("TEST NAME", "Some Description", "Pokemon", "Fire, grass, water, etc", "Fire", locations, new Response.Listener<Long>() {
+            @Override
+            public void onResponse(Long response) {
+                System.out.println("THE NEW ID IS: " + response);
+
+                if (response > 0) {
+
+                    //Fetch TEST
+                    System.out.println("FETCHING....");
+                    Assets.fetch(response, new Response.Listener<Assets>() {
+                        @Override
+                        public void onResponse(final Assets asset) {
+
+                            //Update TEST
+                            System.out.println("UPDATING....");
+                            asset.setName("TEST 2");
+                            asset.update(new Response.Listener<Boolean>() {
+                                @Override
+                                public void onResponse(Boolean response) {
+                                    if (response) {
+                                        System.out.println("UPDATE SUCCESS!!");
+
+                                        //Fetch TEST
+                                        System.out.println("FETCHING....");
+                                        Assets.fetch(asset.getId(), new Response.Listener<Assets>() {
+                                            @Override
+                                            public void onResponse(Assets response) {
+                                                System.out.println("THE UPDATED ASSET: " + response);
+
+                                                //Delete TEST
+                                                System.out.println("DELETING....");
+                                                response.delete(new Response.Listener<Boolean>() {
+                                                    @Override
+                                                    public void onResponse(Boolean response) {
+                                                        if (response) {
+                                                            System.out.println("DELETION SUCCESS!!");
+                                                        }
+                                                        else {
+                                                            System.out.println("DELETION FAILED!!");
+                                                        }
+                                                    }
+                                                }, null);
+
+                                            }
+                                        },null);
+                                    }
+                                }
+                            }, null);
+
+                        }
+                    }, null);
+                }
+            }
+        }, null);
     }
 
     @Override

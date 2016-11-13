@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.List;
@@ -25,14 +26,19 @@ public class HttpJson {
                                        String url,
                                        JsonObject json,
                                        Map<String,String> headers,
-                                       final Listener<HttpResponse> resultListener) throws Exception {
+                                       final Listener<HttpResponse> resultListener) {
 
         //Translate json to body data
         byte[] body = null;
         if (json != null) {
-            String charset = "UTF-8";
-            String jsonString = json.toString();
-            body = jsonString.getBytes(charset);
+            try {
+                String charset = "UTF-8";
+                String jsonString = json.toString();
+                body = jsonString.getBytes(charset);
+            }
+            catch (UnsupportedEncodingException e) {
+                throw new AssertionError("JSON Charset (UTF-8) not valid.");
+            }
         }
 
         //Override content type
