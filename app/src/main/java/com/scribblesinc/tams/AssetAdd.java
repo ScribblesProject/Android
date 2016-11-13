@@ -243,7 +243,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         items.add(new Item("Name", name));
         items.add(new Item("Category",contextValue));
         items.add(new Item("Type",typeValue));
-        items.add(new Item("Location","Asset location"));
+        items.add(new Item("AssetLocation","Asset location"));
         items.add(new Item("Voice Memo","Record Voice Memo",R.drawable.ic_mic));
         items.add(new Item("Description", description));
         items.add(new Item(" "," "));//empty item to permit scrolling

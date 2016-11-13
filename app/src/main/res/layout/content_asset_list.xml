@@ -32,7 +32,7 @@
       android:layout_below="@+id/title_asset"
       android:layout_toStartOf="@+id/img_asset"
       />
-  <!--Location of asset-->
+  <!--AssetLocation of asset-->
   <TextView
       android:id="@+id/location_asset"
       android:layout_width="match_parent"
