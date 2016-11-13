@@ -41,8 +41,7 @@ public class AssetList extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-//        fetchAssets();
-        testAssetCreate();
+        fetchAssets();
     }
 
     private void fetchAssets() {
@@ -64,49 +63,6 @@ public class AssetList extends AppCompatActivity {
 
                 }
             });
-        }
-        catch (Exception e) {
-
-        }
-    }
-
-    private void testAssetCreate() {
-        ArrayList<AssetLocation> locations = new ArrayList<AssetLocation>();
-        locations.add(new AssetLocation(0.1, 0.2));
-        locations.add(new AssetLocation(0.3, 0.4));
-        JsonObject json = Assets.createJSON("Charizard", "description1","categ1", "categDesc1", "typeName1", locations);
-
-        try {
-            String url = "https://tams-142602.appspot.com/api/asset/create/";
-            HttpTask task = HttpJson.requestJSON(Request.Method.POST, url, json, null, new Response.Listener<HttpResponse>() {
-                @Override
-                public void onResponse(HttpResponse result) {
-                    System.out.println("RESULT [" + result.getResponseCode() + "]");
-
-                    if (result.getText() != null) {
-                        System.out.println("TEXT: " + result.getText());
-                    }
-
-                    if (result.getJsonElement() != null) {
-                        System.out.println("JSON: " + result.getJsonElement().getAsJsonObject().toString());
-                    }
-                }
-            });
-
-            task.setDownloadProgressListener(new Response.Listener<Double>() {
-                @Override
-                public void onResponse(Double progress) {
-                    System.out.println("Download Progress: " + progress);
-                }
-            });
-
-            task.setUploadProgressListener(new Response.Listener<Double>() {
-                @Override
-                public void onResponse(Double progress) {
-                    System.out.println("Upload Progress: " + progress);
-                }
-            });
-
         }
         catch (Exception e) {
 
