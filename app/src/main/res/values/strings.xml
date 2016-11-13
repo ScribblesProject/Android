@@ -31,4 +31,5 @@
     <!--need to use @string source for providing hints or others -->
     <string name="voice_over_rec">Voice_Record</string>
     <string name="provide_title">Provide a Title</string>
+    <string name="checkmark" />
 </resources>
