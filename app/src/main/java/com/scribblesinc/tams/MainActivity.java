@@ -202,9 +202,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
             int permissionDenied = PackageManager.PERMISSION_DENIED;
             if (permissionCheck == permissionDenied) {
-                Log.d(TAG, "Location Permission Required");
+                Log.d(TAG, "AssetLocation Permission Required");
                 AlertDialog.Builder getLocationPermission = new AlertDialog.Builder(this);
-                getLocationPermission.setTitle("Location Required");
+                getLocationPermission.setTitle("AssetLocation Required");
                 getLocationPermission.setMessage("TAMS needs to use your device's location in order to function properly. If you accept the please tap 'ok' and then tap 'allow'.");
                 getLocationPermission.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
             }
         }else{
-            Toast.makeText(getApplicationContext(), "Location Permission Granted", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "AssetLocation Permission Granted", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (requestCode) {
             case PERMISSION_ACCESS_FINE_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.length > 0) {
-                    Toast.makeText(getApplicationContext(), "Location Permission Granted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "AssetLocation Permission Granted", Toast.LENGTH_LONG).show();
                     setLocationEnable();
                 } else {
                     Toast.makeText(getApplicationContext(), "Closing TAMS", Toast.LENGTH_LONG).show();

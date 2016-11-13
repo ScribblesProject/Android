@@ -3,12 +3,14 @@ package com.scribblesinc.tams.backendapi;
 import android.widget.ImageView;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
+import com.android.volley.Response.Listener;
+import com.android.volley.Response.ErrorListener;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import com.scribblesinc.tams.patterns.AppRequestManager;
+import com.scribblesinc.tams.network.AppRequestManager;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -18,7 +20,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Assets {
+
+    private static final String hostURL = "https://tams-142602.appspot.com/";
     private static final String TAG = Assets.class.getSimpleName();
+
     private long id;
     private String name;
     private String description;
@@ -33,9 +38,9 @@ public class Assets {
     private String media_image_url;
     @SerializedName("media-voice-url")
     private String media_voice_url;
-    private Map<String, Location> locations;
+    private Map<String, AssetLocation> locations;
 
-    public Assets(long id, String name, String description, String category, String category_id, String category_description, String asset_type, String media_image_url, String media_voice_url, Map<String, Location> locations) {
+    private Assets(long id, String name, String description, String category, String category_id, String category_description, String asset_type, String media_image_url, String media_voice_url, Map<String, AssetLocation> locations) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -48,8 +53,8 @@ public class Assets {
         this.locations = locations;
     }
 
-    public ArrayList<Location> sortedLocations(){
-        ArrayList<Location> result = new ArrayList<>();
+    public ArrayList<AssetLocation> getSortedLocations() {
+        ArrayList<AssetLocation> result = new ArrayList<>();
         List<String> keyArray = new ArrayList<>( this.locations.keySet() );
         Collections.sort(keyArray, new Comparator<String>() {
             @Override
@@ -65,10 +70,9 @@ public class Assets {
     }
 
     /// This will fetch all assets in the database
-    public static void list(final Response.Listener<ArrayList<Assets>> listener, Response.ErrorListener errorListener) {
-        String url = "https://tams-142602.appspot.com/";
-        String endpoint = url + "api/asset/list/";
-        StringRequest request = new StringRequest(Request.Method.GET, endpoint, new Response.Listener<String>(){
+    public static void list(final Listener<ArrayList<Assets>> listener, ErrorListener errorListener) {
+
+        StringRequest request = new StringRequest(Request.Method.GET, "", new Listener<String>(){
             @Override
             public void onResponse(String response){
 
@@ -87,32 +91,82 @@ public class Assets {
     }
 
     /// This will create a new asset on the server and return an initialized asset object
-    public static void create(Response.Listener<Assets> listener, Response.ErrorListener errorListener) {
+    public static void create(String name, String description, String category, String categoryDescription, String typeName, ArrayList<AssetLocation> sortedAssetLocations, Listener<Assets> listener, ErrorListener errorListener)
+    {
 
+    }
+
+    public static JsonObject createJSON(String name, String description, String category, String categoryDescription, String typeName, ArrayList<AssetLocation> sortedAssetLocations)
+    {
+        try
+        {
+            JsonObject result = new JsonObject();
+
+            result.addProperty("name", name);
+            result.addProperty("description", description);
+            result.addProperty("category",category);
+            result.addProperty("category-description", categoryDescription);
+            result.addProperty("type-name", typeName);
+
+            JsonObject locations = new JsonObject();
+            Integer currentOrder = 0;
+            for (AssetLocation value : sortedAssetLocations) {
+                JsonObject loc = new JsonObject();
+                loc.addProperty("longitude", value.getLongitude());
+                loc.addProperty("latitude", value.getLatitude());
+
+                currentOrder += 1;
+                String order = currentOrder.toString();
+                locations.add(order, loc);
+            }
+            result.add("locations", locations);
+
+            return result;
+        }
+        catch (Exception e)
+        {
+            System.out.println("ERROR PARSING JSON : " + e.toString());
+            return null;
+        }
     }
 
     /// This will fetch an individual asset
-    public static void fetch(Integer assetId, Response.Listener<Assets> listener, Response.ErrorListener errorListener) {
+    public static void fetch(Integer assetId, final Listener<Assets> listener, ErrorListener errorListener) {
+        String endpoint = hostURL + "api/asset/" + assetId.toString() + "/";
+        StringRequest request = new StringRequest(Request.Method.GET, endpoint, new Listener<String>(){
+            @Override
+            public void onResponse(String response){
 
+                // Decode
+                Gson gson  = new Gson();
+                Type type = new TypeToken<Assets>(){}.getType();
+                Assets asset = gson.fromJson(response, type);
+
+                listener.onResponse(asset);
+
+            }
+        }, errorListener);
+
+        AppRequestManager.getInstance().addToRequestQueue(request);
     }
 
     /// This will upload and attach an image view to the asset
-    public void attachImage(ImageView image, Response.Listener<Double> progressListener, Response.ErrorListener errorListener) {
+    public void attachImage(ImageView image, Listener<Double> progressListener, ErrorListener errorListener) {
 
     }
 
     /// This will upload and attach an voice memo to the asset
-    public void attachVoiceMemo(String memoFilePath, Response.Listener<Double> progressListener, Response.ErrorListener errorListener) {
+    public void attachVoiceMemo(String memoFilePath, Listener<Double> progressListener, ErrorListener errorListener) {
 
     }
 
     /// This will update the asset on the server to the current attribute values
-    public void update(Response.ErrorListener errorListener) {
+    public void update(ErrorListener errorListener) {
 
     }
 
     /// This will delete the asset from the server
-    public void delete(Response.ErrorListener errorListener) {
+    public void delete(ErrorListener errorListener) {
 
     }
 
@@ -188,11 +242,11 @@ public class Assets {
         this.media_voice_url = media_voice_url;
     }
 
-    public Map<String, Location> getLocations() {
+    public Map<String, AssetLocation> getLocations() {
         return locations;
     }
 
-    public void setLocations(Map<String, Location> locations) {
+    public void setLocations(Map<String, AssetLocation> locations) {
         this.locations = locations;
     }
 
@@ -211,40 +265,5 @@ public class Assets {
                 ", locations=" + locations +
                 '}';
     }
-
-    public class Location{
-        private double latitude;
-        private double longitude;
-
-        public Location(double latitude, double longitude) {
-            this.latitude = latitude;
-            this.longitude = longitude;
-        }
-
-        public double getLatitude() {
-            return latitude;
-        }
-
-        public void setLatitude(double latitude) {
-            this.latitude = latitude;
-        }
-
-        public double getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(double longitude) {
-            this.longitude = longitude;
-        }
-
-        @Override
-        public String toString() {
-            return "Location{" +
-                    "latitude=" + latitude +
-                    ", longitude=" + longitude +
-                    '}';
-        }
-    }
-
 }
 
