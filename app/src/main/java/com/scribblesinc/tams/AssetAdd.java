@@ -195,7 +195,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         ArrayList<Item> items = new ArrayList<>();
         items.add(new Item("Image","Image of Asset",R.drawable.ic_camera_alt));
         items.add(new Item("Name", name));
-        items.add(new Item("Category",contextValue));
+        items.add(new Item("AssetCategory",contextValue));
         items.add(new Item("Type",typeValue));
         items.add(new Item("AssetLocation","Asset location"));
         items.add(new Item("Voice Memo","Record Voice Memo",R.drawable.ic_mic));

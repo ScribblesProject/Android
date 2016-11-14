@@ -45,8 +45,25 @@ public class HttpJson {
         if (headers == null) {
             headers = new HashMap<String, String>();
         }
-        headers.put("Content-Type", "application/json");
-        headers.put("Accept", "application/json");
+        boolean contentTypeFound = false;
+        boolean acceptFound = false;
+        for (String headerKey : headers.keySet())
+        {
+            String lowerCasedKey = headerKey.toLowerCase();
+            if (lowerCasedKey == "content-type") {
+                contentTypeFound = true;
+            }
+
+            if (lowerCasedKey == "accept") {
+                acceptFound = true;
+            }
+        }
+        if (contentTypeFound) {
+            headers.put("Content-Type", "application/json");
+        }
+        if (acceptFound) {
+            headers.put("Accept", "application/json");
+        }
 
         HttpRequest request = new HttpRequest(method, url, body, headers, new Listener<HttpResponse>() {
             @Override
