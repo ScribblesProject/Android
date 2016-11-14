@@ -27,7 +27,9 @@ import java.util.Map;
 
 public class Assets {
 
-    private static final String hostURL = "https://tams-142602.appspot.com/";
+    //Looking for a nice global place to place this url.
+    public static final String hostURL = "https://tams-142602.appspot.com/";
+
     private static final String TAG = Assets.class.getSimpleName();
 
     private long id;

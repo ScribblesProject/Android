@@ -14,7 +14,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.google.gson.JsonObject;
+import com.scribblesinc.tams.backendapi.AssetCategory;
 import com.scribblesinc.tams.backendapi.AssetLocation;
+import com.scribblesinc.tams.backendapi.AssetType;
 import com.scribblesinc.tams.backendapi.Assets;
 import com.scribblesinc.tams.network.HttpJson;
 import com.scribblesinc.tams.network.HttpResponse;
@@ -42,7 +44,6 @@ public class AssetList extends AppCompatActivity {
         }
 
         fetchAssets();
-//        testAssetsEndpoints();
     }
 
     private void fetchAssets() {
@@ -52,69 +53,6 @@ public class AssetList extends AppCompatActivity {
                 if (response != null) {
                     // ... Display this...
                     System.out.println("ASSET LIST RESPONSE: " + response);
-                }
-            }
-        }, null);
-    }
-
-    private void testAssetsEndpoints() {
-
-        System.out.println("CREATING....");
-        //Create TEST
-        ArrayList<AssetLocation> locations = new ArrayList<AssetLocation>();
-        locations.add(new AssetLocation(0.1, 0.2));
-        locations.add(new AssetLocation(0.3, 0.4));
-        Assets.create("TEST NAME", "Some Description", "Pokemon", "Fire, grass, water, etc", "Fire", locations, new Response.Listener<Long>() {
-            @Override
-            public void onResponse(Long response) {
-                System.out.println("THE NEW ID IS: " + response);
-
-                if (response > 0) {
-
-                    //Fetch TEST
-                    System.out.println("FETCHING....");
-                    Assets.fetch(response, new Response.Listener<Assets>() {
-                        @Override
-                        public void onResponse(final Assets asset) {
-
-                            //Update TEST
-                            System.out.println("UPDATING....");
-                            asset.setName("TEST 2");
-                            asset.update(new Response.Listener<Boolean>() {
-                                @Override
-                                public void onResponse(Boolean response) {
-                                    if (response) {
-                                        System.out.println("UPDATE SUCCESS!!");
-
-                                        //Fetch TEST
-                                        System.out.println("FETCHING....");
-                                        Assets.fetch(asset.getId(), new Response.Listener<Assets>() {
-                                            @Override
-                                            public void onResponse(Assets response) {
-                                                System.out.println("THE UPDATED ASSET: " + response);
-
-                                                //Delete TEST
-                                                System.out.println("DELETING....");
-                                                response.delete(new Response.Listener<Boolean>() {
-                                                    @Override
-                                                    public void onResponse(Boolean response) {
-                                                        if (response) {
-                                                            System.out.println("DELETION SUCCESS!!");
-                                                        }
-                                                        else {
-                                                            System.out.println("DELETION FAILED!!");
-                                                        }
-                                                    }
-                                                }, null);
-
-                                            }
-                                        },null);
-                                    }
-                                }
-                            }, null);
-
-                        }
-                    }, null);
                 }
             }
         }, null);
