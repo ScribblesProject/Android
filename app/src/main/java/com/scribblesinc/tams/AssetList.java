@@ -18,7 +18,8 @@ import com.scribblesinc.tams.backendapi.AssetCategory;
 import com.scribblesinc.tams.backendapi.AssetLocation;
 import com.scribblesinc.tams.backendapi.AssetType;
 import com.scribblesinc.tams.backendapi.Assets;
-import com.scribblesinc.tams.network.HttpJSON;
+import com.scribblesinc.tams.backendapi.AsyncApiTests;
+import com.scribblesinc.tams.network.HttpJson;
 import com.scribblesinc.tams.network.HttpResponse;
 import com.scribblesinc.tams.network.HttpTask;
 
