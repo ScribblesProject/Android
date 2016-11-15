@@ -45,7 +45,6 @@ public class AssetList extends AppCompatActivity {
         }
 
         fetchAssets();
-        AsyncApiTests.testCategoryAndTypeEndpoints();
     }
 
     private void fetchAssets() {
