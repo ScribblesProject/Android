@@ -19,19 +19,9 @@ import android.widget.Toast;
 
 import com.scribblesinc.tams.adapters.CustomAssetAdapter;
 import com.scribblesinc.tams.androidcustom.Item;
-import android.graphics.BitmapFactory;
+
 import java.util.ArrayList;
-import android.widget.ImageView;
-import android.net.Uri;
-import android.os.Environment;
-import java.io.File;
-import java.io.IOException;
-import android.graphics.Bitmap;
-import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import android.support.v4.content.FileProvider;
-import android.util.Log;
+
 public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     private CustomAssetAdapter adapter;
@@ -43,13 +33,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private boolean isType;
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
-
-    private static String root = null;
-    private static String imageFolderPath = null;
-    private String imageName = null;
-    private static Uri fileUri = null;
-    public final String APP_TAG = "MyCustomApp";
-    public String photoFileName = "photo.jpg";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,29 +115,9 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         //start audio recording
         if(requestCode == REQUEST_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Toast.makeText(getApplicationContext(), "App has microphone capturing permission", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "App has microphone capturing permission", Toast.LENGTH_LONG).show();
                 newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (newActivity.resolveActivity(getPackageManager()) != null) {
-                    // Create the File where the photo should go
-                    File photoFile = null;
-                    try {
-                        photoFile = createImageFile();
-                    } catch (IOException ex) {
-                        // Error occurred while creating the File
-                        //
-                    }
-                    // Continue only if the File was successfully created
-                    if (photoFile != null) {
-                        Uri photoURI = FileProvider.getUriForFile(this,
-                                "com.example.android.fileprovider",
-                                photoFile);
-                        newActivity.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                        startActivityForResult(newActivity,0);
-                        newActivity.putExtra(MediaStore.EXTRA_OUTPUT, getPhotoFileUri(photoFileName));
-                    }
-                }
-
-
+                startActivityForResult(newActivity,1);
             } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(AssetAdd.this, Manifest.permission.CAMERA)) {
                     //explain user need of permission
@@ -168,15 +131,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             }
         }
     }//end of onRequestPermissoinResult
-    private void galleryAddPic() {
-        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        File f = new File(mCurrentPhotoPath);
-        Uri contentUri = Uri.fromFile(f);
-        mediaScanIntent.setData(contentUri);
-        this.sendBroadcast(mediaScanIntent);
-    }
-
-
 
     /*onCreateContextMenu, responsible for creating contextual menus for type item and category,
     * based on a flag the according menu will be shown
@@ -249,51 +203,10 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         items.add(new Item(" "," "));//empty item to permit scrolling
         return items;
     }
-    String mCurrentPhotoPath;
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        return image;
-    }
     /* Start activityForResult() will call the intent to my photo, notes and audio, whatever is
     *  sent back is receive here onActivityResult(), thus here we process result to be outputted on
     *  addAdd viewlist*/
-    private boolean isExternalStorageAvailable() {
-        String state = Environment.getExternalStorageState();
-        return state.equals(Environment.MEDIA_MOUNTED);
-    }
-
-    public Uri getPhotoFileUri(String fileName) {
-        // Only continue if the SD Card is mounted
-        if (isExternalStorageAvailable()) {
-            // Get safe storage directory for photos
-            // Use `getExternalFilesDir` on Context to access package-specific directories.
-            // This way, we don't need to request external read/write runtime permissions.
-            File mediaStorageDir = new File(
-                    getExternalFilesDir(Environment.DIRECTORY_PICTURES), APP_TAG);
-
-            // Create the storage directory if it does not exist
-            if (!mediaStorageDir.exists() && !mediaStorageDir.mkdirs()){
-                Log.d(APP_TAG, "failed to create directory");
-            }
-
-            // Return the file target for the photo based on filename
-            return Uri.fromFile(new File(mediaStorageDir.getPath() + File.separator + fileName));
-        }
-        return null;
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -303,48 +216,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         // ID = {(has extras)}, while pressing back (on both app and phones gives) 1, 0, and null respectively
         switch (requestCode) {
             case 0:
-
-                //root = Environment.getExternalStorageDirectory().toString()
-                  //      + "/Your_Folder";
-
-                // Creating folders for Image
-               // imageFolderPath = root + "/saved_images";
-               // File imagesFolder = new File(imageFolderPath);
-                //imagesFolder.mkdirs();
-               // imageName = "test.png";
-
-                // Creating image here
-
-                //File image = new File(imageFolderPath, imageName);
-
-                //fileUri = Uri.fromFile(image);
-                //Toast.makeText(getApplicationContext(), "Picture to be handled", Toast.LENGTH_LONG).show();
-                //data.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-                //Bitmap bitmap = null;
-                //try {
-                 //   GetImageThumbnail getImageThumbnail = new GetImageThumbnail();
-                 //   bitmap = getImageThumbnail.getThumbnail(fileUri, this);
-              //  } catch (FileNotFoundException e1) {
-                ///    // TODO Auto-generated catch block
-               //   e1.printStackTrace();
-              //  } catch (IOException e1) {
-                    // TODO Auto-generated catch block
-                //    e1.printStackTrace();
-              // }
-
-                // Setting image image icon on the imageview
-                //Uri takenPhotoUri = getPhotoFileUri(photoFileName);
-                // by this point we have the camera photo on disk
-                //Bitmap takenImage = BitmapFactory.decodeFile(takenPhotoUri.getPath());
-               // ImageView imageView = (ImageView) this
-                    //   .findViewById(R.id.checkmark);
-
-                //imageView.setImageBitmap(takenImage);
-                //ImageView mImageView = (ImageView) this.findViewById(R.id.checkmark);
-               // Bundle extras = data.getExtras();
-                //Bitmap imageBitmap = (Bitmap) extras.get("data");
-                //mImageView.setImageBitmap(imageBitmap);
-                galleryAddPic();
+                Toast.makeText(getApplicationContext(), "Picture to be handled", Toast.LENGTH_LONG).show();
                 break;
             case 1:
                 System.out.println("RQC: " + requestCode + " RC: " + resultCode);
