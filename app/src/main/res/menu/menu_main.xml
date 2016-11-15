@@ -16,6 +16,7 @@
         android:title="@string/action_list"
         app:showAsAction="ifRoom" />
 
+    <!-- Button might be used in the end -->
     <!--<item android:id="@+id/action_current_location"
         android:icon="@drawable/ic_current_location"
         android:title="@string/action_current_location"
