@@ -18,9 +18,9 @@ import java.util.Map;
  * Created by danielmj on 11/11/16.
  */
 
-public class HttpJson {
+public class HttpJSON {
 
-    private HttpJson() { }
+    private HttpJSON() { }
 
     public static HttpTask requestJSON(int method,
                                        String url,

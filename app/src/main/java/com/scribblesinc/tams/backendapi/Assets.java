@@ -14,7 +14,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.scribblesinc.tams.androidcustom.Locations;
 import com.scribblesinc.tams.network.AppRequestManager;
-import com.scribblesinc.tams.network.HttpJson;
+import com.scribblesinc.tams.network.HttpJSON;
 import com.scribblesinc.tams.network.HttpResponse;
 
 import java.lang.reflect.Type;
@@ -76,7 +76,7 @@ public class Assets {
     public static void list(final Listener<ArrayList<Assets>> listener, final ErrorListener errorListener) {
 
         String url = hostURL + "api/asset/list/";
-        HttpJson.requestJSON(Request.Method.GET, url, null, null, new Listener<HttpResponse>() {
+        HttpJSON.requestJSON(Request.Method.GET, url, null, null, new Listener<HttpResponse>() {
             @Override
             public void onResponse(HttpResponse response) {
                 if (response.getError() != null && errorListener != null) {
@@ -108,7 +108,7 @@ public class Assets {
         String url = hostURL + "api/asset/create/";
         JsonObject json = createJSON(name, description, category, categoryDescription, typeName, sortedAssetLocations);
 
-        HttpJson.requestJSON(Request.Method.GET, url, json, null, new Listener<HttpResponse>() {
+        HttpJSON.requestJSON(Request.Method.GET, url, json, null, new Listener<HttpResponse>() {
             @Override
             public void onResponse(HttpResponse response) {
                 if (response.getError() != null && errorListener != null) {
@@ -138,7 +138,7 @@ public class Assets {
     public static void fetch(long assetId, final Listener<Assets> listener, final ErrorListener errorListener) {
 
         String url = hostURL + "api/asset/" + assetId + "/";
-        HttpJson.requestJSON(Request.Method.GET, url, null, null, new Listener<HttpResponse>() {
+        HttpJSON.requestJSON(Request.Method.GET, url, null, null, new Listener<HttpResponse>() {
             @Override
             public void onResponse(HttpResponse response) {
                 if (response.getError() != null && errorListener != null) {
@@ -181,7 +181,7 @@ public class Assets {
 
         System.out.println("ERROR JSON? " + json.toString());
 
-        HttpJson.requestJSON(Request.Method.PUT, url, json, null, new Listener<HttpResponse>() {
+        HttpJSON.requestJSON(Request.Method.PUT, url, json, null, new Listener<HttpResponse>() {
             @Override
             public void onResponse(HttpResponse response) {
                 if (response.getError() != null && errorListener != null) {
@@ -212,7 +212,7 @@ public class Assets {
     public void delete(final Listener<Boolean> responseListener, final ErrorListener errorListener) {
         String url = hostURL + "api/asset/delete/" + this.id + "/";
 
-        HttpJson.requestJSON(Request.Method.DELETE, url, null, null, new Listener<HttpResponse>() {
+        HttpJSON.requestJSON(Request.Method.DELETE, url, null, null, new Listener<HttpResponse>() {
             @Override
             public void onResponse(HttpResponse response) {
                 if (response.getError() != null && errorListener != null) {

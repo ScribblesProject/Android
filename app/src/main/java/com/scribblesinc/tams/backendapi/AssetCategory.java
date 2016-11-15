@@ -6,7 +6,7 @@ import com.android.volley.VolleyError;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.scribblesinc.tams.network.HttpJson;
+import com.scribblesinc.tams.network.HttpJSON;
 import com.scribblesinc.tams.network.HttpResponse;
 import com.scribblesinc.tams.network.HttpTask;
 
@@ -30,7 +30,7 @@ public class AssetCategory {
     public static void list(final Response.Listener<ArrayList<AssetCategory>> listener, final Response.ErrorListener errorListener)
     {
         String url = Assets.hostURL + "api/asset/category/list/";
-        HttpTask task = HttpJson.requestJSON(Request.Method.GET, url, null, null, new Response.Listener<HttpResponse>() {
+        HttpTask task = HttpJSON.requestJSON(Request.Method.GET, url, null, null, new Response.Listener<HttpResponse>() {
             @Override
             public void onResponse(HttpResponse response) {
                 if (response.getError() != null && errorListener != null) {

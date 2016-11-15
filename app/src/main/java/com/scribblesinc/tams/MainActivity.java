@@ -118,9 +118,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng csus = new LatLng(38.559144, -121.4256621);
         mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
         // Move the camera instantly to location with a zoom of 15.
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
         // Zoom in, animating the camera.
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+        //mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
 
     @Override
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMarker.remove();
         }
 
-        mMarker = mMap.addMarker(new MarkerOptions().position(mLatLng).title("Your Position"));
+        //mMarker = mMap.addMarker(new MarkerOptions().position(mLatLng).title("Your Position"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 15));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 
