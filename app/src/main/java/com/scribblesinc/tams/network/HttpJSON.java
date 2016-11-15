@@ -22,49 +22,29 @@ public class HttpJSON {
 
     private HttpJSON() { }
 
-    public static HttpTask requestJSON(int method,
+    public static HttpTask requestJSONWithRawData(int method,
                                        String url,
-                                       JsonObject json,
+                                       byte[] body,
                                        Map<String,String> headers,
-                                       final Listener<HttpResponse> resultListener) {
-
-        //Translate json to body data
-        byte[] body = null;
-        if (json != null) {
-            try {
-                String charset = "UTF-8";
-                String jsonString = json.toString();
-                body = jsonString.getBytes(charset);
-            }
-            catch (UnsupportedEncodingException e) {
-                throw new AssertionError("JSON Charset (UTF-8) not valid.");
-            }
-        }
-
-        //Override content type
+                                       final Listener<HttpResponse> resultListener)
+    {
+        //Ensure accept header is set
         if (headers == null) {
             headers = new HashMap<String, String>();
         }
-        boolean contentTypeFound = false;
         boolean acceptFound = false;
         for (String headerKey : headers.keySet())
         {
             String lowerCasedKey = headerKey.toLowerCase();
-            if (lowerCasedKey == "content-type") {
-                contentTypeFound = true;
-            }
-
             if (lowerCasedKey == "accept") {
                 acceptFound = true;
             }
-        }
-        if (contentTypeFound) {
-            headers.put("Content-Type", "application/json");
         }
         if (acceptFound) {
             headers.put("Accept", "application/json");
         }
 
+        //Setup request
         HttpRequest request = new HttpRequest(method, url, body, headers, new Listener<HttpResponse>() {
             @Override
             public void onResponse(HttpResponse response) {
@@ -94,8 +74,47 @@ public class HttpJSON {
             }
         });
 
+        //Execute task
         HttpTask task = new HttpTask(request);
         task.execute();
         return task;
+    }
+
+    public static HttpTask requestJSON(int method,
+                                       String url,
+                                       JsonObject json,
+                                       Map<String,String> headers,
+                                       final Listener<HttpResponse> resultListener) {
+
+        //Translate json to body data
+        byte[] body = null;
+        if (json != null) {
+            try {
+                String charset = "UTF-8";
+                String jsonString = json.toString();
+                body = jsonString.getBytes(charset);
+            }
+            catch (UnsupportedEncodingException e) {
+                throw new AssertionError("JSON Charset (UTF-8) not valid.");
+            }
+        }
+
+        //Set content-type header if needed
+        if (headers == null) {
+            headers = new HashMap<String, String>();
+        }
+        boolean contentTypeFound = false;
+        for (String headerKey : headers.keySet())
+        {
+            String lowerCasedKey = headerKey.toLowerCase();
+            if (lowerCasedKey == "content-type") {
+                contentTypeFound = true;
+            }
+        }
+        if (contentTypeFound) {
+            headers.put("Content-Type", "application/json");
+        }
+
+        return requestJSONWithRawData(method,url, body, headers, resultListener);
     }
 }

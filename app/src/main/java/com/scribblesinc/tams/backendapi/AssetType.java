@@ -29,9 +29,9 @@ public class AssetType {
         this.category_name = category_name;
     }
 
-    public static void list(final Response.Listener<ArrayList<AssetType>> listener, final Response.ErrorListener errorListener) {
-        String url = Assets.hostURL + "api/asset/type/list/";
-        HttpJSON.requestJSON(Request.Method.GET, url, null, null, new Response.Listener<HttpResponse>() {
+    public static void list(long category_id, final Response.Listener<ArrayList<AssetType>> listener, final Response.ErrorListener errorListener) {
+        String url = Assets.hostURL + "api/asset/type/list/" + category_id + "/";
+        HttpJson.requestJSON(Request.Method.GET, url, null, null, new Response.Listener<HttpResponse>() {
             @Override
             public void onResponse(HttpResponse response) {
 

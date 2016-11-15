@@ -26,13 +26,17 @@ public class AsyncApiTests {
             @Override
             public void onResponse(ArrayList<AssetCategory> response) {
                 System.out.println("CATEGORY LIST RESPONSE: " + response.toString());
-            }
-        }, null);
 
-        AssetType.list(new Response.Listener<ArrayList<AssetType>>() {
-            @Override
-            public void onResponse(ArrayList<AssetType> response) {
-                System.out.println("TYPE LIST RESPONSE: " + response.toString());
+                if (response.size() > 0) {
+                    AssetCategory category = response.get(0);
+
+                    AssetType.list(category.getId(), new Response.Listener<ArrayList<AssetType>>() {
+                        @Override
+                        public void onResponse(ArrayList<AssetType> response) {
+                            System.out.println("TYPE LIST RESPONSE: " + response.toString());
+                        }
+                    }, null);
+                }
             }
         }, null);
     }
