@@ -2,6 +2,8 @@ package com.scribblesinc.tams.network;
 
 import com.scribblesinc.tams.util.LruBitmapImgCache;
 
+
+import android.app.Activity;
 import android.app.Application;
 import android.text.TextUtils;
 
@@ -9,10 +11,11 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-/*class is a singleton class to initialize core objects of volley library*/
+
 public class AppRequestManager extends Application {
 
     public static final String TAG = AppRequestManager.class.getSimpleName();
+
 
     //Declare ReuquestQueue and ImageLoader to be use
     private RequestQueue appRequestQueue;
