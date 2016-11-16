@@ -1,6 +1,8 @@
 package com.scribblesinc.tams.patterns;
 
 import com.scribblesinc.tams.util.LruBitmapImgCache;
+
+import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,18 +13,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 /*class is a singleton class to initialize core objects of volley library*/
-public class AppController extends AppCompatActivity {
+public class AppController extends Application {
     public static final String TAG = AppController.class.getSimpleName();
 
     //Declare ReuquestQueue and ImageLoader to be use
     private RequestQueue appRequestQueue;
     private ImageLoader appImageLoader;
-    //audio
     private static AppController appInstance;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
-        super.onCreate(savedInstanceState);
+    public void onCreate(){
+        super.onCreate();
         appInstance = this;
     }
     public static synchronized AppController getInstance(){

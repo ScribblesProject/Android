@@ -12,9 +12,12 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.google.android.gms.vision.text.Text;
 import com.scribblesinc.tams.R;
-import com.scribblesinc.tams.Asset;
+import com.scribblesinc.tams.Assets;
 import com.scribblesinc.tams.patterns.AppController;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -24,20 +27,21 @@ import java.util.Objects;
  * not ArrayAdapter
  */
 public class CustomListAdapter extends BaseAdapter {
+    private Context context;
     private Activity activity;
     private LayoutInflater inflater;
-    private List<Asset> assetList;
+    private ArrayList itemsAsset;
     ImageLoader imageLoader = AppController.getInstance().getImageLoader();
 
-    public CustomListAdapter(Activity activity, List<Asset> assetList) {
-        this.activity = activity;
-        this.assetList = assetList;
+    public CustomListAdapter(Map<String,ArrayList<Assets>> itemAssetMap) {
+        itemsAsset = new ArrayList();//create an arraylist
+        itemsAsset.addAll(itemAssetMap.entrySet());//get collection
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        if (inflater == null)//create one
+        if (inflater == null)
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
             convertView = inflater.inflate(R.layout.content_asset_list, parent, false);//will inflate with given parent bu won't attach it to it
@@ -49,22 +53,29 @@ public class CustomListAdapter extends BaseAdapter {
         //get text view
         TextView assetTitle = (TextView) convertView.findViewById(R.id.title_asset);
         TextView assetNotes = (TextView) convertView.findViewById(R.id.notes_asset);
-        TextView alocation = (TextView) convertView.findViewById(R.id.location_asset);
+        //TextView alocation = (TextView) convertView.findViewById(R.id.location_asset);
 
         //getting asset data for row
-        Asset asset = assetList.get(position);
+        //Assets asset = ItemsAssetMap.get(1).get(position);
+        Map.Entry<String, ArrayList<Assets>> item =  this.getItem(position);
 
+        //TAG, String.valueOf(assets.get(0).sortedLocations()));
         //set text view
-        imgAsset.setImageUrl(asset.getMediaImageURL(), imageLoader);
-        assetTitle.setText(asset.getName());
-        assetNotes.setText(asset.getDescription());
+        //imgAsset.setImageUrl(item.get(4).getMedia_image_url(), imageLoader);
+      //  imgAsset.setImageUrl(getKey);
+        //assetTitle.setText(item.getName());
+        //assetNotes.setText(item.getDescription());
         //return row view
         return convertView;
+    }
+    @Override
+    public Map.Entry<String, ArrayList<Assets>> getItem(int position){
+        return (Map.Entry) itemsAsset.get(position);
     }
 
     @Override
     public int getCount() {
-        return assetList.size();
+        return itemsAsset.size();
     }
 
     @Override
@@ -72,8 +83,5 @@ public class CustomListAdapter extends BaseAdapter {
         return position;
     }
 
-    @Override
-    public Object getItem(int location) {
-        return assetList.get(location);
-    }
+
 }

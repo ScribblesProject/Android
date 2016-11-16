@@ -1,6 +1,8 @@
 package com.scribblesinc.tams;
 
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +29,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.scribblesinc.tams.androidcustom.AssetItems;
 import com.scribblesinc.tams.adapters.CustomListAdapter;
+import com.scribblesinc.tams.androidcustom.Item;
 import com.scribblesinc.tams.patterns.AppController;
 import com.scribblesinc.tams.adapters.CustomListAdapter;
 import com.scribblesinc.tams.androidcustom.AssetItems;
@@ -48,8 +51,9 @@ public class AssetList extends AppCompatActivity {
     private CustomListAdapter listadapter;
     private ListView listview;
     private Gson gson;
-    private List<Asset>assetlist = new ArrayList<Asset>();
-
+    //private List<Assets>assetlist = new ArrayList<Assets>();
+    private String name = "";
+    private String description = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +71,7 @@ public class AssetList extends AppCompatActivity {
         queue = Volley.newRequestQueue(this);
         String url = "https://tams-142602.appspot.com/";
 
+
         stringRequest = new StringRequest(Request.Method.GET, url + "api/asset/list/", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -76,12 +81,34 @@ public class AssetList extends AppCompatActivity {
                 Gson gson = new Gson();
                 Type type = new TypeToken<Map<String, ArrayList<Assets>>>() {
                 }.getType();
+
                 Map<String, ArrayList<Assets>> result = gson.fromJson(response, type);
+                /*
                 ArrayList<Assets> assets = result.get("assets");
                 Log.d(TAG, String.valueOf(assets.get(0).sortedLocations()));
                 Log.d(TAG, String.valueOf(result.get("assets")));
                 //Log.d(TAG, String.valueOf(result.get("assets").get(0).getName()));
                 Toast.makeText(getApplicationContext(), result.get("assets").toString(), Toast.LENGTH_LONG).show();
+                 */
+                //Initialize adapter
+                listview = (ListView) findViewById(R.id.listView_al);
+                listadapter = new CustomListAdapter(getApplicationContext(),result);
+                listview.setAdapter(listadapter);
+
+                //notify list adapter that data has new changes
+                listadapter.notifyDataSetChanged();
+
+             //   List<Assets> assets = (List<Assets>) gson.fromJson(response, type);
+                //register listview
+  ///              listview = (ListView) findViewById(R.id.listView_al);
+                //listadapter = new CustomListAdapter(this,assets);
+
+                //got to figure out how to make it only read image, titile and discription and pass this to the adapter.
+
+
+                //2 notify list adapter about data change/obtains list id to be use with AssetList
+               //listview = getListView();
+//                listview.setAdapter(listadapter);
 
             }
         }, new Response.ErrorListener() {
@@ -92,8 +119,22 @@ public class AssetList extends AppCompatActivity {
             }
         });
         //add the request to the RequestQueue
-        queue.add(stringRequest);
+        //queue.add(stringRequest);
+        AppController.getInstance().addToRequestQueue(stringRequest);
+    }//endof Oncreate
+
+
+    // The array list of items to be added to my ListView
+    private ArrayList<Item>generateData() {
+        ArrayList<Item> items = new ArrayList<>();
+        //items.add(new Item("Image","Image of Asset",R.drawable.ic_camera_alt));
+        items.add(new Item("Name", name));
+        items.add(new Item("Description", description));
+
+        return items;
     }
+
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
