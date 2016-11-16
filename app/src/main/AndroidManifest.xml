@@ -25,6 +25,7 @@
     <application
         android:name = "com.scribblesinc.tams.network.AppRequestManager"
         android:allowBackup="true"
+        android:name = "com.scribblesinc.tams.patterns.AppController"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
