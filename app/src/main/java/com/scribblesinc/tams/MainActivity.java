@@ -19,6 +19,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 //import com.google.android.gms.common.api.PendingResult;
@@ -33,6 +35,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.wearable.Asset;
+import com.scribblesinc.tams.backendapi.Assets;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 0;
@@ -52,14 +58,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
 
-        Log.d(TAG, "onCreate()");
+        //Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_main);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -106,21 +111,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //this method is called when the current location menu item is tapped
-    public void currentLocationAction(MenuItem item) {
+    //public void currentLocationAction(MenuItem item) {
         //Will work on later. Need to figure out how to get the device location here.
-    }
+    //}
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
         getLocationPermission();
+        mMap = googleMap;
+
+        populateMap(googleMap);
         // Hard-code marker by CSUS to test maps
-        LatLng csus = new LatLng(38.559144, -121.4256621);
-        mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
+        //LatLng csus = new LatLng(38.559144, -121.4256621);
+        //mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
         // Move the camera instantly to location with a zoom of 15.
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
         // Zoom in, animating the camera.
         //mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+    }
+
+    private void populateMap(final GoogleMap googleMap){
+
+        Assets.list(new Response.Listener<ArrayList<Assets>>() {
+            @Override
+            public void onResponse(ArrayList<Assets> response) {
+                for (int i = 0; i < response.size(); i++){
+                    //Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, response.get(i).getLocations().size()+"", Toast.LENGTH_LONG).show();
+                    for(int j = 0; j < response.get(i).getLocations().size(); j++){
+
+                        //Toast.makeText(MainActivity.this, response.get(i).getName(), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(MainActivity.this, response.get(i).getSortedLocations().get(j)+"", Toast.LENGTH_SHORT).show();
+                        LatLng assetPoint = new LatLng(response.get(i).getSortedLocations().get(j).getLatitude(), response.get(i).getSortedLocations().get(j).getLongitude());
+                        googleMap.addMarker(new MarkerOptions().position(assetPoint).title(response.get(i).getName())).setVisible(true);
+
+                        //Toast.makeText(MainActivity.this, response.get(i).getLocations().get("" + j).getLatitude()+"", Toast.LENGTH_LONG).show();
+                        //response.get(i).getLocations().get("" + j).getLatitude();
+                    }
+                }
+            }
+        }, null);
     }
 
     @Override
@@ -143,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
 
-        Toast.makeText(MainActivity.this, "Map Connection Established", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, "Map Connection Established", Toast.LENGTH_SHORT).show();
     }
 
     private void startLocationUpdates() {

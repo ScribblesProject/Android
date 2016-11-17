@@ -1,23 +1,23 @@
 package com.scribblesinc.tams;
 
 
-        import android.content.Intent;
-        import android.os.Bundle;
-        import android.support.v7.app.AppCompatActivity;
-        import android.support.v7.widget.Toolbar;
-        import android.view.Menu;
-        import android.view.MenuItem;
-        import android.widget.AdapterView;
-        import android.widget.ListView;
-        import android.view.View;
-        import android.widget.Toast;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.view.View;
+import android.widget.Toast;
 
-        import com.android.volley.RequestQueue;
-        import com.android.volley.Response;
-        import com.android.volley.toolbox.StringRequest;
-        import com.scribblesinc.tams.adapters.CustomListAdapter;
-        import com.scribblesinc.tams.backendapi.Assets;
-        import java.util.ArrayList;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.StringRequest;
+import com.scribblesinc.tams.adapters.CustomListAdapter;
+import com.scribblesinc.tams.backendapi.Assets;
+import java.util.ArrayList;
 
 
 public class AssetList extends AppCompatActivity {
