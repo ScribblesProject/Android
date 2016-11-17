@@ -1,33 +1,32 @@
 package com.scribblesinc.tams;
 
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.Toast;
+        import android.content.Intent;
+        import android.os.Bundle;
+        import android.support.v7.app.AppCompatActivity;
+        import android.support.v7.widget.Toolbar;
+        import android.view.Menu;
+        import android.view.MenuItem;
+        import android.widget.AdapterView;
+        import android.widget.ListView;
+        import android.view.View;
+        import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
-import com.google.gson.JsonObject;
-import com.scribblesinc.tams.backendapi.AssetCategory;
-import com.scribblesinc.tams.backendapi.AssetLocation;
-import com.scribblesinc.tams.backendapi.AssetType;
-import com.scribblesinc.tams.backendapi.Assets;
-import com.scribblesinc.tams.backendapi.AsyncApiTests;
-import com.scribblesinc.tams.network.HttpResponse;
-import com.scribblesinc.tams.network.HttpTask;
+        import com.android.volley.RequestQueue;
+        import com.android.volley.Response;
+        import com.android.volley.toolbox.StringRequest;
+        import com.scribblesinc.tams.adapters.CustomListAdapter;
+        import com.scribblesinc.tams.backendapi.Assets;
+        import java.util.ArrayList;
 
-import java.util.ArrayList;
 
 public class AssetList extends AppCompatActivity {
-    public RequestQueue queue;
-    public StringRequest stringRequest;
-    private static final String TAG = AssetList.class.getSimpleName();
+    //Declaring the listAdapter and listview to be use
+    private CustomListAdapter listAdapter;
+    private ListView listview;
+    //Declaring new activity to be initialize
+    private Intent newActivity;
+    static final String ARRAY_LIST = "com.scribblesinc.tams";
 
 
     @Override
@@ -49,11 +48,33 @@ public class AssetList extends AppCompatActivity {
     private void fetchAssets() {
         Assets.list(new Response.Listener<ArrayList<Assets>>() {
             @Override
-            public void onResponse(ArrayList<Assets> response) {
+            public void onResponse(final ArrayList<Assets> response) {
                 if (response != null) {
-                    // ... Display this...
-                    System.out.println("ASSET LIST RESPONSE: " + response);
+                    //get view to be populated
+                    listview = (ListView) findViewById(R.id.listView_al);
+                    //create the adapter for listview
+                    listAdapter = new CustomListAdapter(AssetList.this, response);
+                    //attach adapter to listview
+                    listview.setAdapter(listAdapter);
+
+                    //listAdapter.notifyDataSetChanged();
+                    //onclick listener to be use when user touches a view for more information,
+                    //user then can update or delete view.
+                    listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                        @Override
+                                                        public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+
+                                                            newActivity  = new Intent(AssetList.this,AssetAdd.class);
+                                                           //put data on intent -work in progress
+                                                            //newActivity.putExtra(ARRAY_LIST,response);
+
+                                                            startActivityForResult(newActivity,1);
+                                                            //Toast.makeText(getApplicationContext(), "Ping ", Toast.LENGTH_SHORT).show();
+                                                        }
+                                                    }
+                    );
                 }
+
             }
         }, null);
     }
@@ -61,7 +82,8 @@ public class AssetList extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_asset_list, menu);
+            getMenuInflater().inflate(R.menu.menu_asset_list, menu);
+
         return true;
     }
 

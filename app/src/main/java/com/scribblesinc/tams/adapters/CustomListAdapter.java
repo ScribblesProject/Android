@@ -8,8 +8,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.scribblesinc.tams.R;
 import com.scribblesinc.tams.backendapi.Assets;
+import com.scribblesinc.tams.network.AppRequestManager;
 
 import java.util.List;
 
@@ -20,36 +23,42 @@ import java.util.List;
  * not ArrayAdapter
  */
 public class CustomListAdapter extends BaseAdapter {
-    private Activity activity;
     private LayoutInflater inflater;
+    private Activity activity;
     private List<Assets> assetList;
+    ImageLoader imageloader = AppRequestManager.getInstance().getImageLoader();
     //ImageLoader imageLoader
 
     public CustomListAdapter(Activity activity, List<Assets> assetList) {
-        this.activity = activity;
         this.assetList = assetList;
+        this.activity = activity;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-
-        if (inflater == null)//create one
-            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        //we inflate the xml which gives us a view
+        if(inflater == null)
+                inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
             convertView = inflater.inflate(R.layout.content_asset_list, parent, false);//will inflate with given parent bu won't attach it to it
+        //if imageloader is not initialize
+        if(imageloader==null)
+            imageloader = AppRequestManager.getInstance().getImageLoader();
 
-        //get text view
+        //Get the widget with id name which is defined in the xml of the row
+        NetworkImageView imgAsset = (NetworkImageView) convertView.findViewById(R.id.img_asset);
         TextView a_title = (TextView) convertView.findViewById(R.id.title_asset);
         TextView a_notes = (TextView) convertView.findViewById(R.id.notes_asset);
-        TextView a_location = (TextView) convertView.findViewById(R.id.location_asset);
+        //TextView a_location = (TextView) convertView.findViewById(R.id.location_asset);
 
-        //getting asset data for row
+        //Get the item in the adapter
         Assets asset = assetList.get(position);
 
-        //set text view
+        //populate the row's with info from the list
+        imgAsset.setImageUrl(asset.getMedia_image_url(),imageloader);
         a_title.setText(asset.getName());
         a_notes.setText(asset.getDescription());
-        //return row view
+        //return generated view
         return convertView;
     }
 

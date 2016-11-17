@@ -33,6 +33,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private boolean isType;
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
+    static final String ARRAY_LIST = "com.scribblesinc.tams";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +50,15 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        //Reading from intent AssetList when user wants to update or Delete asset
+        //Intent testIntent = getIntent();
+        //looking to populate AssetList based on data from ListView
+       // ArrayList<Item> itemlist = testIntent.getStringArrayListExtra(ARRAY_LIST);
+
+
+
+
         // pass context and data to the custom adapter
         adapter = new CustomAssetAdapter(this, generateData());
         // Get ListView from content_asset_add
@@ -256,8 +266,16 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_asset, menu);
+        /*When activty gets call by startActivity() getCallingActivity() returns null
+        which means user selected to go to AssetAdd
+        */
+        if(getCallingActivity() == null) {
+            // Inflate the menu; this adds items to the action bar if it is present.
+            getMenuInflater().inflate(R.menu.menu_add_asset, menu);
+        }else{
+           /*startActivityForResult()  call this activity */
+            getMenuInflater().inflate(R.menu.menu_asset_modify,menu);
+        }
         return true;
     }
 
