@@ -170,28 +170,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }, null);
     }
 
-    private void addPoints(GoogleMap googleMap, ArrayList<AssetLocation> assetsLocation) {
-        /*PolylineOptions newLine = new PolylineOptions();
-        LatLng newLatLng;
-        if(assetsLocation.size() > 1) {
-            for (int i = 0; i < assetsLocation.size(); i++) {
-                newLatLng = new LatLng(assetsLocation.get(i).getLatitude(), assetsLocation.get(i).getLongitude());
-                //sets the lines location, color, and width
-                newLine.add(newLatLng).color(Color.RED).width((float)2.5);
-                googleMap.addMarker(new MarkerOptions().position(newLatLng)).setVisible(true);
-            }
-
-            newLatLng = new LatLng(assetsLocation.get(0).getLatitude(), assetsLocation.get(0).getLongitude());
-            //sets the lines location, color, and width
-            newLine.add(newLatLng).color(Color.RED).width((float)2.5);
-            mMap.addPolyline(newLine);
-
-        } else if(assetsLocation.size() == 1){
-            newLatLng = new LatLng(assetsLocation.get(0).getLatitude(), assetsLocation.get(0).getLongitude());
-            googleMap.addMarker(new MarkerOptions().position(newLatLng)).setVisible(true);
-        }*/
-    }
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
