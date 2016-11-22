@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +36,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.wearable.Asset;
+import com.scribblesinc.tams.backendapi.AssetLocation;
 import com.scribblesinc.tams.backendapi.Assets;
 
 import java.util.ArrayList;
@@ -112,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     //this method is called when the current location menu item is tapped
     //public void currentLocationAction(MenuItem item) {
-        //Will work on later. Need to figure out how to get the device location here.
+    //Will work on later. Need to figure out how to get the device location here.
     //}
 
     @Override
@@ -135,22 +140,56 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Assets.list(new Response.Listener<ArrayList<Assets>>() {
             @Override
             public void onResponse(ArrayList<Assets> response) {
+                ArrayList<AssetLocation> sortedLocations;
+                PolylineOptions newLine = new PolylineOptions();
+                LatLng newLatLng;
+
                 for (int i = 0; i < response.size(); i++){
-                    //Toast.makeText(MainActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(MainActivity.this, response.get(i).getLocations().size()+"", Toast.LENGTH_LONG).show();
-                    for(int j = 0; j < response.get(i).getLocations().size(); j++){
+                    //response.get(i).getLocations().get("" + j).getLatitude();`
+                    //LatLng assetPoint = new LatLng(response.get(i).getSortedLocations().get(i).getLatitude(), response.get(i).getSortedLocations().get(j).getLongitude());
+                    sortedLocations = response.get(i).getSortedLocations();
+                    if(sortedLocations.size() > 1) {
+                        for (int j = 0; j < sortedLocations.size(); j++) {
+                            newLatLng = new LatLng(sortedLocations.get(j).getLatitude(), sortedLocations.get(j).getLongitude());
+                            //sets the lines location, color, and width
+                            newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                            googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
+                        }
 
-                        //Toast.makeText(MainActivity.this, response.get(i).getName(), Toast.LENGTH_SHORT).show();
-                        //Toast.makeText(MainActivity.this, response.get(i).getSortedLocations().get(j)+"", Toast.LENGTH_SHORT).show();
-                        LatLng assetPoint = new LatLng(response.get(i).getSortedLocations().get(j).getLatitude(), response.get(i).getSortedLocations().get(j).getLongitude());
-                        googleMap.addMarker(new MarkerOptions().position(assetPoint).title(response.get(i).getName())).setVisible(true);
+                        newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
+                        //sets the lines location, color, and width
+                        newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                        mMap.addPolyline(newLine);
 
-                        //Toast.makeText(MainActivity.this, response.get(i).getLocations().get("" + j).getLatitude()+"", Toast.LENGTH_LONG).show();
-                        //response.get(i).getLocations().get("" + j).getLatitude();
+                    } else if(sortedLocations.size() == 1){
+                        newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
+                        googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
                     }
                 }
             }
         }, null);
+    }
+
+    private void addPoints(GoogleMap googleMap, ArrayList<AssetLocation> assetsLocation) {
+        /*PolylineOptions newLine = new PolylineOptions();
+        LatLng newLatLng;
+        if(assetsLocation.size() > 1) {
+            for (int i = 0; i < assetsLocation.size(); i++) {
+                newLatLng = new LatLng(assetsLocation.get(i).getLatitude(), assetsLocation.get(i).getLongitude());
+                //sets the lines location, color, and width
+                newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                googleMap.addMarker(new MarkerOptions().position(newLatLng)).setVisible(true);
+            }
+
+            newLatLng = new LatLng(assetsLocation.get(0).getLatitude(), assetsLocation.get(0).getLongitude());
+            //sets the lines location, color, and width
+            newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+            mMap.addPolyline(newLine);
+
+        } else if(assetsLocation.size() == 1){
+            newLatLng = new LatLng(assetsLocation.get(0).getLatitude(), assetsLocation.get(0).getLongitude());
+            googleMap.addMarker(new MarkerOptions().position(newLatLng)).setVisible(true);
+        }*/
     }
 
     @Override
