@@ -1,26 +1,32 @@
-package com.scribblesinc.tams;
 
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.view.ContextMenu;
-import android.os.Bundle;
-import android.provider.MediaStore;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.Toast;
+        package com.scribblesinc.tams;
 
-import com.scribblesinc.tams.adapters.CustomAssetAdapter;
-import com.scribblesinc.tams.androidcustom.Item;
+        import android.Manifest;
+        import android.content.Intent;
+        import android.content.pm.PackageManager;
+        import android.support.annotation.NonNull;
+        import android.support.v4.app.ActivityCompat;
+        import android.view.ContextMenu;
+        import android.os.Bundle;
+        import android.provider.MediaStore;
+        import android.support.v7.app.AppCompatActivity;
+        import android.support.v7.widget.Toolbar;
+        import android.view.Menu;
+        import android.view.MenuItem;
+        import android.view.View;
+        import android.widget.AdapterView;
+        import android.widget.ImageView;
+        import android.widget.ListView;
+        import android.widget.Toast;
+        import android.graphics.Bitmap;
 
-import java.util.ArrayList;
+        import android.graphics.drawable.BitmapDrawable;
+
+
+        import com.scribblesinc.tams.adapters.CustomAssetAdapter;
+        import com.scribblesinc.tams.androidcustom.Item;
+
+        import java.util.ArrayList;
 
 public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
@@ -33,7 +39,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private boolean isType;
     private Intent newActivity;
     private static final int REQUEST_CAMERA = 200;
-    static final String ARRAY_LIST = "com.scribblesinc.tams";
+    private ImageView imageView;
+    private Bitmap imageBitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,15 +57,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-
-        //Reading from intent AssetList when user wants to update or Delete asset
-        //Intent testIntent = getIntent();
-        //looking to populate AssetList based on data from ListView
-       // ArrayList<Item> itemlist = testIntent.getStringArrayListExtra(ARRAY_LIST);
-
-
-
-
         // pass context and data to the custom adapter
         adapter = new CustomAssetAdapter(this, generateData());
         // Get ListView from content_asset_add
@@ -72,50 +70,52 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
         //OnItemClickListener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 
-                //switch state to change accordingly based on user selection
-                switch(position){
-                    case 0: //camera
-                        //do permission checking
-                        ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
-                        break;
-                    case 1://name
-                        newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
-                        startActivityForResult(newActivity,1);
-                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                        break;
-                    case 2://category
-                        isType = false;
-                        view.showContextMenu();
-                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                        break;
-                    case 3://type
-                        isType = true;
-                        view.showContextMenu();
-                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                        break;
-                    case 4://location
-                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                        break;
-                    case 5://voice memo
-                         newActivity = new Intent(AssetAdd.this,AudioCapture.class);
-                        startActivityForResult(newActivity,5);
-                        //startActivity for result will be implemented later  to handle info
-                        break;
-                    case 6://description
-                        newActivity = new Intent(AssetAdd.this, NotesCapture.class);
-                        startActivityForResult(newActivity,6);
-                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                        break;
-                    default:
-                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                        break;
-                }
+                                                //switch state to change accordingly based on user selection
+                                                switch(position){
+                                                    case 0: //camera
+                                                        //do permission checking
 
-                }
-            }
+                                                        ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                                                        break;
+
+                                                    case 1://name
+                                                        newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
+                                                        startActivityForResult(newActivity,1);
+                                                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                                                        break;
+                                                    case 2://category
+                                                        isType = false;
+                                                        view.showContextMenu();
+                                                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                                                        break;
+                                                    case 3://type
+                                                        isType = true;
+                                                        view.showContextMenu();
+                                                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                                                        break;
+                                                    case 4://location
+                                                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                                                        break;
+                                                    case 5://voice memo
+                                                        newActivity = new Intent(AssetAdd.this,AudioCapture.class);
+                                                        startActivityForResult(newActivity,5);
+                                                        //startActivity for result will be implemented later  to handle info
+                                                        break;
+                                                    case 6://description
+                                                        newActivity = new Intent(AssetAdd.this, NotesCapture.class);
+                                                        startActivityForResult(newActivity,6);
+                                                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                                                        break;
+                                                    default:
+                                                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
+                                                        break;
+                                                }
+
+                                            }
+                                        }
         );//end of OnItemClickListener
     }//end of onCreate
     //handle the permissions request response
@@ -211,6 +211,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         items.add(new Item("Voice Memo","Record Voice Memo",R.drawable.ic_mic));
         items.add(new Item("Description", description));
         items.add(new Item(" "," "));//empty item to permit scrolling
+
         return items;
     }
 
@@ -226,13 +227,26 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         // ID = {(has extras)}, while pressing back (on both app and phones gives) 1, 0, and null respectively
         switch (requestCode) {
             case 0:
+
                 Toast.makeText(getApplicationContext(), "Picture to be handled", Toast.LENGTH_LONG).show();
                 break;
+
             case 1:
                 System.out.println("RQC: " + requestCode + " RC: " + resultCode);
 
+                if(resultCode == RESULT_OK){
+
+                    //ImageView imgTestView = (ImageView) this.findViewById(R.id.background_test);
+                    //imgTestView.setImageResource(adapter.getItem(0).getIcon());
+                    ///*
+                    Bundle extras = data.getExtras();
+                    imageBitmap = (Bitmap) extras.get("data");
+                    //listView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
+                    adapter.setBitMap(imageBitmap);
+
+                }
                 if (data != null) { // data can be null if back button is pressed!!!
-                     //gets the title from the key that was passed by the activity in TitleofAsset
+                    //gets the title from the key that was passed by the activity in TitleofAsset
                     name = data.getStringExtra("assetTitle");
                     //gets the item at index 1 (the description of the title) and changes it
                     adapter.getItem(1).setDescription(name);
@@ -266,16 +280,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        /*When activty gets call by startActivity() getCallingActivity() returns null
-        which means user selected to go to AssetAdd
-        */
-        if(getCallingActivity() == null) {
-            // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.menu_add_asset, menu);
-        }else{
-           /*startActivityForResult()  call this activity */
-            getMenuInflater().inflate(R.menu.menu_asset_modify,menu);
-        }
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_add_asset, menu);
         return true;
     }
 
@@ -294,25 +300,10 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             Toast.makeText(getApplicationContext(), "Not working ", Toast.LENGTH_SHORT).show();
         }
         // resets the asset being created
-        if (id == R.id.action_reset) {
-            if(!(name.isEmpty() && description.isEmpty())) {
-                name = "";
-                description = "";
-                contextValue = "";
-                typeValue = "";
-
-                adapter.getItem(1).setDescription(name);
-                //gets the item at index 1 (the description of the title) and changes it
-                adapter.getItem(2).setDescription(contextValue);
-
-                adapter.getItem(3).setDescription(typeValue);
-
-                adapter.getItem(6).setDescription(description);
-                //setListAdapter aka assign adapter to listview
-                listView.setAdapter(adapter);
-                //creating a contextmeny for listview
-                this.registerForContextMenu(listView);
-            }
+        if(id == R.id.action_reset){
+            Intent intent = new Intent(this, AssetAdd.class);
+            startActivity(intent);
+            finish(); // This opens a new AssetAdd and closes the current one.
         }
 
         return super.onOptionsItemSelected(item);
