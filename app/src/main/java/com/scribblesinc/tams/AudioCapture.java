@@ -1,6 +1,7 @@
 package com.scribblesinc.tams;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +36,13 @@ public class AudioCapture extends AppCompatActivity{
     Boolean isSDPresent;
     private static final int REQUEST_MIC = 200;
     private int REQUEST_Audio_RESULT = 1;
+    //Variables Constant to be use for intent across activites
+    static final String REC_AUDIO = "com.scribblesinc.tams";
     private static final String TAG = AudioCapture.class.getSimpleName();
+
+    //Declaring intent to be use
+    private Intent intent;
+    private boolean ismic;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //run parents method by extending the existing class or run this
@@ -59,9 +66,23 @@ public class AudioCapture extends AppCompatActivity{
         stop = (Button) findViewById(R.id.stop_sound);
         record = (Button)findViewById(R.id.record_sound);
 
-        //Initially stop button and play button are enabled
-        stop.setEnabled(false);
-        play.setEnabled(false);
+        //Get the information sent via intent
+        intent = getIntent();
+        outputFile = intent.getStringExtra(REC_AUDIO);
+        //if outputFile has something
+        if(outputFile != null) {
+            //Initially stop button and play button are enabled
+            //stop.setEnabled(false);
+            //play.setEnabled(false);
+            ismic = true;
+
+        }else{
+            //its a fresh recording with no previous audio
+            //Initially stop button and play button are enabled
+            stop.setEnabled(false);
+            play.setEnabled(false);
+            ismic = false;
+        }
 
                 /*Where shoud storing of recording go? SD or device
         if SD is present store there else store on device*/
@@ -214,7 +235,11 @@ public class AudioCapture extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_audio, menu);
+        if(!ismic) {
+            getMenuInflater().inflate(R.menu.menu_audio, menu);
+        }else{
+            getMenuInflater().inflate(R.menu.menu_audio_update, menu);
+        }
         return true;
     }
 
@@ -224,10 +249,26 @@ public class AudioCapture extends AppCompatActivity{
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
+        int id = item.getItemId();
         //if the back button is pressed
         if(item.getItemId() == android.R.id.home){
             finish(); //goes back to the previous activity
         }
+
+        //if done button is pressed
+        if(id == R.id.action_done||id==R.id.action_update){
+            //get recording
+            if(outputFile.isEmpty()){
+                Toast.makeText(this,"No recording has been made",Toast.LENGTH_LONG).show();
+            }else{
+                //send file back
+                Intent sendToPreviousActivity = new Intent();
+                sendToPreviousActivity.putExtra(REC_AUDIO,outputFile);
+                setResult(RESULT_OK,sendToPreviousActivity);
+                finish();
+            }
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

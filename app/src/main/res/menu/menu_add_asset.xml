@@ -14,7 +14,7 @@
         android:title="@string/action_reset"
         app:showAsAction="ifRoom" />
 
-    <item android:id="@+id/action_done"
-        android:title="@string/action_done"
+    <item android:id="@+id/action_create"
+        android:title="@string/action_create"
         app:showAsAction="ifRoom" />
 </menu>
