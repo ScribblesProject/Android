@@ -12,21 +12,25 @@ import android.widget.ListView;
 import android.view.View;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
+
 import com.android.volley.Response;
-import com.android.volley.toolbox.StringRequest;
 import com.scribblesinc.tams.adapters.CustomListAdapter;
 import com.scribblesinc.tams.backendapi.Assets;
 import java.util.ArrayList;
+import android.app.ProgressDialog;
+
 
 
 public class AssetList extends AppCompatActivity {
     //Declaring the listAdapter and listview to be use
     private CustomListAdapter listAdapter;
     private ListView listview;
-    //Declaring new activity to be initialize
-    private Intent newActivity;
+    //Declaring new intent to be initialize
+    private Intent intent;
     static final String ARRAY_LIST = "com.scribblesinc.tams";
+
+    private ProgressDialog listDialog;
+    private static final String TAG = AssetList.class.getSimpleName();
 
 
     @Override
@@ -41,14 +45,21 @@ public class AssetList extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-
+        /* want to show loading sign, but doing it here causes loading to go forever til touch
+        //Showing progress dialog
+        listDialog = new ProgressDialog(this);
+        listDialog.setMessage("Loading...");
+        listDialog.show();
+        */
         fetchAssets();
     }
 
     private void fetchAssets() {
+
         Assets.list(new Response.Listener<ArrayList<Assets>>() {
             @Override
             public void onResponse(final ArrayList<Assets> response) {
+
                 if (response != null) {
                     //get view to be populated
                     listview = (ListView) findViewById(R.id.listView_al);
@@ -64,12 +75,14 @@ public class AssetList extends AppCompatActivity {
                                                         @Override
                                                         public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 
-                                                            newActivity  = new Intent(AssetList.this,AssetAdd.class);
-                                                           //put data on intent -work in progress
-                                                            //newActivity.putExtra(ARRAY_LIST,response);
+                                                            intent  = new Intent(AssetList.this,AssetAdd.class);
+                                                           intent.putExtra(ARRAY_LIST, response.get(position));
 
-                                                            startActivityForResult(newActivity,1);
-                                                            //Toast.makeText(getApplicationContext(), "Ping ", Toast.LENGTH_SHORT).show();
+                                                            //Toast.makeText(getApplicationContext(),response.get(position).toString(),Toast.LENGTH_LONG).show();
+                                                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show()
+                                                           //put data on intent -work in progress11
+                                                            startActivityForResult(intent,1);
+
                                                         }
                                                     }
                     );
