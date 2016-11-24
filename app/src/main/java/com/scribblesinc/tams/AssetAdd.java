@@ -3,6 +3,7 @@ package com.scribblesinc.tams;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.view.ContextMenu;
@@ -20,12 +21,11 @@ import android.widget.Toast;
 import android.graphics.Bitmap;
 
 import android.graphics.drawable.BitmapDrawable;
-
-
 import com.scribblesinc.tams.adapters.CustomAssetAdapter;
 import com.scribblesinc.tams.androidcustom.Item;
-import java.util.ArrayList;
 import com.scribblesinc.tams.backendapi.Assets;
+import java.util.ArrayList;
+
 
 
 public class AssetAdd extends AppCompatActivity {//AppCompatActivity
@@ -61,7 +61,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private Assets asset;
     //Declaring intent to be use
     private Intent intent;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -290,7 +289,6 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
                      //gets the title from the key that was passed by the activity in TitleofAsset
                     assetName = data.getStringExtra("assetTitle");
-
                     //gets the item at index 1 (the description of the title) and changes it
                     adapter.getItem(1).setDescription(assetName);
                     adapter.notifyDataSetChanged();
@@ -347,10 +345,12 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             Toast.makeText(getApplicationContext(), "Not working ", Toast.LENGTH_SHORT).show();
         }
         // resets the asset being created
+
         if(id == R.id.action_reset){
             Intent intent = new Intent(this, AssetAdd.class);
             startActivity(intent);
             finish(); // This opens a new AssetAdd and closes the current one.
+
         }
 
         return super.onOptionsItemSelected(item);
