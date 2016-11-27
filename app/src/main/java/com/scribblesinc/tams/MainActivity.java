@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Asset Map");
     }
 
     @Override
@@ -103,7 +104,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         //when the filter button is pressed
         if (id == R.id.action_filter) {
-            Toast.makeText(getApplicationContext(), "Not Working Yet", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(this, AssetFilter.class);
+            startActivity(intent);
+            //Toast.makeText(getApplicationContext(), "Not Working Yet", Toast.LENGTH_SHORT).show();
         }
 
         //when the list button is pressed
@@ -124,15 +127,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         getLocationPermission();
         mMap = googleMap;
-
         populateMap(googleMap);
-        // Hard-code marker by CSUS to test maps
-        //LatLng csus = new LatLng(38.559144, -121.4256621);
-        //mMap.addMarker(new MarkerOptions().position(csus).title("CSUS")).setVisible(true);
-        // Move the camera instantly to location with a zoom of 15.
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(csus, 15));
-        // Zoom in, animating the camera.
-        //mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
     }
 
     private void populateMap(final GoogleMap googleMap){
@@ -145,8 +140,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 LatLng newLatLng;
 
                 for (int i = 0; i < response.size(); i++){
-                    //response.get(i).getLocations().get("" + j).getLatitude();`
-                    //LatLng assetPoint = new LatLng(response.get(i).getSortedLocations().get(i).getLatitude(), response.get(i).getSortedLocations().get(j).getLongitude());
                     sortedLocations = response.get(i).getSortedLocations();
                     if(sortedLocations.size() > 1) {
                         for (int j = 0; j < sortedLocations.size(); j++) {
@@ -158,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                         newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
                         //sets the lines location, color, and width
-                        newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                        newLine.add(newLatLng).color(Color.RED).width((float)5);
                         mMap.addPolyline(newLine);
 
                     } else if(sortedLocations.size() == 1){
@@ -251,8 +244,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (permissionCheck == permissionDenied) {
                 Log.d(TAG, "AssetLocation Permission Required");
                 AlertDialog.Builder getLocationPermission = new AlertDialog.Builder(this);
-                getLocationPermission.setTitle("AssetLocation Required");
-                getLocationPermission.setMessage("TAMS needs to use your device's location in order to function properly. If you accept the please tap 'ok' and then tap 'allow'.");
+                getLocationPermission.setTitle("Location Required");
+                getLocationPermission.setMessage("TAMS needs to use your device's location in order to function properly. If you accept, please tap 'OK' and then tap 'Allow'.");
                 getLocationPermission.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -263,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
             }
         }else{
-            Toast.makeText(getApplicationContext(), "AssetLocation Permission Granted", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "AssetLocation Permission Granted", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -272,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         switch (requestCode) {
             case PERMISSION_ACCESS_FINE_LOCATION:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.length > 0) {
-                    Toast.makeText(getApplicationContext(), "AssetLocation Permission Granted", Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getApplicationContext(), "AssetLocation Permission Granted", Toast.LENGTH_LONG).show();
                     setLocationEnable();
                 } else {
                     Toast.makeText(getApplicationContext(), "Closing TAMS", Toast.LENGTH_LONG).show();

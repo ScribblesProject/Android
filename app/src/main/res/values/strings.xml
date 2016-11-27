@@ -31,8 +31,10 @@
     <string name="road_sign">road_sign</string>
     <string name="traffic_sign">Traffic Sign</string>
     <string name="caution_sign">Caution_Sign</string>
+    <string name="map_view">Map View</string>
 
     <!--need to use @string source for providing hints or others -->
     <string name="voice_over_rec">Voice_Record</string>
     <string name="provide_title">Provide a Title</string>
+    <string name="title_activity_asset_filter">Asset Filter</string>
 </resources>
