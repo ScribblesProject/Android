@@ -35,24 +35,28 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private Intent newActivity;
 
     private ImageView imageView;
-    private Bitmap imageBitmap;
 
     private static final int REQUEST_CAMERA = 200;//variable use for permission checking
     //Variables Constant to be use for intent across activites
-    static final String ARRAY_LIST = "com.scribblesinc.tams";//variable use for intent receivng of information
-    static final String REC_AUDIO = "com.scribblesinc.tams";
-
+    private static final String ARRAY_LIST = "com.scribblesinc.tams";//variable use for intent receivng of information
+    private static final String REC_AUDIO = "com.scribblesinc.tams";
+    private static final String ASSET_TITLE = "com.scribblesinc.tams";
+    private static final String ASSET_NOTES = "com.scribblesinc.tams";
 
     //list of variables to be use for asset class
     private String assetName = null;
     private String assetDescription = null;
     private String assetCategory_Description= null;
     private String assetType = null;
-    private String assetMedia_image =null;
+    private Bitmap assetMedia_image =null;
     private String assetMedia_voice = null;
 
-    //flags
-    private boolean isType;//context menu for Type, Category
+    //Variables to control context menu for Type, Category on long press hold on view for
+    //type and category.
+     private int isContextMenu = 0;
+    private int CATEGORYPOSITION = 2;
+    private int TYPEPOSITION= 3;
+
 
     //list of items that adapter will use to populate listview
     ArrayList<Item> items = new ArrayList<>();
@@ -91,7 +95,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
         //if activity is called via intent
         if(getCallingActivity() != null){
-            //if activity is called via intent, update arraylist
+            //if activity is called via intent, update activity with information sent
             updateList();
         }
 
@@ -112,14 +116,15 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                         break;
                     case 1://name
                         newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
-                        startActivityForResult(newActivity,1);
+                        newActivity.putExtra(ASSET_TITLE,assetName);
+                        startActivityForResult(newActivity,0);//upon return go t given requestCode
                         break;
                     case 2://category
-                        isType = false;//flag to point if user selected type or category view
+                        isContextMenu = position;//int position to point if user selected type or category view
                         view.showContextMenu();
                         break;
                     case 3://type
-                        isType = true;
+                        isContextMenu = position;
                         view.showContextMenu();
                         break;
                     case 4://location
@@ -127,12 +132,13 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                         break;
                     case 5://voice memo
                          newActivity = new Intent(AssetAdd.this,AudioCapture.class);
-                        //send assetMedia_voice if data is contained
+                        //send assetMedia_voice to allow user to play or record a new audio
                         newActivity.putExtra(REC_AUDIO,assetMedia_voice);
                         startActivityForResult(newActivity,5);
                         break;
                     case 6://description
                         newActivity = new Intent(AssetAdd.this, NotesCapture.class);
+                        newActivity.putExtra(ASSET_NOTES,assetDescription);
                         startActivityForResult(newActivity,6);
                         break;
                     default:
@@ -177,12 +183,14 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuinfo) {
         super.onCreateContextMenu(menu,v,menuinfo);
-        if(isType) { // menu shown based on type of view selected
-            getMenuInflater().inflate(R.menu.menu_context_type,menu);
-        }else{
+        if(isContextMenu==CATEGORYPOSITION) { // menu shown based on type of view selected
             //contextual menu if catorogy view is selected
             getMenuInflater().inflate(R.menu.menu_context_category, menu);
+        }else if(isContextMenu==TYPEPOSITION){
+            getMenuInflater().inflate(R.menu.menu_context_type,menu);
         }
+        //Reset value to zero to stop it from activating when user selects other views, not mentioned above
+        isContextMenu = 0;
     }
 
     /* When the user selects a menu item  from contextmenu, the system calls
@@ -191,20 +199,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     public boolean onContextItemSelected(MenuItem item) {
         int id = item.getItemId();
         /*Depending on user choice between category or type choice, changes are different*/
-        if(isType) {
-            //in the type contextual menu
-            if (id == R.id.caution_sign){
-                assetType = "caution sign";
-            }
-            if (id == R.id.traffic_sign) {
-                assetType = "traffic sign";
-            }
-            adapter.getItem(3).setDescription(assetType);
-            listView.setAdapter(adapter);
-            this.registerForContextMenu(listView);
-            adapter.notifyDataSetChanged();
-
-        }else{
+        if(isContextMenu==CATEGORYPOSITION) {
             //user click on category view
             if (id == R.id.stop_light) {
                 assetCategory_Description = "stop light";
@@ -218,6 +213,20 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             listView.setAdapter(adapter);
             this.registerForContextMenu(listView);
             adapter.notifyDataSetChanged();
+
+        }else if(isContextMenu==TYPEPOSITION){
+            //in the type contextual menu
+            if (id == R.id.caution_sign){
+                assetType = "caution sign";
+            }
+            if (id == R.id.traffic_sign) {
+                assetType = "traffic sign";
+            }
+            adapter.getItem(3).setDescription(assetType);
+            listView.setAdapter(adapter);
+            this.registerForContextMenu(listView);
+            adapter.notifyDataSetChanged();
+
         }
 
         return true;
@@ -243,7 +252,17 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         Intent testIntent = getIntent();
         asset = (Assets) getIntent().getParcelableExtra(ARRAY_LIST);
         if(asset != null){
-            //class is here, we can start populating activity
+            //Store data
+             assetName = asset.getName();
+             assetDescription = asset.getDescription();
+             assetCategory_Description= null;
+             assetType = null;
+             assetMedia_image = null;
+             assetMedia_voice = asset.getMedia_voice_url();
+
+
+
+            // populating activity's listview
             adapter.getItem(1).setDescription(asset.getName());
             adapter.getItem(6).setDescription(asset.getDescription());
 
@@ -266,29 +285,10 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         // Note: Case statement numbers cause conflicts. In "Name" typing something in and pressing done gives us REQ = 1, RES = -1, and
         // ID = {(has extras)}, while pressing back (on both app and phones gives) 1, 0, and null respectively
         switch (requestCode) {
-            case 0:
-
-                Toast.makeText(getApplicationContext(), "Picture to be handled", Toast.LENGTH_LONG).show();
-                break;
-
-            case 1:
-                System.out.println("RQC: " + requestCode + " RC: " + resultCode);
-
-                if(resultCode == RESULT_OK){
-
-                    //ImageView imgTestView = (ImageView) this.findViewById(R.id.background_test);
-                    //imgTestView.setImageResource(adapter.getItem(0).getIcon());
-                    ///*
-                    Bundle extras = data.getExtras();
-                    imageBitmap = (Bitmap) extras.get("data");
-                    //listView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
-                    adapter.setBitMap(imageBitmap);
-
-                }
-                if (data != null) { // data can be null if back button is pressed!!!
-
-                     //gets the title from the key that was passed by the activity in TitleofAsset
-                    assetName = data.getStringExtra("assetTitle");
+            case 0://Name
+                //gets the title from the key that was passed by the activity in TitleofAsset
+                if(data !=null) {
+                    assetName = data.getStringExtra(ASSET_TITLE);
                     //gets the item at index 1 (the description of the title) and changes it
                     adapter.getItem(1).setDescription(assetName);
                     adapter.notifyDataSetChanged();
@@ -298,17 +298,34 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                     //creating a contextmeny for listviewcu
                     this.registerForContextMenu(listView);
                 }
+                break;
+
+            case 1://Image //requestCode for image is 1
+             //  System.out.println("RQC: " + requestCode + " RC: " + resultCode);
+
+                    //ImageView imgTestView = (ImageView) this.findViewById(R.id.background_test);
+                    //imgTestView.setImageResource(adapter.getItem(0).getIcon());
+                    ///*
+                    Bundle extras = data.getExtras();
+                    assetMedia_image = (Bitmap) extras.get("data");
+                    //listView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
+                    adapter.setBitMap(assetMedia_image);
+                    //setListAdapter aka assign adapter to listview
+                    listView.setAdapter(adapter);
+                    //creating a contextmeny for listview
+                    this.registerForContextMenu(listView);
+
 
                 break;
-            case 5:
+            case 5://Audio recording
                 if(data!=null)
                     //save data brought from the audio activity
                     assetMedia_voice = data.getStringExtra(REC_AUDIO);
                 break;
-            case 6:
+            case 6://notes
                 if (data != null) { // data can be null if back button is pressed!!!
                     //gets the title from the key that was passed by the activity in TitleofAsset
-                    assetDescription = data.getStringExtra("assetNotes");
+                    assetDescription = data.getStringExtra(ASSET_NOTES);
                     //gets the item at index 1 (the description of the title) and changes it
                     adapter.getItem(6).setDescription(assetDescription);
                     //setListAdapter aka assign adapter to listview
@@ -317,7 +334,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                     this.registerForContextMenu(listView);
                 }
                 break;
-            default:
+            default://nothing
                 Toast.makeText(getApplicationContext(), "View not on listview", Toast.LENGTH_LONG).show();
                 break;
         }

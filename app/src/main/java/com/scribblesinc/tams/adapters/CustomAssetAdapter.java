@@ -44,9 +44,9 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
             //get rowView from inflater
             convertView = myinflater.inflate(R.layout.content_asset_add, parent, false);
 
-            if(position == 0 && ImageBitmap != null){
+            if(position == 0 && ImageBitmap != null){                convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
+
                 System.out.println("made it to getView test");
-                convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
             }
 
             //Get the two text view from the rowView

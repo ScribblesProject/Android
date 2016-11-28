@@ -69,11 +69,13 @@ public class AudioCapture extends AppCompatActivity{
         //Get the information sent via intent
         intent = getIntent();
         outputFile = intent.getStringExtra(REC_AUDIO);
+
+
         //if outputFile has something
         if(outputFile != null) {
             //Initially stop button and play button are enabled
-            //stop.setEnabled(false);
-            //play.setEnabled(false);
+            stop.setEnabled(false);
+            record.setEnabled(false);
             ismic = true;
 
         }else{
@@ -153,6 +155,7 @@ public class AudioCapture extends AppCompatActivity{
         }
         appPlayer.start();
         play.setEnabled(false);
+        record.setEnabled(false);
         stop.setEnabled(true);
         Toast.makeText(getApplicationContext(),"Playing the recording...",Toast.LENGTH_LONG).show();
     }
@@ -176,7 +179,6 @@ public class AudioCapture extends AppCompatActivity{
         }
         stop.setEnabled(false);//disabled stop button
         play.setEnabled(true);//enabled play button
-        //a
         record.setEnabled(true);
         Toast.makeText(getApplicationContext(),"Audio stopped recording",Toast.LENGTH_LONG).show();
     }
@@ -261,11 +263,39 @@ public class AudioCapture extends AppCompatActivity{
             if(outputFile.isEmpty()){
                 Toast.makeText(this,"No recording has been made",Toast.LENGTH_LONG).show();
             }else{
-                //send file back
-                Intent sendToPreviousActivity = new Intent();
-                sendToPreviousActivity.putExtra(REC_AUDIO,outputFile);
-                setResult(RESULT_OK,sendToPreviousActivity);
-                finish();
+                if(id==R.id.action_update) {
+                    //Instantiate an AlertDialog.Builder with its constructor
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ConfirmationAlertDialogStyle);
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int choice) {
+                            Intent sendToPreviousActivity = new Intent();
+                            sendToPreviousActivity.putExtra(REC_AUDIO,outputFile);
+                            setResult(RESULT_OK,sendToPreviousActivity);
+                            Toast.makeText(getApplicationContext(),"Recording has been captured ",Toast.LENGTH_LONG).show();
+                            finish();;
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int choice) {
+                            Toast.makeText(getApplicationContext(),"Canceling update ",Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    builder.setMessage("Selecting 'Ok' will override current data. ");
+                    builder.setTitle("Attemping to Update Data");
+
+                    //Get the AlertDialog from create();
+                    AlertDialog d = builder.create();
+                    d.show();
+                }else{//user is not updating data
+                    Intent sendToPreviousActivity = new Intent();
+                    sendToPreviousActivity.putExtra(REC_AUDIO,outputFile);
+                    setResult(RESULT_OK,sendToPreviousActivity);
+                    Toast.makeText(this,"Recording has been captured ",Toast.LENGTH_LONG).show();
+                    finish();
+                }
+
             }
         }
 
