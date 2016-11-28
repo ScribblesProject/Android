@@ -21,6 +21,7 @@ import com.scribblesinc.tams.androidcustom.Item;
  * Created by Joel on 10/26/2016.
  */
 
+//custom ArrayAdapter
 public class CustomAssetAdapter extends ArrayAdapter<Item>{
     private final Context context;
     private final ArrayList<Item> itemsArrayList;
@@ -33,6 +34,7 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
 
     }
     //Get a View that displays the data at the specified position in the data set
+    //called when rendering list
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //View should be created based on the type returned from getItemViewtype(int pos)
@@ -42,9 +44,9 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
             //get rowView from inflater
             convertView = myinflater.inflate(R.layout.content_asset_add, parent, false);
 
-            if(position == 0 && ImageBitmap != null){
+            if(position == 0 && ImageBitmap != null){                convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
+
                 System.out.println("made it to getView test");
-                convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
             }
 
             //Get the two text view from the rowView
@@ -64,6 +66,14 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
         //return rowView
         return convertView;
     }
+
+    public int getCount(){
+        return itemsArrayList.size();
+    }
+    public long getItemId(int position){
+        return position;
+    }
+    /*These handle the case where you want different types of view for different rows*/
 
     //Returns the number of types of Views that will be created by getView(int,View, ViewGroup)
     @Override

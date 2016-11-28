@@ -1,5 +1,8 @@
 package com.scribblesinc.tams.backendapi;
 
+import android.app.ProgressDialog;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ImageView;
 
 import com.android.volley.Request;
@@ -18,6 +21,7 @@ import com.scribblesinc.tams.network.AppRequestManager;
 import com.scribblesinc.tams.network.HttpJSON;
 import com.scribblesinc.tams.network.HttpResponse;
 
+import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Assets {
+public class Assets implements Parcelable {
 
     //Looking for a nice global place to place this url.
     public static final String hostURL = "https://tams-142602.appspot.com/";
@@ -72,6 +76,46 @@ public class Assets {
 
         return result;
     }
+
+    /*Pacelable methods-use for communication between activites*/
+
+    @Override
+    public int describeContents(){
+            return 0;
+    }
+    public void writeToParcel(Parcel out, int flags){
+        out.writeLong(id);
+        out.writeString(name);
+        out.writeString(description);
+        out.writeString(category);
+        out.writeString(category_id);
+        out.writeString(category_description);
+        out.writeString(asset_type);
+        out.writeString(media_image_url);
+        out.writeString(media_voice_url);
+    }
+    private  Assets(Parcel in){
+        id = in.readLong();
+        name = in.readString();
+        description = in.readString();
+        category = in.readString();
+        category_id = in.readString();
+        category_description = in.readString();
+        asset_type = in.readString();
+        media_image_url = in.readString();
+        media_voice_url = in.readString();
+
+    }
+    public static final Parcelable.Creator<Assets> CREATOR
+            = new Parcelable.Creator<Assets>(){
+        public Assets createFromParcel(Parcel in){
+            return new Assets(in);
+        }
+        public Assets[] newArray(int size){
+            return new Assets[size];
+        }
+    };
+
 
     /// This will fetch all assets in the database
     public static void list(final Listener<ArrayList<Assets>> listener, final ErrorListener errorListener) {
@@ -407,5 +451,9 @@ public class Assets {
                 ", locations=" + locations +
                 '}';
     }
+
+
+
+
 }
 

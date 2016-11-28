@@ -35,7 +35,6 @@
 
     <Button
         android:id="@+id/record_sound"
-        android:textColor="@color/recRed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/record_sound"
