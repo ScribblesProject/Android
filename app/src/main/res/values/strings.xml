@@ -17,6 +17,8 @@
     <string name="action_delete">Delete</string>
     <string name="action_update">Update</string>
     <string name="action_create">Create</string>
+    <string name="action_apply_filter">Apply</string>
+    <string name="action_clear">Clear</string>
 
     <string name="action_type">Type</string>
     <string name="camera_mic">camera_mic</string>
@@ -37,5 +39,5 @@
     <!--need to use @string source for providing hints or others -->
     <string name="voice_over_rec">Voice_Record</string>
     <string name="provide_title">Provide a Title</string>
-    <string name="title_activity_asset_filter">Asset Filter</string>
+    <string name="title_activity_asset_filter">Filter Map</string>
 </resources>

@@ -68,8 +68,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-
-        //Log.d(TAG, "onCreate()");
         setContentView(R.layout.activity_main);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -119,9 +117,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //this method is called when the current location menu item is tapped
-    //public void currentLocationAction(MenuItem item) {
-    //Will work on later. Need to figure out how to get the device location here.
-    //}
+    /*public void currentLocationAction(MenuItem item) {
+        //Will work on later. Need to figure out how to get the device location here.
+    }*/
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -131,30 +129,27 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void populateMap(final GoogleMap googleMap){
-
         Assets.list(new Response.Listener<ArrayList<Assets>>() {
             @Override
             public void onResponse(ArrayList<Assets> response) {
                 ArrayList<AssetLocation> sortedLocations;
-                PolylineOptions newLine = new PolylineOptions();
+                PolylineOptions newLine;
                 LatLng newLatLng;
 
-                for (int i = 0; i < response.size(); i++){
+                for(int i = 0; i < response.size(); i++){
                     sortedLocations = response.get(i).getSortedLocations();
-                    if(sortedLocations.size() > 1) {
-                        for (int j = 0; j < sortedLocations.size(); j++) {
+                    if(sortedLocations.size() > 1){
+                        newLine = new PolylineOptions();
+                        for(int j = 0; j < sortedLocations.size(); j++){
                             newLatLng = new LatLng(sortedLocations.get(j).getLatitude(), sortedLocations.get(j).getLongitude());
-                            //sets the lines location, color, and width
-                            newLine.add(newLatLng).color(Color.RED).width((float)2.5);
                             googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
+                            newLine.add(newLatLng).color(Color.RED).width((float)2.5);
                         }
-
                         newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
-                        //sets the lines location, color, and width
-                        newLine.add(newLatLng).color(Color.RED).width((float)5);
-                        mMap.addPolyline(newLine);
-
-                    } else if(sortedLocations.size() == 1){
+                        googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
+                        newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                        googleMap.addPolyline(newLine);
+                    }else if(sortedLocations.size() == 1){
                         newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
                         googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
                     }
@@ -173,16 +168,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mLocationLatiudeText = String.valueOf(mLastKnownLocation.getLatitude());
             mLocationLongitudeText = String.valueOf(mLastKnownLocation.getLongitude());
         }
-
         mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(1000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
         startLocationUpdates();
 
         //LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder().addLocationRequest(mLocationRequest);
-
         //Toast.makeText(MainActivity.this, "Map Connection Established", Toast.LENGTH_SHORT).show();
     }
 
@@ -207,7 +199,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }else if(i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
             Toast.makeText(getApplicationContext(), "Connection Lost due to Service", Toast.LENGTH_LONG).show();
         }
-
         finish();
     }
 
@@ -228,7 +219,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mMarker.remove();
         }
 
-        //mMarker = mMap.addMarker(new MarkerOptions().position(mLatLng).title("Your Position"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 15));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 
@@ -242,7 +232,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
             int permissionDenied = PackageManager.PERMISSION_DENIED;
             if (permissionCheck == permissionDenied) {
-                Log.d(TAG, "AssetLocation Permission Required");
+                Log.d(TAG, "Location Permission Required");
                 AlertDialog.Builder getLocationPermission = new AlertDialog.Builder(this);
                 getLocationPermission.setTitle("Location Required");
                 getLocationPermission.setMessage("TAMS needs to use your device's location in order to function properly. If you accept, please tap 'OK' and then tap 'Allow'.");
