@@ -53,6 +53,7 @@ public class AssetList extends AppCompatActivity {
         listDialog.show();
         */
         fetchAssets();
+
     }
 
     private void fetchAssets() {
@@ -68,7 +69,7 @@ public class AssetList extends AppCompatActivity {
                     listAdapter = new CustomListAdapter(AssetList.this, response);
                     //attach adapter to listview
                     listview.setAdapter(listAdapter);
-
+                    findViewById(R.id.loadingPanel).setVisibility(View.GONE);
                     //listAdapter.notifyDataSetChanged();
                     //onclick listener to be use when user touches a view for more information,
                     //user then can update or delete view.

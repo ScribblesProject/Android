@@ -19,12 +19,26 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.util.Base64;
+import android.graphics.BitmapFactory;
+
+import android.net.Uri;
+import android.content.Context;
+import android.provider.MediaStore.Images.Media;
+import android.database.Cursor;
+
 
 import android.graphics.drawable.BitmapDrawable;
 import com.scribblesinc.tams.adapters.CustomAssetAdapter;
 import com.scribblesinc.tams.androidcustom.Item;
 import com.scribblesinc.tams.backendapi.Assets;
+
+import java.io.File;
 import java.util.ArrayList;
+import java.io.ByteArrayOutputStream;
+
+
 
 
 
@@ -50,6 +64,12 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private String assetType = null;
     private Bitmap assetMedia_image =null;
     private String assetMedia_voice = null;
+    private String convertedMedia_image = null;
+    private Uri uriTest = null;
+    private File fileTest = null;
+
+    String testImagePath = null;
+
 
     //Variables to control context menu for Type, Category on long press hold on view for
     //type and category.
@@ -72,6 +92,10 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         *  class in addition to parent's class*/
         super.onCreate(savedInstanceState);
         // activity class creates window
+        if (savedInstanceState != null) {
+            onRotate(savedInstanceState);
+
+        }
         setContentView(R.layout.activity_asset_add);
         // Instantiating the toolbar of adding asset activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -88,6 +112,14 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         listView = (ListView) findViewById(R.id.listView_aa);
         // setListAdapter aka assign adapter to listview
         listView.setAdapter(adapter);
+
+        if(assetMedia_image != null){
+            //this is kinda sloppy, but lets see if it works
+            adapter.setBitMap(assetMedia_image);
+            //setListAdapter aka assign adapter to listview
+            listView.setAdapter(adapter);
+
+        }
 
 
         //creating a contextmenu for listview
@@ -303,13 +335,23 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
             case 1://Image //requestCode for image is 1
              //  System.out.println("RQC: " + requestCode + " RC: " + resultCode);
 
-                    //ImageView imgTestView = (ImageView) this.findViewById(R.id.background_test);
-                    //imgTestView.setImageResource(adapter.getItem(0).getIcon());
-                    ///*
+
                     Bundle extras = data.getExtras();
                     assetMedia_image = (Bitmap) extras.get("data");
-                    //listView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
-                    adapter.setBitMap(assetMedia_image);
+
+
+                    //int width = listView.getWidth();
+                    //int height = listView.getHeight();
+                    //if(height>width){assetMedia_image = RotateBitmap(assetMedia_image, 90);}
+
+                    convertedMedia_image = BitMapToString(assetMedia_image);
+
+                    Uri testImageUri = data.getData();
+                    String testImagePath = getRealPathFromURI(testImageUri);
+
+                    System.out.println(testImagePath);
+                    adapter.setPath(testImagePath);
+                    //adapter.setBitMap(assetMedia_image);
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
@@ -346,6 +388,90 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         getMenuInflater().inflate(R.menu.menu_add_asset, menu);
         return true;
     }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putString("Name", assetName);
+        savedInstanceState.putString("Description", assetDescription);
+        savedInstanceState.putString("Type", assetType);
+        savedInstanceState.putString("Category", assetCategory_Description);
+        savedInstanceState.putString("Path", testImagePath);
+        savedInstanceState.putString("Bitmap", convertedMedia_image);
+        savedInstanceState.putString("Voice", assetMedia_voice);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRotate(Bundle savedInstanceState){
+        assetName = savedInstanceState.getString("Name");
+        assetDescription = savedInstanceState.getString("Description");
+        assetType = savedInstanceState.getString("Type");
+        assetCategory_Description = savedInstanceState.getString("Category");
+        convertedMedia_image = savedInstanceState.getString("Bitmap");
+        assetMedia_image = StringToBitMap(convertedMedia_image);
+        assetMedia_voice = savedInstanceState.getString("Voice");
+        testImagePath = savedInstanceState.getString("Path");
+    }
+    public static Bitmap RotateBitmap(Bitmap source, float angle)
+    {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    public String BitMapToString(Bitmap bitmap){
+        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
+        byte [] b=baos.toByteArray();
+        String temp=Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+    public Bitmap StringToBitMap(String encodedString){
+        try {
+            byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
+            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch(Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+
+    /*
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
+    }
+    */
+
+    public String getRealPathFromURI(Uri contentUri)
+    {
+        try
+        {
+            String[] proj = {MediaStore.Images.Media.DATA};
+            Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        }
+        catch (Exception e)
+        {
+            return contentUri.getPath();
+        }
+    }
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
