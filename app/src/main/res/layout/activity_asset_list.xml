@@ -7,6 +7,18 @@
     android:fitsSystemWindows="true"
     tools:context="com.scribblesinc.tams.AssetList">
 
+    <RelativeLayout
+        android:id="@+id/loadingPanel"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+    </RelativeLayout>
+
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,3 +36,4 @@
     <include layout="@layout/content_asset_list" />
 
 </android.support.design.widget.CoordinatorLayout>
+

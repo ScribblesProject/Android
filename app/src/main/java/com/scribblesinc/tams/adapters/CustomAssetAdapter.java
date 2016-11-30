@@ -1,22 +1,30 @@
 package com.scribblesinc.tams.adapters;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.view.ViewGroup.LayoutParams;
+import java.io.File;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
 
 
-import android.graphics.drawable.BitmapDrawable;
+
 
 import com.scribblesinc.tams.R;
 import com.scribblesinc.tams.androidcustom.Item;
+
+import static android.R.attr.bitmap;
+
 /**
  * Created by Joel on 10/26/2016.
  */
@@ -26,6 +34,10 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
     private final Context context;
     private final ArrayList<Item> itemsArrayList;
     private Bitmap ImageBitmap;
+    //private File backgroundFile;
+    private String TestString;
+    private int height;
+    private int width;
 
     public CustomAssetAdapter(Context context, ArrayList<Item> itemsArrayList){
         super(context, R.layout.content_asset_add,itemsArrayList);
@@ -44,9 +56,19 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
             //get rowView from inflater
             convertView = myinflater.inflate(R.layout.content_asset_add, parent, false);
 
-            if(position == 0 && ImageBitmap != null){                convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
+            if(position == 0){
+                //  LayoutParams params = convertView.getLayoutParams();
+                //params.height = 180;
+                //convertView.setLayoutParams(params);
+                if(ImageBitmap != null) {
+                    convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
+                }
+                if(TestString != null) {
+                    Bitmap b = BitmapFactory.decodeFile(TestString);
+                    Bitmap.createScaledBitmap(b, 300, 150, false);
+                    convertView.setBackground(new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(b, 240, 120, false)));
+                }
 
-                System.out.println("made it to getView test");
             }
 
             //Get the two text view from the rowView
@@ -95,4 +117,5 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
         ImageBitmap = imageBitmap;
     }
 
+    public void setPath(String Path){TestString = Path; }
 }
