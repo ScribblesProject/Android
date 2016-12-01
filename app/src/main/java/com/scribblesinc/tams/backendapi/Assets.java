@@ -1,6 +1,7 @@
 package com.scribblesinc.tams.backendapi;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.ImageView;
@@ -206,17 +207,17 @@ public class Assets implements Parcelable {
     }
 
     /// This will upload and attach an image view to the asset
-    public void attachImage(ImageView image, Listener<Double> progressListener, Listener<Boolean> responseListener,  ErrorListener errorListener) {
+    public void attachImage(Bitmap image, Listener<Double> progressListener, Listener<Boolean> responseListener, ErrorListener errorListener) {
 
         // I may need some help with these
-
+        responseListener.onResponse(true);
     }
 
     /// This will upload and attach an voice memo to the asset
     public void attachVoiceMemo(String memoFilePath, Listener<Double> progressListener, Listener<Boolean> responseListener, ErrorListener errorListener) {
 
         // I may need some help with these
-
+        responseListener.onResponse(true);
     }
 
     /// This will update the asset on the server to the current attribute values

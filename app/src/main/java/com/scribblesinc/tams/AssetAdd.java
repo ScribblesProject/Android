@@ -3,9 +3,14 @@ package com.scribblesinc.tams;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 import android.view.ContextMenu;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,27 +24,29 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.graphics.Bitmap;
-import android.graphics.Matrix;
-import android.util.Base64;
-import android.graphics.BitmapFactory;
-
-import android.net.Uri;
-import android.content.Context;
 import android.provider.MediaStore.Images.Media;
-import android.database.Cursor;
 
 
-import android.graphics.drawable.BitmapDrawable;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.scribblesinc.tams.adapters.CustomAssetAdapter;
+import com.scribblesinc.tams.adapters.CustomListAdapter;
 import com.scribblesinc.tams.androidcustom.Item;
+import com.scribblesinc.tams.backendapi.AssetCategory;
+import com.scribblesinc.tams.backendapi.AssetLocation;
+import com.scribblesinc.tams.backendapi.AssetType;
 import com.scribblesinc.tams.backendapi.Assets;
+import com.scribblesinc.tams.network.HttpJSON;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.io.ByteArrayOutputStream;
-
-
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class AssetAdd extends AppCompatActivity {//AppCompatActivity
@@ -51,31 +58,40 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private ImageView imageView;
 
     private static final int REQUEST_CAMERA = 200;//variable use for permission checking
-    //Variables Constant to be use for intent across activites
+    //Variables Constant to be use for handling data across information
     private static final String ARRAY_LIST = "com.scribblesinc.tams";//variable use for intent receivng of information
     private static final String REC_AUDIO = "com.scribblesinc.tams";
     private static final String ASSET_TITLE = "com.scribblesinc.tams";
     private static final String ASSET_NOTES = "com.scribblesinc.tams";
 
     //list of variables to be use for asset class
-    private String assetName = null;
-    private String assetDescription = null;
-    private String assetCategory_Description= null;
-    private String assetType = null;
-    private Bitmap assetMedia_image =null;
+
+    // NOTE: THIS INFO IS ALREADY CONTAINED IN asset variable. NO NEED TO STORE IT AGAIN
+    // JUST UPDATE THE ASSET CLASS AS NEEDED, WHEN READY TO COMMIT CHANGES CALL asset.update(...)
+
+    private Bitmap assetMedia_image = null;
     private String assetMedia_voice = null;
-    private String convertedMedia_image = null;
-    private Uri uriTest = null;
-    private File fileTest = null;
-
-    String testImagePath = null;
-
+    private Bitmap fullrezMedia = null;
 
     //Variables to control context menu for Type, Category on long press hold on view for
     //type and category.
-     private int isContextMenu = 0;
-    private int CATEGORYPOSITION = 2;
-    private int TYPEPOSITION= 3;
+    private boolean isContextMenu;
+
+    private int CATEGORYPOSITION = 2;//position of category
+    private int TYPEPOSITION = 3;//position of Type
+    private boolean isAssetExist = false;//if user is looking at an existing
+    private boolean isType;
+    //storing if any of the fields has been modified
+    private boolean isDescriptionModified = false;
+    private boolean isImageModified = false;
+    private boolean isAudioModified = false;
+    private boolean isTitleModified = false;
+    private String convertedBitmap;
+    private String testVoicePath;
+    private Uri testVoiceURI;
+    private String assetCategory;
+    private String categoryDescription;
+    private String Type;
 
 
     //list of items that adapter will use to populate listview
@@ -83,6 +99,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     //Class for storing data inserted by user
     private Assets asset;
+    private AssetCategory assetcategory;
+
     //Declaring intent to be use
     private Intent intent;
 
@@ -92,16 +110,13 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         *  class in addition to parent's class*/
         super.onCreate(savedInstanceState);
         // activity class creates window
-        if (savedInstanceState != null) {
-            onRotate(savedInstanceState);
 
-        }
         setContentView(R.layout.activity_asset_add);
         // Instantiating the toolbar of adding asset activity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         //gets action bar that's supported if null
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
@@ -109,95 +124,92 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         // pass context and data to the custom adapter
         adapter = new CustomAssetAdapter(this, generateData());
         // Get ListView from content_asset_add
-        listView = (ListView) findViewById(R.id.listView_aa);
-        // setListAdapter aka assign adapter to listview
-        listView.setAdapter(adapter);
 
-        if(assetMedia_image != null){
-            //this is kinda sloppy, but lets see if it works
-            adapter.setBitMap(assetMedia_image);
-            //setListAdapter aka assign adapter to listview
-            listView.setAdapter(adapter);
+        listView = (ListView) findViewById(R.id.listView_aa);
+        if (savedInstanceState != null) {
+            onRotate(savedInstanceState);
+
 
         }
+        if(assetMedia_image != null){
+            adapter.setBitMap(assetMedia_image);
+        }
+
+        // setListAdapter aka assign adapter to listview
+        listView.setAdapter(adapter);
 
 
         //creating a contextmenu for listview
         this.registerForContextMenu(listView);
 
         //if activity is called via intent
-        if(getCallingActivity() != null){
+        if (getCallingActivity() != null) {
+            isAssetExist = true;
             //if activity is called via intent, update activity with information sent
             updateList();
         }
 
-
-
-
-
         //OnItemClickListener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
 
-                //switch state to change accordingly based on user selection
-                switch(position){
-                    case 0: //camera
-                        //do permission checking
-                        ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
-                        break;
-                    case 1://name
-                        newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
-                        newActivity.putExtra(ASSET_TITLE,assetName);
-                        startActivityForResult(newActivity,0);//upon return go t given requestCode
-                        break;
-                    case 2://category
-                        isContextMenu = position;//int position to point if user selected type or category view
-                        view.showContextMenu();
-                        break;
-                    case 3://type
-                        isContextMenu = position;
-                        view.showContextMenu();
-                        break;
-                    case 4://location
-                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show();
-                        break;
-                    case 5://voice memo
-                         newActivity = new Intent(AssetAdd.this,AudioCapture.class);
-                        //send assetMedia_voice to allow user to play or record a new audio
-                        newActivity.putExtra(REC_AUDIO,assetMedia_voice);
-                        startActivityForResult(newActivity,5);
-                        break;
-                    case 6://description
-                        newActivity = new Intent(AssetAdd.this, NotesCapture.class);
-                        newActivity.putExtra(ASSET_NOTES,assetDescription);
-                        startActivityForResult(newActivity,6);
-                        break;
-                    default:
-                        Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id+"not present",Toast.LENGTH_LONG).show();
-                        break;
-                }
+                                                //switch state to change accordingly based on user selection
+                                                switch (position) {
+                                                    case 0: //camera
+                                                        //do permission checking
+                                                        ActivityCompat.requestPermissions(AssetAdd.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA);
+                                                        break;
+                                                    case 1://name
+                                                        newActivity = new Intent(AssetAdd.this, TitleofAsset.class);
+                                                        newActivity.putExtra(ASSET_TITLE, adapter.getItem(1).getDescription());
+                                                        startActivityForResult(newActivity, 0);//upon return go t given requestCode
+                                                        break;
+                                                    case 2://category
+                                                        view.showContextMenu();
+                                                        break;
+                                                    case 3://type
+                                                        view.showContextMenu();
+                                                        break;
+                                                    case 4://location
+                                                        Toast.makeText(getApplicationContext(), "Posi:" + position + "and" + "Id" + id, Toast.LENGTH_LONG).show();
+                                                        break;
+                                                    case 5://voice memo
+                                                        newActivity = new Intent(AssetAdd.this, AudioCapture.class);
+                                                        //send assetMedia_voice to allow user to play or record a new audio
+                                                        newActivity.putExtra(REC_AUDIO, assetMedia_voice);
+                                                        startActivityForResult(newActivity, 5);
+                                                        break;
+                                                    case 6://description
+                                                        newActivity = new Intent(AssetAdd.this, NotesCapture.class);
+                                                        newActivity.putExtra(ASSET_NOTES, adapter.getItem(6).getDescription());
+                                                        startActivityForResult(newActivity, 6);
+                                                        break;
+                                                    default:
+                                                        Toast.makeText(getApplicationContext(), "Posi:" + position + "and" + "Id" + id + "not present", Toast.LENGTH_LONG).show();
+                                                        break;
+                                                }
 
-                }
-            }
+                                            }
+                                        }
 
         );//end of OnItemClickListener
     }//end of onCreate
 
     /*handle the permissions request response*/
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull  int[] grantResults){
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
 
         //start audio recording
-        if(requestCode == REQUEST_CAMERA) {
+        if (requestCode == REQUEST_CAMERA) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 Toast.makeText(getApplicationContext(), "App has microphone capturing permission", Toast.LENGTH_LONG).show();
                 newActivity = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(newActivity,1);
+                startActivityForResult(newActivity, 1);
             } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(AssetAdd.this, Manifest.permission.CAMERA)) {
                     //explain user need of permission
-                    Toast.makeText(getApplicationContext(),"Audio Capturing Permission Required", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Audio Capturing Permission Required", Toast.LENGTH_LONG).show();
 
                 } else {
                     //Don't ask again for permission, handle rest of app without this permisson
@@ -214,47 +226,71 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuinfo) {
-        super.onCreateContextMenu(menu,v,menuinfo);
-        if(isContextMenu==CATEGORYPOSITION) { // menu shown based on type of view selected
+        super.onCreateContextMenu(menu, v, menuinfo);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuinfo;
+        //Create a context menu only when one of these two view positions are press
+
+        if (info.position == CATEGORYPOSITION) { // menu shown based on type of view selected
             //contextual menu if catorogy view is selected
-            getMenuInflater().inflate(R.menu.menu_context_category, menu);
-        }else if(isContextMenu==TYPEPOSITION){
-            getMenuInflater().inflate(R.menu.menu_context_type,menu);
+            // getMenuInflater().inflate(R.menu.menu_context_category, menu);
+
+            //create context menu
+            listCategory(menu,v);
+
+
+
+
+
+
+            //maybe a for loop
+            isType = false;
         }
-        //Reset value to zero to stop it from activating when user selects other views, not mentioned above
-        isContextMenu = 0;
+        if(info.position==TYPEPOSITION){
+            getMenuInflater().inflate(R.menu.menu_context_type, menu);
+            isType = true;
+        }
     }
 
     /* When the user selects a menu item  from contextmenu, the system calls
-    *  this method so the appropriate action can be perform*/
+        *  this method so the appropriate action can be perform*/
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         int id = item.getItemId();
+
         /*Depending on user choice between category or type choice, changes are different*/
-        if(isContextMenu==CATEGORYPOSITION) {
+        if (!isType) {
+
+            /*
+            Toast.makeText(getApplicationContext(), "Category", Toast.LENGTH_LONG).show();
             //user click on category view
+            String newCategory = null;
+
             if (id == R.id.stop_light) {
-                assetCategory_Description = "stop light";
+                newCategory = "stop light";
             }
             if (id == R.id.road_sign) {
-                assetCategory_Description = "road sign";
-
+                newCategory = "road sign";
             }
 
-            adapter.getItem(2).setDescription(assetCategory_Description);
+            adapter.getItem(2).setDescription(newCategory);
             listView.setAdapter(adapter);
             this.registerForContextMenu(listView);
             adapter.notifyDataSetChanged();
+            */
 
-        }else if(isContextMenu==TYPEPOSITION){
+        } else  {
+            Toast.makeText(getApplicationContext(), "TYPE", Toast.LENGTH_LONG).show();
+            String newType = null;
+
             //in the type contextual menu
-            if (id == R.id.caution_sign){
-                assetType = "caution sign";
+            if (id == R.id.caution_sign) {
+                newType = "caution sign";
             }
             if (id == R.id.traffic_sign) {
-                assetType = "traffic sign";
+                newType = "traffic sign";
             }
-            adapter.getItem(3).setDescription(assetType);
+
+            adapter.getItem(3).setDescription(newType);
             listView.setAdapter(adapter);
             this.registerForContextMenu(listView);
             adapter.notifyDataSetChanged();
@@ -265,44 +301,47 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     }
 
     /* The list of items generated to be added to ListView*/
-    private ArrayList<Item>generateData() {
-       // ArrayList<Item> items = new ArrayList<>();
-        items.add(new Item("Image","Image of Asset",R.drawable.ic_camera_alt));
-        items.add(new Item("Name", assetName));
-        items.add(new Item("AssetCategory",assetCategory_Description));
-        items.add(new Item("Type",assetType));
-        items.add(new Item("AssetLocation","Asset location"));
-        items.add(new Item("Voice Memo","Record Voice Memo",R.drawable.ic_mic));
-        items.add(new Item("Description", assetDescription));
-        items.add(new Item(" "," "));//empty item to permit scrolling
+    private ArrayList<Item> generateData() {
+
+        // Data populated onCreate in updateList
+
+        // ArrayList<Item> items = new ArrayList<>();
+        items.add(new Item("Image", "Image of Asset", R.drawable.ic_camera_alt));
+        items.add(new Item("Name", null));
+        items.add(new Item("AssetCategory", null));
+        items.add(new Item("Type", null));
+        items.add(new Item("AssetLocation", "Asset location"));
+        items.add(new Item("Voice Memo", "Record Voice Memo", R.drawable.ic_mic));
+        items.add(new Item("Description", null));
+        items.add(new Item(" ", " "));//empty item to permit scrolling
 
         return items;
     }
-  /*method use to update list when user click on a row view in assetList */
-    private void updateList(){
+
+    /*method use to update list when user click on a row view in assetList */
+    private void updateList() {
         //Reading from intent AssetList when user wants to update or Delete asset
         Intent testIntent = getIntent();
         asset = (Assets) getIntent().getParcelableExtra(ARRAY_LIST);
-        if(asset != null){
+        if (asset != null) {
             //Store data
-             assetName = asset.getName();
-             assetDescription = asset.getDescription();
-             assetCategory_Description= null;
-             assetType = null;
-             assetMedia_image = null;
-             assetMedia_voice = asset.getMedia_voice_url();
+            assetMedia_image = null;
+            assetMedia_voice = asset.getMedia_voice_url();
+
+
 
 
 
             // populating activity's listview
             adapter.getItem(1).setDescription(asset.getName());
+            adapter.getItem(2).setDescription(asset.getCategory());
+            adapter.getItem(3).setDescription(asset.getAsset_type());
             adapter.getItem(6).setDescription(asset.getDescription());
 
             //update listview with new values.
             listView.setAdapter(adapter);
 
             this.registerForContextMenu(listView);
-
         }
     }
 
@@ -319,10 +358,16 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         switch (requestCode) {
             case 0://Name
                 //gets the title from the key that was passed by the activity in TitleofAsset
-                if(data !=null) {
-                    assetName = data.getStringExtra(ASSET_TITLE);
+                if (data != null) {
+                    //check if description has been modified
+                    if(adapter.getItem(1).getDescription() != null) {//if description is not null
+                        if (adapter.getItem(1).getDescription().compareTo(data.getStringExtra(ASSET_TITLE)) != 0) {//data has been modified
+                            this.isTitleModified = true;
+                        }
+                    }
+
                     //gets the item at index 1 (the description of the title) and changes it
-                    adapter.getItem(1).setDescription(assetName);
+                    adapter.getItem(1).setDescription(data.getStringExtra(ASSET_TITLE));
                     adapter.notifyDataSetChanged();
 
                     //setListAdapter aka assign adapter to listview
@@ -333,43 +378,59 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                 break;
 
             case 1://Image //requestCode for image is 1
-             //  System.out.println("RQC: " + requestCode + " RC: " + resultCode);
 
 
+                if(data != null) {
                     Bundle extras = data.getExtras();
+                    //get thumbnail from data
                     assetMedia_image = (Bitmap) extras.get("data");
 
 
-                    //int width = listView.getWidth();
-                    //int height = listView.getHeight();
-                    //if(height>width){assetMedia_image = RotateBitmap(assetMedia_image, 90);}
+                    //time to rotate if needed.
+                    int width = listView.getWidth();
+                    int height = listView.getHeight();
+                    if(height>width){
+                        assetMedia_image = RotateBitmap(assetMedia_image, 90);
+                    }
 
-                    convertedMedia_image = BitMapToString(assetMedia_image);
 
+
+                    //give adapter bitmap.
+                    adapter.setBitMap(assetMedia_image);
+                    convertedBitmap = BitMapToString(assetMedia_image);
+
+                    //here we get the full sized image for later
                     Uri testImageUri = data.getData();
                     String testImagePath = getRealPathFromURI(testImageUri);
+                    fullrezMedia = BitmapFactory.decodeFile(testImagePath);
 
-                    System.out.println(testImagePath);
-                    adapter.setPath(testImagePath);
-                    //adapter.setBitMap(assetMedia_image);
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
                     this.registerForContextMenu(listView);
-
-
+                }
                 break;
             case 5://Audio recording
-                if(data!=null)
+                if (data != null)
                     //save data brought from the audio activity
                     assetMedia_voice = data.getStringExtra(REC_AUDIO);
+                    testVoiceURI = data.getData();
+
+
+
                 break;
             case 6://notes
                 if (data != null) { // data can be null if back button is pressed!!!
-                    //gets the title from the key that was passed by the activity in TitleofAsset
-                    assetDescription = data.getStringExtra(ASSET_NOTES);
+
+                    //check if description has been modified
+                    if(adapter.getItem(6).getDescription() != null) {//if description is not null
+                        if (adapter.getItem(6).getDescription().compareTo(data.getStringExtra(ASSET_NOTES)) != 0) {
+                            this.isDescriptionModified = true;//data has been modified
+                        }
+                    }
+
                     //gets the item at index 1 (the description of the title) and changes it
-                    adapter.getItem(6).setDescription(assetDescription);
+                    adapter.getItem(6).setDescription(data.getStringExtra(ASSET_NOTES));
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
                     //creating a contextmeny for listview
@@ -385,93 +446,13 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_add_asset, menu);
+        if (!isAssetExist) {
+            getMenuInflater().inflate(R.menu.menu_add_asset, menu);
+        } else {
+            getMenuInflater().inflate(R.menu.menu_asset_modify, menu);
+        }
         return true;
     }
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        // Save the user's current game state
-        savedInstanceState.putString("Name", assetName);
-        savedInstanceState.putString("Description", assetDescription);
-        savedInstanceState.putString("Type", assetType);
-        savedInstanceState.putString("Category", assetCategory_Description);
-        savedInstanceState.putString("Path", testImagePath);
-        savedInstanceState.putString("Bitmap", convertedMedia_image);
-        savedInstanceState.putString("Voice", assetMedia_voice);
-
-        // Always call the superclass so it can save the view hierarchy state
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    public void onRotate(Bundle savedInstanceState){
-        assetName = savedInstanceState.getString("Name");
-        assetDescription = savedInstanceState.getString("Description");
-        assetType = savedInstanceState.getString("Type");
-        assetCategory_Description = savedInstanceState.getString("Category");
-        convertedMedia_image = savedInstanceState.getString("Bitmap");
-        assetMedia_image = StringToBitMap(convertedMedia_image);
-        assetMedia_voice = savedInstanceState.getString("Voice");
-        testImagePath = savedInstanceState.getString("Path");
-    }
-    public static Bitmap RotateBitmap(Bitmap source, float angle)
-    {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(angle);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
-    }
-
-    public String BitMapToString(Bitmap bitmap){
-        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] b=baos.toByteArray();
-        String temp=Base64.encodeToString(b, Base64.DEFAULT);
-        return temp;
-    }
-    public Bitmap StringToBitMap(String encodedString){
-        try {
-            byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
-            Bitmap bitmap=BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-            return bitmap;
-        } catch(Exception e) {
-            e.getMessage();
-            return null;
-        }
-    }
-
-    /*
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-    public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
-    }
-    */
-
-    public String getRealPathFromURI(Uri contentUri)
-    {
-        try
-        {
-            String[] proj = {MediaStore.Images.Media.DATA};
-            Cursor cursor = managedQuery(contentUri, proj, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            return cursor.getString(column_index);
-        }
-        catch (Exception e)
-        {
-            return contentUri.getPath();
-        }
-    }
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -480,22 +461,408 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         *  as you specify a parent activity in AndroidManifest.xml.*/
         int id = item.getItemId();
         // if the back button is pressed
-        if(id == android.R.id.home) {
+        if (id == android.R.id.home) {
             finish(); //goes back to the previous activity
         }
         // when the filter button is pressed
-        if(id == R.id.action_done) {
-            Toast.makeText(getApplicationContext(), "Not working ", Toast.LENGTH_SHORT).show();
+        if (id == R.id.action_create) {
+            assetToCreate();
         }
         // resets the asset being created
 
-        if(id == R.id.action_reset){
+        if (id == R.id.action_reset) {
             Intent intent = new Intent(this, AssetAdd.class);
             startActivity(intent);
             finish(); // This opens a new AssetAdd and closes the current one.
 
         }
+        if (id == R.id.action_update) {
+            assetToUpdate();
+        }
+        if (id == R.id.action_delete) {
+            assetToDelete();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    //methods category and type implementation
+    public void listCategory(ContextMenu menu, View v) {
+
+
+        AssetCategory.list(new Response.Listener<ArrayList<AssetCategory>>() {
+            public void onResponse(final ArrayList<AssetCategory>response){
+                if(response !=null){
+                    Toast.makeText(getApplicationContext(),response.toString(),Toast.LENGTH_LONG).show();
+
+
+
+                }
+            }
+        },null);
+    }
+    /*
+    public void listType(ContextMenu menu, View v){
+
+        AssetType.list(asset.getCategory_id() , new Response.Listener<ArrayList<AssetType>>() {
+            public void onResponse(final ArrayList<AssetType>response){
+                if(response !=null){
+                    Toast.makeText(getApplicationContext(),response.toString(),Toast.LENGTH_LONG).show();
+
+
+                }
+            }
+        },null);
+    }
+    */
+    //methods to delete and update asset
+    public void assetToDelete() {
+
+        if (asset == null) {
+            Toast.makeText(getApplicationContext(), "Error! Asset Does Not Exist!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        asset.delete(new Response.Listener<Boolean>() {
+            @Override
+            public void onResponse(Boolean success) {
+                //SUCCESS!!!
+                Toast.makeText(getApplicationContext(), "ASSET DELETED SUCCESSFULLY!!!!!!!", Toast.LENGTH_LONG).show();
+                dismissView();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                String errorMessage = "Error Deleting Asset! Message: " + error.getMessage();
+                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    public String BitMapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String temp = Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+    public String getRealPathFromURI(Uri contentUri) {
+        try {
+            //String[] proj = {Media.DATA};
+            //Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+            String[] proj = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            return contentUri.getPath();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putString("Name", adapter.getItem(1).getDescription());
+        savedInstanceState.putString("Description", adapter.getItem(6).getDescription());
+        savedInstanceState.putString("Type", adapter.getItem(3).getDescription());
+        savedInstanceState.putString("Category", adapter.getItem(2).getDescription());
+        savedInstanceState.putString("Bitmap", convertedBitmap);
+
+        savedInstanceState.putString("Voice", assetMedia_voice);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRotate(Bundle savedInstanceState) {
+        adapter.getItem(1).setDescription(savedInstanceState.getString("Name"));
+        adapter.getItem(6).setDescription(savedInstanceState.getString("Description"));
+        adapter.getItem(2).setDescription(savedInstanceState.getString("Category"));
+        adapter.getItem(3).setDescription(savedInstanceState.getString("Type"));
+
+        convertedBitmap = savedInstanceState.getString("Bitmap");
+        assetMedia_image = StringToBitMap(convertedBitmap);
+        assetMedia_voice = savedInstanceState.getString("Voice");
+
+
+    }
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            // Log exception
+            return null;
+        }
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+
+
+    public void assetToCreate() {
+        //Pull info from fields
+        String name = adapter.getItem(1).getDescription();
+        String category = adapter.getItem(2).getDescription();
+        String categoryDescription = null;
+        String typeName = adapter.getItem(3).getDescription();
+        String description = adapter.getItem(6).getDescription();
+        ArrayList<AssetLocation> locations = new ArrayList<AssetLocation>();
+
+        //Validate
+        if (name == null || description == null) {
+            Toast.makeText(getApplicationContext(), "ERROR - name or description is empty.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //Set default values for null
+        category = (category != null) ? category : "uncategorized";
+        categoryDescription = (categoryDescription != null) ? categoryDescription : "na";
+        typeName = (typeName != null) ? typeName : "uncategorized";
+
+
+        Assets.create(name, description, category, categoryDescription, typeName, locations, new Response.Listener<Long>() {
+            @Override
+            public void onResponse(Long newAssetId) {
+                if (newAssetId > 0) {
+                    //SUCCESS
+                    Toast.makeText(getApplicationContext(), "SUCCESS!!", Toast.LENGTH_LONG).show();
+                    dismissView();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Unable to create asset! " + error.toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void assetToUpdate() {
+
+        if (asset == null) {
+            Toast.makeText(getApplicationContext(), "Error! Asset Does Not Exist!", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //Pull info from fields
+        String name = adapter.getItem(1).getDescription();
+        String category = adapter.getItem(2).getDescription();
+        String categoryDescription = null;
+        String typeName = adapter.getItem(3).getDescription();
+        String description = adapter.getItem(6).getDescription();
+        Map<String, AssetLocation> locations = new HashMap<String, AssetLocation>();
+
+        //Validate
+        if (name == null || description == null) {
+            Toast.makeText(getApplicationContext(), "ERROR - name or description is empty.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        //Set default values for null
+        category = (category != null) ? category : "uncategorized";
+        categoryDescription = (categoryDescription != null) ? categoryDescription : "na";
+        typeName = (typeName != null) ? typeName : "uncategorized";
+
+        //Pull info out of fields
+        asset.setName(name);
+        asset.setCategory(category);
+        asset.setAsset_type( typeName );
+        asset.setCategory_description(categoryDescription);
+        asset.setDescription( description );
+        asset.setLocations(locations);
+
+        //Update the asset
+        asset.update(new Response.Listener<Boolean>() {
+            @Override
+            public void onResponse(Boolean success) {
+                if (success)
+                {
+                    //Upload image & voice. Progress Updates & Errors handled in respective functions.
+                    updateAssetMedia(new Response.Listener<Boolean>() {
+                        @Override
+                        public void onResponse(Boolean success) {
+                            if (success)
+                            {
+                                Toast.makeText(getApplicationContext(), "SUCCESS!!!", Toast.LENGTH_LONG).show();
+                                dismissView();
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Unable to update aasset! An unknown error occurred!", Toast.LENGTH_LONG).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //ERROR!!!!
+                String errorMessage = "Error Updating Asset! Message: " + error.getMessage();
+                Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+
+    }
+
+    //Error Messages produced in individual
+    public void updateAssetMedia(final Response.Listener<Boolean> listener)
+    {
+        uploadImageIfNeeded(new Response.Listener<Boolean>() {
+            @Override
+            public void onResponse(final Boolean imageSuccess) {
+
+                uploadMemoIfNeeded(new Response.Listener<Boolean>() {
+                    @Override
+                    public void onResponse(Boolean memoSuccess) {
+
+                        if (listener != null) {
+                            listener.onResponse( imageSuccess && memoSuccess );
+                        }
+                    }
+                });
+            }
+        });
+
+    }
+
+    public void uploadImageIfNeeded(final Response.Listener<Boolean> listener)
+    {
+        if (imageWasModified())
+        {
+            //NOTE: The attachImage method hasnt been implemented. Lets work on this together.
+            // We can change this parameter type to bitmap or w/e.. so long as I can get it into raw bytes.
+
+            ImageView image = null;
+            asset.attachImage(assetMedia_image, new Response.Listener<Double>() {
+                @Override
+                public void onResponse(Double progress) {
+                    //UPDATE PROGRESS BAR
+                }
+            }, new Response.Listener<Boolean>() {
+                @Override
+                public void onResponse(Boolean success) {
+                    if (!success) {
+                        String errorMessage = "Error Uploading Asset Image! Unknown Error";
+                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    }
+
+                    if (listener != null) {
+                        listener.onResponse(success);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    String errorMessage = "Error Uploading Asset Image! Message: " + error.getMessage();
+                    Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+
+                    if (listener != null) {
+                        listener.onResponse(false);
+                    }
+                }
+            });
+        }
+        else {
+            //If no modifications, success.
+            if (listener != null) {
+                listener.onResponse(true);
+            }
+        }
+    }
+
+    public void uploadMemoIfNeeded(final Response.Listener<Boolean> listener)
+    {
+        if (memoWasModified())
+        {
+            //NOTE: The attachMemo method hasnt been implemented. Lets work on this together.
+
+            String newMemoFilePath = null;
+            asset.attachVoiceMemo(newMemoFilePath, new Response.Listener<Double>() {
+                @Override
+                public void onResponse(Double progress) {
+                    //UPDATE PROGRESS BAR
+                }
+            }, new Response.Listener<Boolean>() {
+                @Override
+                public void onResponse(Boolean success) {
+                    if (!success) {
+                        String errorMessage = "Error Uploading Asset Memo! Unknown Error";
+                        Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+                    }
+
+                    if (listener != null) {
+                        listener.onResponse(success);
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    String errorMessage = "Error Uploading Asset Memo! Message: " + error.getMessage();
+                    Toast.makeText(getApplicationContext(), errorMessage, Toast.LENGTH_LONG).show();
+
+                    if (listener != null) {
+                        listener.onResponse(false);
+                    }
+                }
+            });
+        }
+        else {
+            if (listener != null) {
+                listener.onResponse(true);
+            }
+        }
+    }
+
+    public boolean titleWasModified(){
+        if(!isTitleModified) return false;
+        else return true;
+    }
+    public boolean audioWasModified(){
+        if(!isAudioModified) return false;
+        else return false;
+    }
+
+    //check if data has been modified
+    public boolean memoWasModified()
+    {
+        if(!isDescriptionModified)return false;
+        else return true;
+    }
+
+    //check is data has been modified--WORK IN PROGESS
+    public boolean imageWasModified()
+    {
+        if(!isImageModified) return false;
+        else return false;
+    }
+
+    public void dismissView()
+    {
+        this.finish();
     }
 }
