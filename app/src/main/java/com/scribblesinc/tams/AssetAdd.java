@@ -3,9 +3,14 @@ package com.scribblesinc.tams;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.util.Base64;
 import android.view.ContextMenu;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -19,7 +24,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 import android.graphics.Bitmap;
-
+import android.provider.MediaStore.Images.Media;
 import android.graphics.drawable.BitmapDrawable;
 
 import com.android.volley.Response;
@@ -32,6 +37,11 @@ import com.scribblesinc.tams.backendapi.AssetLocation;
 import com.scribblesinc.tams.backendapi.Assets;
 import com.scribblesinc.tams.network.HttpJSON;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -85,7 +95,10 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private String assetCategory = "";
     private String assetCategoryDescription = "";
     private String assetType = "";
-
+    private String convertedBitmap;
+    private String categoryDescription;
+    private String Type;
+    private Bitmap fullrezMedia;
 
     //list of items that adapter will use to populate listview
     ArrayList<Item> items = new ArrayList<>();
@@ -117,6 +130,17 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         adapter = new CustomAssetAdapter(this, generateData());
         // Get ListView from content_asset_add
         listView = (ListView) findViewById(R.id.listView_aa);
+        //this restores the stuff in case phone is rotated.
+        if (savedInstanceState != null) {
+            onRotate(savedInstanceState);
+
+
+        }
+        if(assetMedia_image != null){
+            adapter.setBitMap(assetMedia_image);
+        }
+
+
         // setListAdapter aka assign adapter to listview
         listView.setAdapter(adapter);
 
@@ -360,17 +384,35 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
             case 1://Image //requestCode for image is 1
 
-                //ImageView imgTestView = (ImageView) this.findViewById(R.id.background_test);
-                //imgTestView.setImageResource(adapter.getItem(0).getIcon());
-                ///*
-                Bundle extras = data.getExtras();
-                assetMedia_image = (Bitmap) extras.get("data");
-                //listView.setBackground(new BitmapDrawable(getResources(), imageBitmap));
-                adapter.setBitMap(assetMedia_image);
-                //setListAdapter aka assign adapter to listview
-                listView.setAdapter(adapter);
-                //creating a contextmeny for listview
-                this.registerForContextMenu(listView);
+                if(data != null) {
+                    Bundle extras = data.getExtras();
+                    //get thumbnail from data
+                    assetMedia_image = (Bitmap) extras.get("data");
+
+
+                    //time to rotate if needed.
+                    int width = listView.getWidth();
+                    int height = listView.getHeight();
+                    if(height>width){
+                        assetMedia_image = RotateBitmap(assetMedia_image, 90);
+                    }
+
+
+
+                    //give adapter bitmap.
+                    adapter.setBitMap(assetMedia_image);
+                    convertedBitmap = BitMapToString(assetMedia_image);
+
+                    //here we get the full sized image for later
+                    Uri testImageUri = data.getData();
+                    String testImagePath = getRealPathFromURI(testImageUri);
+                    fullrezMedia = BitmapFactory.decodeFile(testImagePath);
+
+                    //setListAdapter aka assign adapter to listview
+                    listView.setAdapter(adapter);
+                    //creating a contextmeny for listview
+                    this.registerForContextMenu(listView);
+                }
 
                 break;
             case 5://Audio recording
@@ -462,6 +504,86 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     }
     public void listType(){
 
+    }
+    public String BitMapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
+        String temp = Base64.encodeToString(b, Base64.DEFAULT);
+        return temp;
+    }
+
+    public Bitmap StringToBitMap(String encodedString) {
+        try {
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
+            return bitmap;
+        } catch (Exception e) {
+            e.getMessage();
+            return null;
+        }
+    }
+    public String getRealPathFromURI(Uri contentUri) {
+        try {
+            //String[] proj = {Media.DATA};
+            //Cursor cursor = managedQuery(contentUri, proj, null, null, null);
+            String[] proj = { MediaStore.Images.Media.DATA };
+            Cursor cursor = getContentResolver().query(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } catch (Exception e) {
+            return contentUri.getPath();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putString("Name", adapter.getItem(1).getDescription());
+        savedInstanceState.putString("Description", adapter.getItem(6).getDescription());
+        savedInstanceState.putString("Type", adapter.getItem(3).getDescription());
+        savedInstanceState.putString("Category", adapter.getItem(2).getDescription());
+        savedInstanceState.putString("Bitmap", convertedBitmap);
+
+        savedInstanceState.putString("Voice", assetMedia_voice);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void onRotate(Bundle savedInstanceState) {
+        adapter.getItem(1).setDescription(savedInstanceState.getString("Name"));
+        adapter.getItem(6).setDescription(savedInstanceState.getString("Description"));
+        adapter.getItem(2).setDescription(savedInstanceState.getString("Category"));
+        adapter.getItem(3).setDescription(savedInstanceState.getString("Type"));
+
+        convertedBitmap = savedInstanceState.getString("Bitmap");
+        assetMedia_image = StringToBitMap(convertedBitmap);
+        assetMedia_voice = savedInstanceState.getString("Voice");
+
+
+    }
+
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            // Log exception
+            return null;
+        }
+    }
+
+    public static Bitmap RotateBitmap(Bitmap source, float angle) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(angle);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
     //methods to delete and update asset
