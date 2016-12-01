@@ -16,5 +16,5 @@ public class CustomCategoryAdapter extends ArrayAdapter<AssetCategory> {
     public CustomCategoryAdapter(Context context, ArrayList<AssetCategory> assetCategories){
         super(context, R.layout.content_asset_add, assetCategories);
     }
-    
+
 }
