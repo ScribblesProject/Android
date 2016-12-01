@@ -82,7 +82,7 @@ public class AssetList extends AppCompatActivity {
                                                         public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
 
                                                             intent  = new Intent(AssetList.this,AssetAdd.class);
-                                                           intent.putExtra(ARRAY_LIST, response.get(position));
+                                                            intent.putExtra(ARRAY_LIST, response.get(position));
 
 
                                                             startActivityForResult(intent,1);
@@ -99,7 +99,7 @@ public class AssetList extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-            getMenuInflater().inflate(R.menu.menu_asset_list, menu);
+        getMenuInflater().inflate(R.menu.menu_asset_list, menu);
 
         return true;
     }
