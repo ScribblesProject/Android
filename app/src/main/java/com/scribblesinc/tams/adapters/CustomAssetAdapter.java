@@ -18,10 +18,11 @@ import java.util.ArrayList;
 import android.graphics.Bitmap;
 
 
-
-
+import com.android.volley.toolbox.ImageLoader;
 import com.scribblesinc.tams.R;
 import com.scribblesinc.tams.androidcustom.Item;
+import com.scribblesinc.tams.backendapi.Assets;
+import com.scribblesinc.tams.network.AppRequestManager;
 
 import static android.R.attr.bitmap;
 
@@ -34,10 +35,8 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
     private final Context context;
     private final ArrayList<Item> itemsArrayList;
     private Bitmap ImageBitmap;
-    //private File backgroundFile;
-    private String TestString;
-    private int height;
-    private int width;
+    private String URL;
+    ImageLoader imageloader = AppRequestManager.getInstance().getImageLoader();
 
     public CustomAssetAdapter(Context context, ArrayList<Item> itemsArrayList){
         super(context, R.layout.content_asset_add,itemsArrayList);
@@ -55,21 +54,24 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
             LayoutInflater myinflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             //get rowView from inflater
             convertView = myinflater.inflate(R.layout.content_asset_add, parent, false);
+        }
+
+        if(imageloader==null)
+            imageloader = AppRequestManager.getInstance().getImageLoader();
 
             if(position == 0){
-                //  LayoutParams params = convertView.getLayoutParams();
-                //params.height = 180;
-                //convertView.setLayoutParams(params);
+
                 if(ImageBitmap != null) {
                     convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
                 }
-                if(TestString != null) {
-                    Bitmap b = BitmapFactory.decodeFile(TestString);
-                    Bitmap.createScaledBitmap(b, 300, 150, false);
-                    convertView.setBackground(new BitmapDrawable(getContext().getResources(), Bitmap.createScaledBitmap(b, 240, 120, false)));
+                if(URL != null){
+                   // ImageBitmap = imageloader.getBitmap(URL);
                 }
 
             }
+
+
+
 
             //Get the two text view from the rowView
             // ImageView imageView_c = (ImageView) rowView.findViewById(R.id.mic_camera);
@@ -84,7 +86,7 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
             //imgTestView.setImageResource(itemsArrayList.get(position).getIcon());
             valueView.setText(itemsArrayList.get(position).getDescription());
             labelView.setText(itemsArrayList.get(position).getTitle());
-        }
+
         //return rowView
         return convertView;
     }
@@ -117,5 +119,5 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
         ImageBitmap = imageBitmap;
     }
 
-    public void setPath(String Path){TestString = Path; }
+    public void setURL(String URL){URL = URL;}
 }
