@@ -46,6 +46,12 @@ public class AssetList extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+
         /* want to show loading sign, but doing it here causes loading to go forever til touch
         //Showing progress dialog
         listDialog = new ProgressDialog(this);
@@ -54,7 +60,6 @@ public class AssetList extends AppCompatActivity {
         */
         fetchAssets();
     }
-
     private void fetchAssets() {
 
         Assets.list(new Response.Listener<ArrayList<Assets>>() {
@@ -64,7 +69,7 @@ public class AssetList extends AppCompatActivity {
                 if (response != null) {
                     //get view to be populated
                     listview = (ListView) findViewById(R.id.listView_al);
-                    //create the adapter for listview
+                    //create the adapter for listview based on response
                     listAdapter = new CustomListAdapter(AssetList.this, response);
                     //attach adapter to listview
                     listview.setAdapter(listAdapter);
@@ -79,9 +84,7 @@ public class AssetList extends AppCompatActivity {
                                                             intent  = new Intent(AssetList.this,AssetAdd.class);
                                                            intent.putExtra(ARRAY_LIST, response.get(position));
 
-                                                            //Toast.makeText(getApplicationContext(),response.get(position).toString(),Toast.LENGTH_LONG).show();
-                                                        //Toast.makeText(getApplicationContext(),"Posi:"+position+"and"+"Id"+id,Toast.LENGTH_LONG).show()
-                                                           //put data on intent -work in progress11
+
                                                             startActivityForResult(intent,1);
 
                                                         }
