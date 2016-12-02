@@ -94,7 +94,10 @@
         <activity
             android:name=".AssetFilter"
             android:label="@string/title_activity_asset_filter"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AssetFilterCategories"
+            android:label="@string/title_asset_filter_categories" />
     </application>
 
 </manifest>

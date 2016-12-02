@@ -1,6 +1,7 @@
 package com.scribblesinc.tams;
 
 import android.Manifest;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -31,6 +33,7 @@ import com.google.android.gms.location.LocationServices;
 //import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Marker mMarker;
     private boolean mRequestingLocationUpdates;
     private Toolbar toolbar;
+    private SupportMapFragment mapFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,8 +74,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .build();
         setContentView(R.layout.activity_main);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mapFragment.getView().setVisibility(View.INVISIBLE);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Asset Map");
@@ -125,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         getLocationPermission();
         mMap = googleMap;
-        populateMap(googleMap);
+        //populateMap(googleMap);
     }
 
     private void populateMap(final GoogleMap googleMap){
@@ -178,6 +184,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //Toast.makeText(MainActivity.this, "Map Connection Established", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        if(mMap != null){
+            populateMap(mMap);
+        }
+        //Toast.makeText(MainActivity.this, "Resumed", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        mMap.clear();
+        //Toast.makeText(MainActivity.this, "Paused", Toast.LENGTH_SHORT).show();
+    }
+
     private void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
@@ -209,15 +231,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onLocationChanged(Location location) {
+        if(mapFragment.getView().getVisibility() == View.INVISIBLE){
+            mapFragment.getView().setVisibility(View.VISIBLE);
+        }
+
         mLocationLatiudeText = String.valueOf(location.getLatitude());
         mLocationLongitudeText = String.valueOf(location.getLongitude());
         mLocationLatiude = location.getLatitude();
         mLocationLongitude = location.getLongitude();
         mLatLng = new LatLng(mLocationLatiude, mLocationLongitude);
 
-        if(mMarker != null) {
+        /*if(mMarker != null) {
             mMarker.remove();
-        }
+        }*/
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 15));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);

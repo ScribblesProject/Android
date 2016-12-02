@@ -9,12 +9,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class AssetFilter extends AppCompatActivity {
-    String[] categoryTypeArray = {"Category", "Type"};
+    String[] categoryTypeArray = {"Asset Category", "Asset Type"};
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,18 +40,33 @@ public class AssetFilter extends AppCompatActivity {
             }
         });*/
 
+        //Used to display the category and type listview entries
         ArrayAdapter adapter = new ArrayAdapter<String>(this,
                 R.layout.asset_filter_listview, categoryTypeArray);
 
         ListView listView = (ListView) findViewById(R.id.cat_types);
         listView.setAdapter(adapter);
+
+        //Listener to determine which options gets tapped
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                switch(position){
+                    case 0: //when Asset Category is tapped
+                        //Toast.makeText(getApplicationContext(), categoryTypeArray[position], Toast.LENGTH_LONG).show();
+                        intent = new Intent(getApplicationContext(), AssetFilterCategories.class);
+                        startActivity(intent);
+                        break;
+                    case 1: //when Asset Type is tapped
+                        Toast.makeText(getApplicationContext(), categoryTypeArray[position], Toast.LENGTH_LONG).show();
+                        break;
+                }
+            }
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //when the edit button is pressed

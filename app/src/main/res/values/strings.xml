@@ -11,6 +11,8 @@
     <string name="action_edit_asset">Edit</string>
     <string name="action_asset_list">Asset List</string>
     <string name="title_activity_asset_add">Add Asset</string>
+    <string name="title_asset_filter_categories">Asset Category</string>
+    <string name="title_select_location">Select Location</string>
 
     <string name="action_done">Done</string>
     <string name="action_reset">Reset</string>

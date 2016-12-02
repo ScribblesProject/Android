@@ -29,6 +29,7 @@ import android.graphics.drawable.BitmapDrawable;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.android.gms.wearable.Asset;
 import com.scribblesinc.tams.adapters.CustomAssetAdapter;
 import com.scribblesinc.tams.adapters.CustomListAdapter;
 import com.scribblesinc.tams.androidcustom.Item;
@@ -62,6 +63,8 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private static final String REC_AUDIO = "com.scribblesinc.tams";
     private static final String ASSET_TITLE = "com.scribblesinc.tams";
     private static final String ASSET_NOTES = "com.scribblesinc.tams";
+
+    private static final String ASSET_LOCATION = "com.scribblesinc.tams";
 
     //list of variables to be use for asset class
 
@@ -178,7 +181,14 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                                                         view.showContextMenu();
                                                         break;
                                                     case 4://location
-                                                        Toast.makeText(getApplicationContext(), "Posi:" + position + "and" + "Id" + id, Toast.LENGTH_LONG).show();
+                                                        //Toast.makeText(getApplicationContext(), "Posi:" + position + "and" + "Id" + id, Toast.LENGTH_LONG).show();
+                                                        newActivity = new Intent(AssetAdd.this, MainActivity.class);
+                                                        newActivity.putExtra(ASSET_LOCATION, adapter.getItem(4).getDescription());
+                                                        startActivityForResult(newActivity,4);
+                                                        //make map view intent with flag or create new map view activity
+                                                        //newActivity = new Intent(getApplicationContext(), SelectLocation.class);
+                                                        //startActivity(newActivity);
+
                                                         break;
                                                     case 5://voice memo
                                                         newActivity = new Intent(AssetAdd.this, AudioCapture.class);
