@@ -48,7 +48,7 @@ import com.scribblesinc.tams.backendapi.Assets;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class SelectLocation extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener, GoogleMap.OnMapLongClickListener {
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 0;
     private static final String TAG = MainActivity.class.getSimpleName();
     private double mLocationLatiude, mLocationLongitude;
@@ -62,32 +62,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean mRequestingLocationUpdates;
     private Toolbar toolbar;
     private SupportMapFragment mapFragment;
+    public ArrayList<LatLng> locations = null;
+    private static final String ASSET_LOCATION = "com.scribblesinc.tams";
+    public Intent prevActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        locations = new ArrayList<>();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_select_location);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.select_location);
         mapFragment.getMapAsync(this);
         mapFragment.getView().setVisibility(View.INVISIBLE);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Asset Map");
+
+        //gets action bar that's supported if null
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
     }
 
     @Override
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
-
     }
 
     @Override
@@ -99,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_select_location, menu);
         return true;
     }
 
@@ -107,32 +114,57 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //when the filter button is pressed
-        if (id == R.id.action_filter) {
-            Intent intent = new Intent(this, AssetFilter.class);
-            startActivity(intent);
-            //Toast.makeText(getApplicationContext(), "Not Working Yet", Toast.LENGTH_SHORT).show();
+        //if the back button is pressed
+        if(id == android.R.id.home){
+            Intent sendToPreviousActivity = new Intent();
+            sendToPreviousActivity.putExtra(ASSET_LOCATION, locations);
+            setResult(RESULT_OK, sendToPreviousActivity);
+            Toast.makeText(getApplicationContext(), "Location Has Been Added", Toast.LENGTH_LONG).show();
+            finish();
         }
 
-        //when the list button is pressed
-        if (id == R.id.action_list) {
-            Intent intent = new Intent(this, AssetList.class);
-            startActivity(intent);
+        if(id == R.id.action_reset){
+            mMap.clear();
+            locations.clear();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    //this method is called when the current location menu item is tapped
-    /*public void currentLocationAction(MenuItem item) {
-        //Will work on later. Need to figure out how to get the device location here.
-    }*/
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         getLocationPermission();
         mMap = googleMap;
-        //populateMap(googleMap);
+        mMap.setOnMapLongClickListener(this);
+
+        locations = getIntent().getExtras().getParcelableArrayList(ASSET_LOCATION);
+        Toast.makeText(SelectLocation.this, ""+locations.size(), Toast.LENGTH_SHORT).show();
+        if(locations.size() > 0){
+            for(int i = 0; i < locations.size(); i++){
+                LatLng coordinates = locations.get(i);
+                double lat = coordinates.latitude;
+                double lon = coordinates.longitude;
+                LatLng assetPoint = new LatLng(lat, lon);
+                //Toast.makeText(SelectLocation.this, coordinates.latitude + " " + coordinates.longitude, Toast.LENGTH_SHORT).show();
+                mMap.addMarker(new MarkerOptions().position(assetPoint).visible(true));
+
+            }
+        }else{
+            locations = new ArrayList<>();
+        }
+    }
+
+    @Override
+    public void onMapLongClick(LatLng latLng) {
+        /**Toast.makeText(SelectLocation.this,
+                "onMapLongClick:\n" + latLng.latitude + " : " + latLng.longitude,
+                Toast.LENGTH_LONG).show();*/
+
+        //Add marker on LongClick position
+        MarkerOptions markerOptions =
+                new MarkerOptions().position(latLng).title(latLng.toString());
+        mMap.addMarker(markerOptions);
+        locations.add(latLng);
     }
 
     private void populateMap(final GoogleMap googleMap){
@@ -170,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
-        mGoogleApiClient.connect();
+
         if(mLastKnownLocation != null) {
             mLocationLatiudeText = String.valueOf(mLastKnownLocation.getLatitude());
             mLocationLongitudeText = String.valueOf(mLastKnownLocation.getLongitude());
@@ -188,17 +220,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onResume(){
         super.onResume();
-        if(mMap != null){
-            populateMap(mMap);
-        }
         //Toast.makeText(MainActivity.this, "Resumed", Toast.LENGTH_SHORT).show();
+        //check if points are already, if so populate it
+        /*if(locations == null){
+            Toast.makeText(SelectLocation.this, "RESUMED LOCATION NULL", Toast.LENGTH_SHORT).show();
+        }else{
+            for(int i = 0; i < locations.size(); i++){
+                if(locations.get(i) != null){
+                    mMap.addMarker(new MarkerOptions().position(locations.get(i))).setVisible(true);
+                }
+            }
+        }*/
+
+        /**locations = ((ArrayList<LatLng>)getIntent().getSerializableExtra(ASSET_LOCATION));
+        if(locations == null){
+            Toast.makeText(SelectLocation.this, "RESUMED LOCATION NULL", Toast.LENGTH_SHORT).show();
+        }else if(locations.size() > 0){
+            for(int i = 0; i < locations.size(); i++){
+                mMap.addMarker(new MarkerOptions().position(locations.get(i))).setVisible(true);
+            }
+        }*/
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        mMap.clear();
         //Toast.makeText(MainActivity.this, "Paused", Toast.LENGTH_SHORT).show();
+        //save points if any points were created
     }
 
     private void startLocationUpdates() {
@@ -207,13 +255,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         mRequestingLocationUpdates = true;
     }
-
-    /*private void stopLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        }
-        mRequestingLocationUpdates = false;
-    }*/
 
     @Override
     public void onConnectionSuspended(int i) {
@@ -242,10 +283,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mLocationLongitude = location.getLongitude();
         mLatLng = new LatLng(mLocationLatiude, mLocationLongitude);
 
-        /*if(mMarker != null) {
-            mMarker.remove();
-        }*/
-
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLng, 15));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 
@@ -266,11 +303,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getLocationPermission.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
+                        ActivityCompat.requestPermissions(SelectLocation.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
                     }
                 }).create().show();
             }else{
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
+                ActivityCompat.requestPermissions(SelectLocation.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_ACCESS_FINE_LOCATION);
             }
         }else{
             //Toast.makeText(getApplicationContext(), "AssetLocation Permission Granted", Toast.LENGTH_LONG).show();

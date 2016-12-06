@@ -43,6 +43,7 @@ public class TitleofAsset extends AppCompatActivity {
         //title = String.valueOf(enteredText.getText());
         enteredText.setText(title, TextView.BufferType.EDITABLE);
 
+
     }
 
     @Override

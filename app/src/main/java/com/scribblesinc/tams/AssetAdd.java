@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.util.Base64;
@@ -29,7 +30,7 @@ import android.graphics.drawable.BitmapDrawable;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.google.android.gms.wearable.Asset;
+import com.google.android.gms.maps.model.LatLng;
 import com.scribblesinc.tams.adapters.CustomAssetAdapter;
 import com.scribblesinc.tams.adapters.CustomListAdapter;
 import com.scribblesinc.tams.androidcustom.Item;
@@ -41,6 +42,7 @@ import com.scribblesinc.tams.network.HttpJSON;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -49,7 +51,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class AssetAdd extends AppCompatActivity {//AppCompatActivity
+public class AssetAdd extends AppCompatActivity {
 
     private CustomAssetAdapter adapter;
     private ListView listView;
@@ -64,7 +66,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     private static final String ASSET_TITLE = "com.scribblesinc.tams";
     private static final String ASSET_NOTES = "com.scribblesinc.tams";
 
-    private static final String ASSET_LOCATION = "com.scribblesinc.tams";
+    public static final String ASSET_LOCATION = "com.scribblesinc.tams";
 
     //list of variables to be use for asset class
 
@@ -105,6 +107,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
 
     //list of items that adapter will use to populate listview
     ArrayList<Item> items = new ArrayList<>();
+    ArrayList<LatLng> asset_locations = null;
 
     //Class for storing data inserted by user
     private Assets asset;
@@ -117,6 +120,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         /* run parents method by extending the existing class or run this
         *  class in addition to parent's class*/
+        asset_locations = new ArrayList<>();
         super.onCreate(savedInstanceState);
         // activity class creates window
         setContentView(R.layout.activity_asset_add);
@@ -182,9 +186,12 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                                                         break;
                                                     case 4://location
                                                         //Toast.makeText(getApplicationContext(), "Posi:" + position + "and" + "Id" + id, Toast.LENGTH_LONG).show();
-                                                        newActivity = new Intent(AssetAdd.this, MainActivity.class);
-                                                        newActivity.putExtra(ASSET_LOCATION, adapter.getItem(4).getDescription());
+                                                        newActivity = new Intent(AssetAdd.this, SelectLocation.class);
+                                                        newActivity.putParcelableArrayListExtra(ASSET_LOCATION, asset_locations);
                                                         startActivityForResult(newActivity,4);
+                                                        //newActivity.putExtra(ASSET_LOCATION, asset_locations);
+                                                        //startActivityForResult(newActivity,4);
+
                                                         //make map view intent with flag or create new map view activity
                                                         //newActivity = new Intent(getApplicationContext(), SelectLocation.class);
                                                         //startActivity(newActivity);
@@ -329,10 +336,10 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
         items.add(new Item("Name", null));
         items.add(new Item("AssetCategory", null));
         items.add(new Item("Type", null));
-        items.add(new Item("AssetLocation", "Asset location"));
+        items.add(new Item("Asset Location", "Asset location"));
         items.add(new Item("Voice Memo", "Record Voice Memo", R.drawable.ic_mic));
         items.add(new Item("Description", null));
-        items.add(new Item(" ", " "));//empty item to permit scrolling
+        //items.add(new Item(" ", " "));//empty item to permit scrolling
 
         return items;
     }
@@ -424,6 +431,21 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                     this.registerForContextMenu(listView);
                 }
 
+                break;
+            case 4: //location
+                if(data != null){
+                    if(adapter.getItem(4).getDescription() != null){
+                        asset_locations = data.getParcelableArrayListExtra(ASSET_LOCATION);
+                        if(asset_locations == null){
+                            adapter.getItem(4).setDescription("0 selected");
+                        }else{
+                            String asset_str = "" + asset_locations.size() + " selected";
+                            //gets the item at index 4 (the description of the title) and changes it
+                            adapter.getItem(4).setDescription(asset_str);
+                        }
+                        adapter.notifyDataSetChanged();
+                    }
+                }
                 break;
             case 5://Audio recording
                 if (data != null)
@@ -713,7 +735,7 @@ public class AssetAdd extends AppCompatActivity {//AppCompatActivity
                 }
                 else
                 {
-                    Toast.makeText(getApplicationContext(), "Unable to update aasset! An unknown error occurred!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Unable to update asset! An unknown error occurred!", Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {
