@@ -404,6 +404,8 @@ public class AssetAdd extends AppCompatActivity {
                 }
             }*/
             adapter.getItem(6).setDescription(asset.getDescription());
+            CatID = Long.parseLong(asset.getCategory_id());
+
 
             //update listview with new values.
             listView.setAdapter(adapter);
