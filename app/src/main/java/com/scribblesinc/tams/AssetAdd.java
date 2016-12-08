@@ -447,6 +447,18 @@ public class AssetAdd extends AppCompatActivity {
                      assetcategory = (AssetCategory) data.getParcelableExtra(ASSET_CATEGORY);
                     Toast.makeText(getApplicationContext(), assetcategory.getName(), Toast.LENGTH_LONG).show();
 
+
+
+
+                    //gets the item at index 1 (the description of the title) and changes it
+                    adapter.getItem(2).setDescription(assetcategory.getName());
+                    adapter.notifyDataSetChanged();
+
+                    //setListAdapter aka assign adapter to listview
+                    listView.setAdapter(adapter);
+                    //creating a contextmeny for listviewcu
+                    this.registerForContextMenu(listView);
+
                 }
 
                 break;
