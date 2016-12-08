@@ -89,7 +89,6 @@ public class NotesCapture extends AppCompatActivity {
                             setResult(RESULT_OK, sendToPreviousActivity);
                             Toast.makeText(getApplicationContext(), "Description has been captured ", Toast.LENGTH_LONG).show();
                             finish();
-                            ;
                         }
                     });
                     builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
