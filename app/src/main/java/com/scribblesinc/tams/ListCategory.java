@@ -1,14 +1,19 @@
 package com.scribblesinc.tams;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -25,6 +30,8 @@ import static com.scribblesinc.tams.R.styleable.View;
  */
 
 public class ListCategory extends AppCompatActivity {
+
+    final Context context = this;
     private Intent intent; //intent for receiving and sending data
     private CustomCategoryAdapter categoryadapter;//adapter for displaying listview
     private ListView listview;//listview for this activity
@@ -75,6 +82,39 @@ public class ListCategory extends AppCompatActivity {
         //if back button is pressed
         if(id== android.R.id.home){
             finish();
+        }
+        if(id== R.id.action_create){
+            LayoutInflater lf = LayoutInflater.from(context);
+            View promptView = lf.inflate(R.layout.content_create_category,null);
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+            //set .xml to alertdialog builder
+            alertDialogBuilder.setView(promptView);
+            final EditText userInput = (EditText) promptView.findViewById(R.id.editTextUserInput1);
+
+            //set dialog message
+            alertDialogBuilder.setCancelable(false).setPositiveButton("Ok",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                                //get user input adn set it to result edit text
+                                Toast.makeText(getApplicationContext(),"Not working yet",Toast.LENGTH_SHORT).show();
+                        }
+
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                       dialogInterface.cancel();
+                        }
+                    });
+
+            //create alert dialog
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            //show it
+            alertDialog.show();
+
         }
 
         return super.onOptionsItemSelected(item);

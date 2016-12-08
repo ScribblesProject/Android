@@ -461,7 +461,7 @@ public class AssetAdd extends AppCompatActivity {
 
             case 3:
                 if(data != null){
-
+                    
                     AssetType assettype;
                     assettype = (AssetType) data.getParcelableExtra(ASSET_TYPE);
                     Toast.makeText(getApplicationContext(), assettype.getName(), Toast.LENGTH_LONG).show();
@@ -471,6 +471,7 @@ public class AssetAdd extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
                     this.registerForContextMenu(listView);
+
                 }
 
 
