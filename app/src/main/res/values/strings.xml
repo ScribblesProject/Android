@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">TAMS</string>
+    <string name="map_view_name">Asset Map</string>
     <string name="action_settings">Settings</string>
     <string name="action_list">List</string>
     <string name="action_filter">Filter</string>
+    <string name="clear_filter">Clear Filter</string>
     <string name="title_activity_maps">Map</string>
     <string name="action_current_location">Current Location</string>
     <string name="title_activity_main">Asset Map</string>

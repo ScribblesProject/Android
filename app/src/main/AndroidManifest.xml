@@ -99,6 +99,9 @@
             android:name=".AssetFilterCategories"
             android:label="@string/title_asset_filter_categories" />
         <activity
+            android:name=".AssetFilterTypes"
+            android:label="Asset Type"/>.
+        <activity
             android:name=".SelectLocation"
             android:label="@string/title_select_location"
             android:theme="@style/AppTheme.NoActionBar"/>
