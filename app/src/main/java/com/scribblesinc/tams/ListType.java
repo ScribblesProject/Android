@@ -7,6 +7,9 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -24,6 +27,8 @@ public class ListType extends AppCompatActivity  {
     private Intent intent;
     private ArrayList<AssetType> typeList;
     private static final String ASSET_TYPE = "com.scribblesinc.tams";
+    private ListView listview;
+
     private CustomTypeAdapter TypeAdapter;
 
     @Override
@@ -46,9 +51,27 @@ public class ListType extends AppCompatActivity  {
         //    categorylist = (ArrayList<AssetCategory>) intent.getParcelableExtra(ASSET_CATEGORY);
         //System.out.println( intent.getParcelableExtra(ASSET_CATEGORY));
 
+        final ArrayList<AssetType> assetTypes = this.getIntent().getParcelableArrayListExtra(ASSET_TYPE);
+        TypeAdapter = new CustomTypeAdapter(this,assetTypes);
+        listview = (ListView) findViewById(R.id.listView_Type);
+        listview.setAdapter(TypeAdapter);
 
-        ArrayList<AssetType> assetTypes = this.getIntent().getParcelableArrayListExtra(ASSET_TYPE);
-        Toast.makeText(getApplicationContext(), assetTypes.get(0).getName(), Toast.LENGTH_LONG).show();
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id){
+                Intent sendToPreviousActivity = new Intent();
+                sendToPreviousActivity.putExtra(ASSET_TYPE,assetTypes.get(position));
+                setResult(RESULT_OK,sendToPreviousActivity);//set data to be return to previous activity
+                finish();//return
+
+
+
+
+            }
+        });
+
+
+
     }
 
     @Override

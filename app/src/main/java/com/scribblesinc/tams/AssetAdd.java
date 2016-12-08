@@ -87,7 +87,7 @@ public class AssetAdd extends AppCompatActivity {
 
     private int CATEGORYPOSITION = 2;//position of category
     private int TYPEPOSITION = 3;//position of Type
-    private long CatID;
+    private long CatID = 0;
     private boolean isAssetExist = false;//if user is looking at an existing
     private boolean isType;
     //storing if any of the fields has been modified
@@ -195,7 +195,11 @@ public class AssetAdd extends AppCompatActivity {
                                                         //view.showContextMenu();
                                                         break;
                                                     case 3://type
-                                                         listType(CatID);
+                                                        if(CatID != 0) {
+                                                            listType(CatID);
+                                                        }else{
+                                                            Toast.makeText(getApplicationContext(), "Use Category First", Toast.LENGTH_LONG).show();
+                                                        }
                                                         break;
                                                     case 4://location
                                                         //Toast.makeText(getApplicationContext(), "Posi:" + position + "and" + "Id" + id, Toast.LENGTH_LONG).show();
@@ -449,20 +453,27 @@ public class AssetAdd extends AppCompatActivity {
                     AssetCategory assetcategory;
                      assetcategory = (AssetCategory) data.getParcelableExtra(ASSET_CATEGORY);
                     Toast.makeText(getApplicationContext(), assetcategory.getName(), Toast.LENGTH_LONG).show();
-
+                    CatID = assetcategory.getId();
                 }
 
                 break;
-            case 2:
-                //if(data != null){
-                    CatID = 4835421284466688L;
 
-
-                //}
-            break;
 
             case 3:
-                System.out.println("Testing, Testing, Case 3");
+                if(data != null){
+
+                    AssetType assettype;
+                    assettype = (AssetType) data.getParcelableExtra(ASSET_TYPE);
+                    Toast.makeText(getApplicationContext(), assettype.getName(), Toast.LENGTH_LONG).show();
+
+
+                    adapter.getItem(3).setDescription(assettype.getName());
+                    adapter.notifyDataSetChanged();
+                    listView.setAdapter(adapter);
+                    this.registerForContextMenu(listView);
+                }
+
+
                 break;
             case 4: //location
                 if(data != null){
