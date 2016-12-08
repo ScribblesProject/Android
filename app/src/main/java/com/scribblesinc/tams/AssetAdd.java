@@ -1,6 +1,8 @@
 package com.scribblesinc.tams;
 
 import android.Manifest;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -65,6 +67,7 @@ public class AssetAdd extends AppCompatActivity {
     private static final String REC_AUDIO = "com.scribblesinc.tams";
     private static final String ASSET_TITLE = "com.scribblesinc.tams";
     private static final String ASSET_NOTES = "com.scribblesinc.tams";
+    private static final String ASSET_CATEGORY = "com.scribblesinc.tams";
 
     public static final String ASSET_LOCATION = "com.scribblesinc.tams";
 
@@ -179,10 +182,17 @@ public class AssetAdd extends AppCompatActivity {
                                                         startActivityForResult(newActivity, 0);//upon return go t given requestCode
                                                         break;
                                                     case 2://category
-                                                        view.showContextMenu();
+
+                                                        listCategory();//call function to create activity for category
+
+                                                       // newActivity = new Intent(AssetAdd.this, ListCategory.class);
+                                                        //pass arraylist category
+                                                       // newActivity.putExtra(ASSET_CATEGORY,adapter.getItem(2).getDescription());
+                                                        //startActivityForResult(newActivity,2);
+                                                        //view.showContextMenu();
                                                         break;
                                                     case 3://type
-                                                        view.showContextMenu();
+                                                         view.showContextMenu();
                                                         break;
                                                     case 4://location
                                                         //Toast.makeText(getApplicationContext(), "Posi:" + position + "and" + "Id" + id, Toast.LENGTH_LONG).show();
@@ -256,10 +266,10 @@ public class AssetAdd extends AppCompatActivity {
         final View thisview = v;
         if (info.position == CATEGORYPOSITION) { // menu shown based on type of view selected
             //contextual menu if catorogy view is selected
-           // getMenuInflater().inflate(R.menu.menu_context_category, menu);
+            // getMenuInflater().inflate(R.menu.menu_context_category, menu);
 
             //create context menu
-            listCategory(menu,v);
+           //---- listCategory(menu,v)L CONTXTEXT MENU WILL BE REMOVED.
             /*
             Toast.makeText(getApplicationContext(), "am in listCategory!", Toast.LENGTH_LONG).show();
             menu.setHeaderTitle("Test");
@@ -290,14 +300,12 @@ public class AssetAdd extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Category", Toast.LENGTH_LONG).show();
             //user click on category view
             String newCategory = null;
-
             if (id == R.id.stop_light) {
                 newCategory = "stop light";
             }
             if (id == R.id.road_sign) {
                 newCategory = "road sign";
             }
-
             adapter.getItem(2).setDescription(newCategory);
             listView.setAdapter(adapter);
             this.registerForContextMenu(listView);
@@ -520,14 +528,18 @@ public class AssetAdd extends AppCompatActivity {
     }
 
     //methods category and type implementation
-    public  void listCategory(ContextMenu menu, View v) {
-        final ContextMenu thismenu = menu;
-         final View thisview = v;
+    public  void listCategory() {
 
         AssetCategory.list(new Response.Listener<ArrayList<AssetCategory>>() {
             public void onResponse(final ArrayList<AssetCategory>response){
                 if(response !=null){
-                    Toast.makeText(getApplicationContext(),response.get(1).toString() ,Toast.LENGTH_LONG).show();
+                    //ORIGNALToast.makeText(getApplicationContext(),response.get(1).toString() ,Toast.LENGTH_LONG).show();
+                    newActivity = new Intent(AssetAdd.this,ListCategory.class);
+
+                   newActivity.putParcelableArrayListExtra(ASSET_CATEGORY,response);
+                  // startActivity(newActivity);
+                    startActivityForResult(newActivity,2);
+
                 }
             }
         },null);

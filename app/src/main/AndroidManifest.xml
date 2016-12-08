@@ -102,6 +102,10 @@
             android:name=".SelectLocation"
             android:label="@string/title_select_location"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ListCategory"
+            android:label="@string/action_category"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
