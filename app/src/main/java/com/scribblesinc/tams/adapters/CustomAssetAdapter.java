@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 
 
 import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.scribblesinc.tams.R;
 import com.scribblesinc.tams.androidcustom.Item;
 import com.scribblesinc.tams.backendapi.Assets;
@@ -63,11 +64,13 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
 
                 if(ImageBitmap != null) {
                     convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
-                }
-                if(URL != null){
-                   // ImageBitmap = imageloader.getBitmap(URL);
-                }
+                }else {
+                    if (URL != null) {
+                        NetworkImageView imgAsset = (NetworkImageView) convertView.findViewById(R.id.img_asset);
+                        imgAsset.setImageUrl(URL, imageloader);
+                    }
 
+                }
             }
 
 

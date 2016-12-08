@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".ListType"
+    tools:showIn="@layout/activity_listtype">
+    <!--Assets tittle-->
+    <TextView
+        android:id="@+id/Type_Name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/img_asset"
+        android:layout_alignTop="@+id/img_asset"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        />
+    <TextView
+        android:id="@+id/Type_Notes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/img_asset"
+        android:layout_below="@+id/title_asset"
+
+        android:layout_marginTop="35dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/black"
+        />
+
+    <!--Any notes on Assets-->
+
+    <ListView
+        android:id="@+id/listView_Type"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

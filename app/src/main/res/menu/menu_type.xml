@@ -1,0 +1,12 @@
+<menu
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ListType">
+
+    <item
+        android:id="@+id/action_update"
+        android:title="@string/action_update"
+        app:showAsAction="ifRoom" />
+
+</menu>

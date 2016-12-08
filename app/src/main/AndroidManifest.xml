@@ -106,6 +106,10 @@
             android:name=".ListCategory"
             android:label="@string/action_category"
             android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ListType"
+            android:label="@string/action_type"
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

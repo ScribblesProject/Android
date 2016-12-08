@@ -38,6 +38,7 @@ import com.scribblesinc.tams.adapters.CustomListAdapter;
 import com.scribblesinc.tams.androidcustom.Item;
 import com.scribblesinc.tams.backendapi.AssetCategory;
 import com.scribblesinc.tams.backendapi.AssetLocation;
+import com.scribblesinc.tams.backendapi.AssetType;
 import com.scribblesinc.tams.backendapi.Assets;
 import com.scribblesinc.tams.network.HttpJSON;
 
@@ -68,6 +69,7 @@ public class AssetAdd extends AppCompatActivity {
     private static final String ASSET_TITLE = "com.scribblesinc.tams";
     private static final String ASSET_NOTES = "com.scribblesinc.tams";
     private static final String ASSET_CATEGORY = "com.scribblesinc.tams";
+    private static final String ASSET_TYPE = "com.scribblesinc.tams";
 
     public static final String ASSET_LOCATION = "com.scribblesinc.tams";
 
@@ -85,6 +87,7 @@ public class AssetAdd extends AppCompatActivity {
 
     private int CATEGORYPOSITION = 2;//position of category
     private int TYPEPOSITION = 3;//position of Type
+    private long CatID = 0;
     private boolean isAssetExist = false;//if user is looking at an existing
     private boolean isType;
     //storing if any of the fields has been modified
@@ -192,7 +195,11 @@ public class AssetAdd extends AppCompatActivity {
                                                         //view.showContextMenu();
                                                         break;
                                                     case 3://type
-                                                         view.showContextMenu();
+                                                        if(CatID != 0) {
+                                                            listType(CatID);
+                                                        }else{
+                                                            Toast.makeText(getApplicationContext(), "Use Category First", Toast.LENGTH_LONG).show();
+                                                        }
                                                         break;
                                                     case 4://location
                                                         //Toast.makeText(getApplicationContext(), "Posi:" + position + "and" + "Id" + id, Toast.LENGTH_LONG).show();
@@ -446,8 +453,26 @@ public class AssetAdd extends AppCompatActivity {
                     AssetCategory assetcategory;
                      assetcategory = (AssetCategory) data.getParcelableExtra(ASSET_CATEGORY);
                     Toast.makeText(getApplicationContext(), assetcategory.getName(), Toast.LENGTH_LONG).show();
-
+                    CatID = assetcategory.getId();
                 }
+
+                break;
+
+
+            case 3:
+                if(data != null){
+
+                    AssetType assettype;
+                    assettype = (AssetType) data.getParcelableExtra(ASSET_TYPE);
+                    Toast.makeText(getApplicationContext(), assettype.getName(), Toast.LENGTH_LONG).show();
+
+
+                    adapter.getItem(3).setDescription(assettype.getName());
+                    adapter.notifyDataSetChanged();
+                    listView.setAdapter(adapter);
+                    this.registerForContextMenu(listView);
+                }
+
 
                 break;
             case 4: //location
@@ -546,7 +571,7 @@ public class AssetAdd extends AppCompatActivity {
                     //ORIGNALToast.makeText(getApplicationContext(),response.get(1).toString() ,Toast.LENGTH_LONG).show();
                     newActivity = new Intent(AssetAdd.this,ListCategory.class);
 
-                   newActivity.putParcelableArrayListExtra(ASSET_CATEGORY,response);
+                    newActivity.putParcelableArrayListExtra(ASSET_CATEGORY,response);
                   // startActivity(newActivity);
                     startActivityForResult(newActivity,2);
 
@@ -556,9 +581,25 @@ public class AssetAdd extends AppCompatActivity {
 
 
     }
-    public void listType(){
+    public void listType(long id){
+        AssetType.list(id, new Response.Listener<ArrayList<AssetType>>() {
+            @Override
+            public void onResponse(ArrayList<AssetType> response) {
+                if(response != null){
+                    System.out.println("listType success, Response is :" + response);
+
+                    newActivity = new Intent(AssetAdd.this,ListType.class);
+
+                    newActivity.putParcelableArrayListExtra(ASSET_TYPE,response);
+
+                    startActivityForResult(newActivity,3);
+                }
+            }
+        },null);
+
 
     }
+
     public String BitMapToString(Bitmap bitmap) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
