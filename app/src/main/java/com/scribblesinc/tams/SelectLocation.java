@@ -119,7 +119,7 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
             Intent sendToPreviousActivity = new Intent();
             sendToPreviousActivity.putExtra(ASSET_LOCATION, locations);
             setResult(RESULT_OK, sendToPreviousActivity);
-            Toast.makeText(getApplicationContext(), "Location Has Been Added", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Location Has Been Updated", Toast.LENGTH_LONG).show();
             finish();
         }
 
@@ -136,19 +136,39 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
         getLocationPermission();
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
+        PolylineOptions newLine;
 
         locations = getIntent().getExtras().getParcelableArrayList(ASSET_LOCATION);
-        Toast.makeText(SelectLocation.this, ""+locations.size(), Toast.LENGTH_SHORT).show();
+        //Toast.makeText(SelectLocation.this, ""+locations.size(), Toast.LENGTH_SHORT).show();
         if(locations.size() > 0){
-            for(int i = 0; i < locations.size(); i++){
-                LatLng coordinates = locations.get(i);
+            newLine = new PolylineOptions();
+            if(locations.size() == 1){
+                LatLng coordinates = locations.get(0);
                 double lat = coordinates.latitude;
                 double lon = coordinates.longitude;
                 LatLng assetPoint = new LatLng(lat, lon);
                 //Toast.makeText(SelectLocation.this, coordinates.latitude + " " + coordinates.longitude, Toast.LENGTH_SHORT).show();
                 mMap.addMarker(new MarkerOptions().position(assetPoint).visible(true));
+            }else{
+                for(int i = 0; i < locations.size(); i++){
+                    LatLng coordinates = locations.get(i);
+                    double lat = coordinates.latitude;
+                    double lon = coordinates.longitude;
+                    LatLng newLatLng = new LatLng(lat, lon);
+                    googleMap.addMarker(new MarkerOptions().position(newLatLng)).setVisible(true);
+                    newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                }
 
+                LatLng coordinates = locations.get(0);
+                double lat = coordinates.latitude;
+                double lon = coordinates.longitude;
+                LatLng newLatLng = new LatLng(lat, lon);
+                googleMap.addMarker(new MarkerOptions().position(newLatLng)).setVisible(true);
+                newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                googleMap.addPolyline(newLine);
             }
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locations.get(0), 15));
+            googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
         }else{
             locations = new ArrayList<>();
         }

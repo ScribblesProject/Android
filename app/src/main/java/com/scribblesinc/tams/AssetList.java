@@ -81,10 +81,8 @@ public class AssetList extends AppCompatActivity {
                     listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                         @Override
                                                         public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-
                                                             intent  = new Intent(AssetList.this,AssetAdd.class);
                                                             intent.putExtra(ARRAY_LIST, response.get(position));
-
 
                                                             startActivityForResult(intent,1);
 

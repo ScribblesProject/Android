@@ -368,6 +368,8 @@ public class AssetAdd extends AppCompatActivity {
         //Reading from intent AssetList when user wants to update or Delete asset
         Intent testIntent = getIntent();
         asset = (Assets) getIntent().getParcelableExtra(ARRAY_LIST);
+        Map<String, AssetLocation> asset_locs;// = new HashMap<String, AssetLocation>();
+        //ArrayList<AssetLocation> asset_locs;
         if (asset != null) {
             //Store data
             assetMedia_image = null;
@@ -377,6 +379,30 @@ public class AssetAdd extends AppCompatActivity {
             adapter.getItem(1).setDescription(asset.getName());
             adapter.getItem(2).setDescription(asset.getCategory());
             adapter.getItem(3).setDescription(asset.getAsset_type());
+            asset_locs = asset.getLocations();
+            //Toast.makeText(getApplicationContext(), asset_locs.toString(),
+                    //Toast.LENGTH_SHORT).show();
+
+            if(asset_locs != null) {
+                asset_locations = new ArrayList<>();
+                for (String key : asset_locs.keySet()) {
+                    double lat = asset_locs.get(key).getLatitude();
+                    double lon = asset_locs.get(key).getLongitude();
+                    LatLng newLatLng = new LatLng(lat, lon);
+                    asset_locations.add(newLatLng);
+                }
+                adapter.getItem(4).setDescription("" + asset_locations.size() + " selected");
+            }else{
+                adapter.getItem(4).setDescription("0 selected");
+            }
+
+            /**if(asset_locs != null){
+                if(asset_locs.size() > 0){
+                    for(int i = 0; i < asset_locs.size(); i++){
+                        asset_locs.
+                    }
+                }
+            }*/
             adapter.getItem(6).setDescription(asset.getDescription());
 
             //update listview with new values.
@@ -490,8 +516,8 @@ public class AssetAdd extends AppCompatActivity {
 
 
                     //gets the item at index 1 (the description of the title) and changes it
-                    adapter.getItem(2).setDescription(assetcategory.getName());
-                    adapter.notifyDataSetChanged();
+                    //adapter.getItem(2).setDescription(assetcategory.getName());
+                    //adapter.notifyDataSetChanged();
 
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
@@ -763,6 +789,14 @@ public class AssetAdd extends AppCompatActivity {
         String description = adapter.getItem(6).getDescription();
         ArrayList<AssetLocation> locations = new ArrayList<AssetLocation>();
 
+        for(int i = 0; i < asset_locations.size(); i++){
+            LatLng loc = asset_locations.get(i);
+            double lat = loc.latitude;
+            double lon = loc.longitude;
+            AssetLocation assets_loc = new AssetLocation(lat,lon);
+            locations.add(assets_loc);
+        }
+
         //Validate
         if (name == null || description == null) {
             Toast.makeText(getApplicationContext(), "ERROR - name or description is empty.", Toast.LENGTH_LONG).show();
@@ -806,6 +840,7 @@ public class AssetAdd extends AppCompatActivity {
         String typeName = adapter.getItem(3).getDescription();
         String description = adapter.getItem(6).getDescription();
         Map<String, AssetLocation> locations = new HashMap<String, AssetLocation>();
+
 
         //Validate
         if (name == null || description == null) {
