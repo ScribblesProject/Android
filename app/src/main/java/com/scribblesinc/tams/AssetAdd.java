@@ -476,6 +476,18 @@ public class AssetAdd extends AppCompatActivity {
                     listView.setAdapter(adapter);
                     this.registerForContextMenu(listView);
 
+
+
+
+                    //gets the item at index 1 (the description of the title) and changes it
+                    adapter.getItem(2).setDescription(assetcategory.getName());
+                    adapter.notifyDataSetChanged();
+
+                    //setListAdapter aka assign adapter to listview
+                    listView.setAdapter(adapter);
+                    //creating a contextmeny for listviewcu
+                    this.registerForContextMenu(listView);
+
                 }
 
 
