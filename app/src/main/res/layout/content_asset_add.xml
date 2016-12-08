@@ -36,6 +36,7 @@
         android:textColor="@color/black"
         />
 
+
     <!--Voice recording Icon-->
     <ImageView
         android:id="@+id/mic_icon"
