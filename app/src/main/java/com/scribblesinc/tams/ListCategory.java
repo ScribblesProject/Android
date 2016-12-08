@@ -7,19 +7,27 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.fitness.request.ListClaimedBleDevicesRequest;
+import com.scribblesinc.tams.adapters.CustomCategoryAdapter;
 import com.scribblesinc.tams.backendapi.AssetCategory;
 
 import java.util.ArrayList;
+
+import static com.scribblesinc.tams.R.styleable.View;
 
 /**
  * Created by Joel on 12/7/2016.
  */
 
 public class ListCategory extends AppCompatActivity {
-    private Intent intent;
-    private ArrayList<AssetCategory> categorylist;
+    private Intent intent; //intent for receiving and sending data
+    private CustomCategoryAdapter categoryadapter;//adapter for displaying listview
+    private ListView listview;//listview for this activity
     private static final String ASSET_CATEGORY = "com.scribblesinc.tams";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,20 +43,29 @@ public class ListCategory extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+        //Get data sent from AssetAdd
+        final ArrayList<AssetCategory> assetCategories = this.getIntent().getParcelableArrayListExtra(ASSET_CATEGORY);
 
-        //Get information set from AssetAdd
-        //  intent = getIntent();
-        //    categorylist = (ArrayList<AssetCategory>) intent.getParcelableExtra(ASSET_CATEGORY);
-        //System.out.println( intent.getParcelableExtra(ASSET_CATEGORY));
+        //instantiating and displaying listview
+        categoryadapter = new CustomCategoryAdapter(this,assetCategories);
+        listview = (ListView) findViewById(R.id.category_listview);
+        listview.setAdapter(categoryadapter);
+        listview.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id){
 
-        ArrayList<AssetCategory> assetCategories = this.getIntent().getParcelableArrayListExtra(ASSET_CATEGORY);
-        Toast.makeText(getApplicationContext(), assetCategories.get(1).getName(), Toast.LENGTH_LONG).show();
+                Intent sendToPreviousActivity = new Intent();
+                sendToPreviousActivity.putExtra(ASSET_CATEGORY,assetCategories.get(position));
+                setResult(RESULT_OK,sendToPreviousActivity);//set data to be return to previous activity
+                finish();//return
+            }
+        });
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_category, menu);
-
+        getMenuInflater().inflate(R.menu.menu_category, menu);//menu
         return true;
     }
     @Override

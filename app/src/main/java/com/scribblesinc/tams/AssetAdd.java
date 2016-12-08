@@ -440,6 +440,16 @@ public class AssetAdd extends AppCompatActivity {
                 }
 
                 break;
+            case 2:
+                if(data != null){
+                    //Category picked is here
+                    AssetCategory assetcategory;
+                     assetcategory = (AssetCategory) data.getParcelableExtra(ASSET_CATEGORY);
+                    Toast.makeText(getApplicationContext(), assetcategory.getName(), Toast.LENGTH_LONG).show();
+
+                }
+
+                break;
             case 4: //location
                 if(data != null){
                     if(adapter.getItem(4).getDescription() != null){
