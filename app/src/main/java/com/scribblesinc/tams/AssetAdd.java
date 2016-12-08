@@ -452,7 +452,12 @@ public class AssetAdd extends AppCompatActivity {
                     //Category picked is here
                     AssetCategory assetcategory;
                      assetcategory = (AssetCategory) data.getParcelableExtra(ASSET_CATEGORY);
-                    Toast.makeText(getApplicationContext(), assetcategory.getName(), Toast.LENGTH_LONG).show();
+                    //set adapter
+                    adapter.getItem(2).setDescription(assetcategory.getName());
+                    adapter.notifyDataSetChanged();
+                    listView.setAdapter(adapter);
+                    this.registerForContextMenu(listView);
+                    //set global id
                     CatID = assetcategory.getId();
                 }
 
@@ -461,10 +466,9 @@ public class AssetAdd extends AppCompatActivity {
 
             case 3:
                 if(data != null){
-                    
+
                     AssetType assettype;
                     assettype = (AssetType) data.getParcelableExtra(ASSET_TYPE);
-                    Toast.makeText(getApplicationContext(), assettype.getName(), Toast.LENGTH_LONG).show();
 
 
                     adapter.getItem(3).setDescription(assettype.getName());
