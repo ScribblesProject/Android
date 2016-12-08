@@ -462,7 +462,12 @@ public class AssetAdd extends AppCompatActivity {
                     //Category picked is here
                     AssetCategory assetcategory;
                      assetcategory = (AssetCategory) data.getParcelableExtra(ASSET_CATEGORY);
-                    Toast.makeText(getApplicationContext(), assetcategory.getName(), Toast.LENGTH_LONG).show();
+                    //set adapter
+                    adapter.getItem(2).setDescription(assetcategory.getName());
+                    adapter.notifyDataSetChanged();
+                    listView.setAdapter(adapter);
+                    this.registerForContextMenu(listView);
+                    //set global id
                     CatID = assetcategory.getId();
                 }
 
@@ -474,13 +479,25 @@ public class AssetAdd extends AppCompatActivity {
 
                     AssetType assettype;
                     assettype = (AssetType) data.getParcelableExtra(ASSET_TYPE);
-                    Toast.makeText(getApplicationContext(), assettype.getName(), Toast.LENGTH_LONG).show();
 
 
                     adapter.getItem(3).setDescription(assettype.getName());
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
                     this.registerForContextMenu(listView);
+
+
+
+
+                    //gets the item at index 1 (the description of the title) and changes it
+                    adapter.getItem(2).setDescription(assetcategory.getName());
+                    adapter.notifyDataSetChanged();
+
+                    //setListAdapter aka assign adapter to listview
+                    listView.setAdapter(adapter);
+                    //creating a contextmeny for listviewcu
+                    this.registerForContextMenu(listView);
+
                 }
 
 
