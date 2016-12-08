@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -51,6 +52,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static final int PERMISSION_ACCESS_FINE_LOCATION = 0;
     private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String ASSET_FILTER = "ASSET_FILTER";
+    private String category = null;
+    private String type = null;
     private double mLocationLatiude, mLocationLongitude;
     private String mLocationLatiudeText, mLocationLongitudeText;
     private GoogleApiClient mGoogleApiClient;
@@ -62,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private boolean mRequestingLocationUpdates;
     private Toolbar toolbar;
     private SupportMapFragment mapFragment;
+    private Menu mainActivityMenu;
+    private Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Asset Map");
+        getSupportActionBar().setTitle(R.string.map_view_name);
     }
 
     @Override
@@ -99,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+        mainActivityMenu = menu;
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -107,11 +114,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //when the filter button is pressed
-        if (id == R.id.action_filter) {
-            Intent intent = new Intent(this, AssetFilter.class);
-            startActivity(intent);
-            //Toast.makeText(getApplicationContext(), "Not Working Yet", Toast.LENGTH_SHORT).show();
+        //when the filter button is pressed, checks to see if menu item text has change for filter to filter text
+        if (id == R.id.action_filter && item.getTitle().equals(this.getText(R.string.action_filter))) {
+            Intent intent = new Intent(MainActivity.this, AssetFilter.class);
+            startActivityForResult(intent, 0);
+        }else if(id == R.id.action_filter && item.getTitle().equals(this.getText(R.string.clear_filter))) {
+            category = null;
+            type = null;
+            item.setTitle(R.string.action_filter);
+            snackbar.dismiss();
+            populateMap(mMap);
         }
 
         //when the list button is pressed
@@ -132,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         getLocationPermission();
         mMap = googleMap;
-        //populateMap(googleMap);
+        populateMap(googleMap);
     }
 
     private void populateMap(final GoogleMap googleMap){
@@ -143,27 +155,51 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 PolylineOptions newLine;
                 LatLng newLatLng;
 
-                for(int i = 0; i < response.size(); i++){
-                    sortedLocations = response.get(i).getSortedLocations();
-                    if(sortedLocations.size() > 1){
-                        newLine = new PolylineOptions();
-                        for(int j = 0; j < sortedLocations.size(); j++){
-                            newLatLng = new LatLng(sortedLocations.get(j).getLatitude(), sortedLocations.get(j).getLongitude());
+                if(category == null && category == null){
+                    for(int i = 0; i < response.size(); i++){
+                        sortedLocations = response.get(i).getSortedLocations();
+                        if(sortedLocations.size() > 1){
+                            newLine = new PolylineOptions();
+                            for(int j = 0; j < sortedLocations.size(); j++){
+                                newLatLng = new LatLng(sortedLocations.get(j).getLatitude(), sortedLocations.get(j).getLongitude());
+                                googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
+                                newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                            }
+                            newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
                             googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
                             newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                            googleMap.addPolyline(newLine);
+                        }else if(sortedLocations.size() == 1){
+                            newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
+                            googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
                         }
-                        newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
-                        googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
-                        newLine.add(newLatLng).color(Color.RED).width((float)2.5);
-                        googleMap.addPolyline(newLine);
-                    }else if(sortedLocations.size() == 1){
-                        newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
-                        googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
+                    }
+                }else{
+                    for(int i = 0; i < response.size(); i++){
+                        if(category.equalsIgnoreCase(response.get(i).getCategory()) && type.equalsIgnoreCase(response.get(i).getAsset_type())) {
+                            sortedLocations = response.get(i).getSortedLocations();
+                            if(sortedLocations.size() > 1){
+                                newLine = new PolylineOptions();
+                                for(int j = 0; j < sortedLocations.size(); j++){
+                                    newLatLng = new LatLng(sortedLocations.get(j).getLatitude(), sortedLocations.get(j).getLongitude());
+                                    googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
+                                    newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                                }
+                                newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
+                                googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
+                                newLine.add(newLatLng).color(Color.RED).width((float)2.5);
+                                googleMap.addPolyline(newLine);
+                            }else if(sortedLocations.size() == 1){
+                                newLatLng = new LatLng(sortedLocations.get(0).getLatitude(), sortedLocations.get(0).getLongitude());
+                                googleMap.addMarker(new MarkerOptions().position(newLatLng).title(response.get(i).getName()).snippet(response.get(i).getDescription())).setVisible(true);
+                            }
+                        }
                     }
                 }
             }
         }, null);
     }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
@@ -197,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onPause(){
         super.onPause();
-        mMap.clear();
+         mMap.clear();
         //Toast.makeText(MainActivity.this, "Paused", Toast.LENGTH_SHORT).show();
     }
 
@@ -302,5 +338,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
         mMap.setMyLocationEnabled(true);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(data == null || resultCode != RESULT_OK) {
+            return;
+        }
+        switch(requestCode) {
+            case 0:
+                String[] categoryTypeFilter = data.getStringArrayExtra(ASSET_FILTER);
+                category = categoryTypeFilter[0];
+                type = categoryTypeFilter[1];
+
+                MenuItem clearFilter = mainActivityMenu.findItem(R.id.action_filter);
+                clearFilter.setTitle(R.string.clear_filter);
+
+                mMap.clear();
+                populateMap(mMap);
+                View view = findViewById(R.id.content_main);
+                snackbar = Snackbar.make(view, "Filter Applied" , Snackbar.LENGTH_INDEFINITE);
+                snackbar.show();
+                break;
+            default:
+                System.out.println("\nError requestCode " + requestCode + "\nnot found");
+                break;
+        }
     }
 }

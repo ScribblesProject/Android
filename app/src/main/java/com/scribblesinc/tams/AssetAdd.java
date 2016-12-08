@@ -600,6 +600,7 @@ public class AssetAdd extends AppCompatActivity {
         // resets the asset being created
 
         if (id == R.id.action_reset) {
+
             Intent intent = new Intent(this, AssetAdd.class);
             startActivity(intent);
             finish(); // This opens a new AssetAdd and closes the current one.
