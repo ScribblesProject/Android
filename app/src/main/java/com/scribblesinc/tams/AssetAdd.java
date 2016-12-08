@@ -378,6 +378,8 @@ public class AssetAdd extends AppCompatActivity {
             adapter.getItem(2).setDescription(asset.getCategory());
             adapter.getItem(3).setDescription(asset.getAsset_type());
             adapter.getItem(6).setDescription(asset.getDescription());
+            CatID = Long.parseLong(asset.getCategory_id());
+
 
             //update listview with new values.
             listView.setAdapter(adapter);
