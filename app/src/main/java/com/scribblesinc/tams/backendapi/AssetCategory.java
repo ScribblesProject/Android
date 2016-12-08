@@ -1,5 +1,8 @@
 package com.scribblesinc.tams.backendapi;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -16,7 +19,7 @@ import java.util.ArrayList;
  * Created by danielmj on 11/14/16.
  */
 
-public class AssetCategory {
+public class AssetCategory implements Parcelable {
     private long id;
     private String name;
     private String description;
@@ -92,6 +95,31 @@ public class AssetCategory {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    /*Parcelable methods*/
+    public int describeContents(){
+        return 0;
+    }
+    public void writeToParcel(Parcel out, int flags){
+        out.writeLong(id);
+        out.writeString(name);
+        out.writeString(description);
+    }
+    private AssetCategory(Parcel in){
+        id = in.readLong();
+        name = in.readString();
+        description = in.readString();
+    }
+    public static final Parcelable.Creator<AssetCategory> CREATOR = new Parcelable.Creator<AssetCategory>(){
+      public AssetCategory createFromParcel(Parcel in){
+          return new AssetCategory(in);
+      }
+        public AssetCategory[] newArray(int size){
+            return new AssetCategory[size];
+        }
+    };
+
+
 
     @Override
     public String toString() {
