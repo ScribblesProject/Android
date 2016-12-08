@@ -3,6 +3,7 @@ package com.scribblesinc.tams;
 import android.Manifest;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.ContextMenu;
 import android.os.Bundle;
@@ -52,6 +54,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.graphics.Bitmap.createScaledBitmap;
 
 
 public class AssetAdd extends AppCompatActivity {
@@ -109,7 +113,7 @@ public class AssetAdd extends AppCompatActivity {
     private String convertedBitmap;
     private String categoryDescription;
     private String Type;
-    private Bitmap fullrezMedia;
+    private Bitmap scaledMedia;
 
     //list of items that adapter will use to populate listview
     ArrayList<Item> items = new ArrayList<>();
@@ -438,7 +442,13 @@ public class AssetAdd extends AppCompatActivity {
                     //here we get the full sized image for later
                     Uri testImageUri = data.getData();
                     String testImagePath = getRealPathFromURI(testImageUri);
-                    fullrezMedia = BitmapFactory.decodeFile(testImagePath);
+                    Bitmap fullrezMedia = BitmapFactory.decodeFile(testImagePath);
+
+                    if(height>width) {
+                        scaledMedia = createScaledBitmap(fullrezMedia, 800, 550, false);
+                    }else{
+                        scaledMedia = createScaledBitmap(fullrezMedia, 550, 800, false);
+                    }
 
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
@@ -556,7 +566,28 @@ public class AssetAdd extends AppCompatActivity {
             assetToUpdate();
         }
         if (id == R.id.action_delete) {
-            assetToDelete();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ConfirmationAlertDialogStyle);
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int choice) {
+                    assetToDelete();
+
+
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int choice) {
+
+                }
+            });
+            builder.setMessage("Selecting 'Ok' will delete this asset! ");
+            builder.setTitle("Attemping to Delete Asset");
+
+            //Get the AlertDialog from create();
+            AlertDialog d = builder.create();
+            d.show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -839,7 +870,7 @@ public class AssetAdd extends AppCompatActivity {
             //NOTE: The attachImage method hasnt been implemented. Lets work on this together.
             // We can change this parameter type to bitmap or w/e.. so long as I can get it into raw bytes.
 
-            asset.attachImage(assetMedia_image, new Response.Listener<Double>() {
+            asset.attachImage(scaledMedia, new Response.Listener<Double>() {
                 @Override
                 public void onResponse(Double progress) {
                     //UPDATE PROGRESS BAR
