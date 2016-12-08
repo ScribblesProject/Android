@@ -3,6 +3,7 @@ package com.scribblesinc.tams;
 import android.Manifest;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Base64;
 import android.view.ContextMenu;
 import android.os.Bundle;
@@ -52,6 +54,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.graphics.Bitmap.createScaledBitmap;
 
 
 public class AssetAdd extends AppCompatActivity {
@@ -109,7 +113,7 @@ public class AssetAdd extends AppCompatActivity {
     private String convertedBitmap;
     private String categoryDescription;
     private String Type;
-    private Bitmap fullrezMedia;
+    private Bitmap scaledMedia;
 
     //list of items that adapter will use to populate listview
     ArrayList<Item> items = new ArrayList<>();
@@ -364,6 +368,8 @@ public class AssetAdd extends AppCompatActivity {
         //Reading from intent AssetList when user wants to update or Delete asset
         Intent testIntent = getIntent();
         asset = (Assets) getIntent().getParcelableExtra(ARRAY_LIST);
+        Map<String, AssetLocation> asset_locs;// = new HashMap<String, AssetLocation>();
+        //ArrayList<AssetLocation> asset_locs;
         if (asset != null) {
             //Store data
             assetMedia_image = null;
@@ -373,7 +379,33 @@ public class AssetAdd extends AppCompatActivity {
             adapter.getItem(1).setDescription(asset.getName());
             adapter.getItem(2).setDescription(asset.getCategory());
             adapter.getItem(3).setDescription(asset.getAsset_type());
+            asset_locs = asset.getLocations();
+            //Toast.makeText(getApplicationContext(), asset_locs.toString(),
+                    //Toast.LENGTH_SHORT).show();
+
+            if(asset_locs != null) {
+                asset_locations = new ArrayList<>();
+                for (String key : asset_locs.keySet()) {
+                    double lat = asset_locs.get(key).getLatitude();
+                    double lon = asset_locs.get(key).getLongitude();
+                    LatLng newLatLng = new LatLng(lat, lon);
+                    asset_locations.add(newLatLng);
+                }
+                adapter.getItem(4).setDescription("" + asset_locations.size() + " selected");
+            }else{
+                adapter.getItem(4).setDescription("0 selected");
+            }
+
+            /**if(asset_locs != null){
+                if(asset_locs.size() > 0){
+                    for(int i = 0; i < asset_locs.size(); i++){
+                        asset_locs.
+                    }
+                }
+            }*/
             adapter.getItem(6).setDescription(asset.getDescription());
+            CatID = Long.parseLong(asset.getCategory_id());
+
 
             //update listview with new values.
             listView.setAdapter(adapter);
@@ -438,7 +470,13 @@ public class AssetAdd extends AppCompatActivity {
                     //here we get the full sized image for later
                     Uri testImageUri = data.getData();
                     String testImagePath = getRealPathFromURI(testImageUri);
-                    fullrezMedia = BitmapFactory.decodeFile(testImagePath);
+                    Bitmap fullrezMedia = BitmapFactory.decodeFile(testImagePath);
+
+                    if(height>width) {
+                        scaledMedia = createScaledBitmap(fullrezMedia, 800, 550, false);
+                    }else{
+                        scaledMedia = createScaledBitmap(fullrezMedia, 550, 800, false);
+                    }
 
                     //setListAdapter aka assign adapter to listview
                     listView.setAdapter(adapter);
@@ -452,7 +490,12 @@ public class AssetAdd extends AppCompatActivity {
                     //Category picked is here
                     AssetCategory assetcategory;
                      assetcategory = (AssetCategory) data.getParcelableExtra(ASSET_CATEGORY);
-                    Toast.makeText(getApplicationContext(), assetcategory.getName(), Toast.LENGTH_LONG).show();
+                    //set adapter
+                    adapter.getItem(2).setDescription(assetcategory.getName());
+                    adapter.notifyDataSetChanged();
+                    listView.setAdapter(adapter);
+                    this.registerForContextMenu(listView);
+                    //set global id
                     CatID = assetcategory.getId();
                 }
 
@@ -464,13 +507,25 @@ public class AssetAdd extends AppCompatActivity {
 
                     AssetType assettype;
                     assettype = (AssetType) data.getParcelableExtra(ASSET_TYPE);
-                    Toast.makeText(getApplicationContext(), assettype.getName(), Toast.LENGTH_LONG).show();
 
 
                     adapter.getItem(3).setDescription(assettype.getName());
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
                     this.registerForContextMenu(listView);
+
+
+
+
+                    //gets the item at index 1 (the description of the title) and changes it
+                    //adapter.getItem(2).setDescription(assetcategory.getName());
+                    //adapter.notifyDataSetChanged();
+
+                    //setListAdapter aka assign adapter to listview
+                    listView.setAdapter(adapter);
+                    //creating a contextmeny for listviewcu
+                    this.registerForContextMenu(listView);
+
                 }
 
 
@@ -557,7 +612,28 @@ public class AssetAdd extends AppCompatActivity {
             assetToUpdate();
         }
         if (id == R.id.action_delete) {
-            assetToDelete();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ConfirmationAlertDialogStyle);
+            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int choice) {
+                    assetToDelete();
+
+
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int choice) {
+
+                }
+            });
+            builder.setMessage("Selecting 'Ok' will delete this asset! ");
+            builder.setTitle("Attemping to Delete Asset");
+
+            //Get the AlertDialog from create();
+            AlertDialog d = builder.create();
+            d.show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -716,6 +792,14 @@ public class AssetAdd extends AppCompatActivity {
         String description = adapter.getItem(6).getDescription();
         ArrayList<AssetLocation> locations = new ArrayList<AssetLocation>();
 
+        for(int i = 0; i < asset_locations.size(); i++){
+            LatLng loc = asset_locations.get(i);
+            double lat = loc.latitude;
+            double lon = loc.longitude;
+            AssetLocation assets_loc = new AssetLocation(lat,lon);
+            locations.add(assets_loc);
+        }
+
         //Validate
         if (name == null || description == null) {
             Toast.makeText(getApplicationContext(), "ERROR - name or description is empty.", Toast.LENGTH_LONG).show();
@@ -759,6 +843,7 @@ public class AssetAdd extends AppCompatActivity {
         String typeName = adapter.getItem(3).getDescription();
         String description = adapter.getItem(6).getDescription();
         Map<String, AssetLocation> locations = new HashMap<String, AssetLocation>();
+
 
         //Validate
         if (name == null || description == null) {
@@ -840,7 +925,7 @@ public class AssetAdd extends AppCompatActivity {
             //NOTE: The attachImage method hasnt been implemented. Lets work on this together.
             // We can change this parameter type to bitmap or w/e.. so long as I can get it into raw bytes.
 
-            asset.attachImage(assetMedia_image, new Response.Listener<Double>() {
+            asset.attachImage(scaledMedia, new Response.Listener<Double>() {
                 @Override
                 public void onResponse(Double progress) {
                     //UPDATE PROGRESS BAR

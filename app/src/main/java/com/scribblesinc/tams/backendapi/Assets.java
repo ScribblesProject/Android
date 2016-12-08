@@ -94,6 +94,7 @@ public class Assets implements Parcelable {
         out.writeString(asset_type);
         out.writeString(media_image_url);
         out.writeString(media_voice_url);
+        out.writeMap(locations);
     }
     private  Assets(Parcel in){
         id = in.readLong();
@@ -105,6 +106,13 @@ public class Assets implements Parcelable {
         asset_type = in.readString();
         media_image_url = in.readString();
         media_voice_url = in.readString();
+        //add location to here
+
+        if(locations == null){
+            locations = new HashMap<String, AssetLocation>();
+        }
+
+        in.readMap(locations,AssetLocation.class.getClassLoader());
 
     }
     public static final Parcelable.Creator<Assets> CREATOR

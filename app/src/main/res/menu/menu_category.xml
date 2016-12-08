@@ -5,8 +5,8 @@
     tools:context=".ListCategory">
 
     <item
-        android:id="@+id/action_update"
-        android:title="@string/action_update"
+        android:id="@+id/action_create"
+        android:title="@string/action_create"
         app:showAsAction="ifRoom" />
 
 </menu>
