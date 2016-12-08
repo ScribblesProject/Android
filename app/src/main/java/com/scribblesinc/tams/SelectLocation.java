@@ -119,7 +119,7 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
             Intent sendToPreviousActivity = new Intent();
             sendToPreviousActivity.putExtra(ASSET_LOCATION, locations);
             setResult(RESULT_OK, sendToPreviousActivity);
-            Toast.makeText(getApplicationContext(), "Location Has Been Updated", Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(), "Location Has Been Updated", Toast.LENGTH_LONG).show();
             finish();
         }
 
@@ -139,7 +139,6 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
         PolylineOptions newLine;
 
         locations = getIntent().getExtras().getParcelableArrayList(ASSET_LOCATION);
-        //Toast.makeText(SelectLocation.this, ""+locations.size(), Toast.LENGTH_SHORT).show();
         if(locations.size() > 0){
             newLine = new PolylineOptions();
             if(locations.size() == 1){
@@ -147,7 +146,6 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
                 double lat = coordinates.latitude;
                 double lon = coordinates.longitude;
                 LatLng assetPoint = new LatLng(lat, lon);
-                //Toast.makeText(SelectLocation.this, coordinates.latitude + " " + coordinates.longitude, Toast.LENGTH_SHORT).show();
                 mMap.addMarker(new MarkerOptions().position(assetPoint).visible(true));
             }else{
                 for(int i = 0; i < locations.size(); i++){
@@ -176,9 +174,6 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        /**Toast.makeText(SelectLocation.this,
-                "onMapLongClick:\n" + latLng.latitude + " : " + latLng.longitude,
-                Toast.LENGTH_LONG).show();*/
 
         //Add marker on LongClick position
         MarkerOptions markerOptions =
@@ -240,32 +235,11 @@ public class SelectLocation extends AppCompatActivity implements OnMapReadyCallb
     @Override
     public void onResume(){
         super.onResume();
-        //Toast.makeText(MainActivity.this, "Resumed", Toast.LENGTH_SHORT).show();
-        //check if points are already, if so populate it
-        /*if(locations == null){
-            Toast.makeText(SelectLocation.this, "RESUMED LOCATION NULL", Toast.LENGTH_SHORT).show();
-        }else{
-            for(int i = 0; i < locations.size(); i++){
-                if(locations.get(i) != null){
-                    mMap.addMarker(new MarkerOptions().position(locations.get(i))).setVisible(true);
-                }
-            }
-        }*/
-
-        /**locations = ((ArrayList<LatLng>)getIntent().getSerializableExtra(ASSET_LOCATION));
-        if(locations == null){
-            Toast.makeText(SelectLocation.this, "RESUMED LOCATION NULL", Toast.LENGTH_SHORT).show();
-        }else if(locations.size() > 0){
-            for(int i = 0; i < locations.size(); i++){
-                mMap.addMarker(new MarkerOptions().position(locations.get(i))).setVisible(true);
-            }
-        }*/
     }
 
     @Override
     public void onPause(){
         super.onPause();
-        //Toast.makeText(MainActivity.this, "Paused", Toast.LENGTH_SHORT).show();
         //save points if any points were created
     }
 

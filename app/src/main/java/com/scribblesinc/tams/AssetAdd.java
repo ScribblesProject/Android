@@ -118,6 +118,8 @@ public class AssetAdd extends AppCompatActivity {
     //list of items that adapter will use to populate listview
     ArrayList<Item> items = new ArrayList<>();
     ArrayList<LatLng> asset_locations = null;
+    public String asset_category;
+    public String asset_type;
 
     //Class for storing data inserted by user
     private Assets asset;
@@ -369,7 +371,6 @@ public class AssetAdd extends AppCompatActivity {
         Intent testIntent = getIntent();
         asset = (Assets) getIntent().getParcelableExtra(ARRAY_LIST);
         Map<String, AssetLocation> asset_locs;// = new HashMap<String, AssetLocation>();
-        //ArrayList<AssetLocation> asset_locs;
         if (asset != null) {
             //Store data
             assetMedia_image = null;
@@ -380,8 +381,6 @@ public class AssetAdd extends AppCompatActivity {
             adapter.getItem(2).setDescription(asset.getCategory());
             adapter.getItem(3).setDescription(asset.getAsset_type());
             asset_locs = asset.getLocations();
-            //Toast.makeText(getApplicationContext(), asset_locs.toString(),
-                    //Toast.LENGTH_SHORT).show();
 
             if(asset_locs != null) {
                 asset_locations = new ArrayList<>();
@@ -393,16 +392,10 @@ public class AssetAdd extends AppCompatActivity {
                 }
                 adapter.getItem(4).setDescription("" + asset_locations.size() + " selected");
             }else{
+                asset_locations = new ArrayList<>();
                 adapter.getItem(4).setDescription("0 selected");
             }
 
-            /**if(asset_locs != null){
-                if(asset_locs.size() > 0){
-                    for(int i = 0; i < asset_locs.size(); i++){
-                        asset_locs.
-                    }
-                }
-            }*/
             adapter.getItem(6).setDescription(asset.getDescription());
             CatID = Long.parseLong(asset.getCategory_id());
 
@@ -492,6 +485,7 @@ public class AssetAdd extends AppCompatActivity {
                      assetcategory = (AssetCategory) data.getParcelableExtra(ASSET_CATEGORY);
                     //set adapter
                     adapter.getItem(2).setDescription(assetcategory.getName());
+                    asset_category = assetcategory.getName();
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
                     this.registerForContextMenu(listView);
@@ -510,6 +504,7 @@ public class AssetAdd extends AppCompatActivity {
 
 
                     adapter.getItem(3).setDescription(assettype.getName());
+                    asset_type = assettype.getName();
                     adapter.notifyDataSetChanged();
                     listView.setAdapter(adapter);
                     this.registerForContextMenu(listView);
@@ -614,7 +609,7 @@ public class AssetAdd extends AppCompatActivity {
         if (id == R.id.action_delete) {
 
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ConfirmationAlertDialogStyle);
-            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int choice) {
                     assetToDelete();
@@ -628,8 +623,8 @@ public class AssetAdd extends AppCompatActivity {
 
                 }
             });
-            builder.setMessage("Selecting 'Ok' will delete this asset! ");
-            builder.setTitle("Attemping to Delete Asset");
+            builder.setMessage("Selecting 'OK' will delete this asset! ");
+            builder.setTitle("Attempting to Delete Asset");
 
             //Get the AlertDialog from create();
             AlertDialog d = builder.create();
@@ -770,7 +765,7 @@ public class AssetAdd extends AppCompatActivity {
             @Override
             public void onResponse(Boolean success) {
                 //SUCCESS!!!
-                Toast.makeText(getApplicationContext(), "ASSET DELETED SUCCESSFULLY!!!!!!!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "ASSET DELETED SUCCESSFULLY", Toast.LENGTH_LONG).show();
                 dismissView();
             }
         }, new Response.ErrorListener() {
@@ -786,11 +781,11 @@ public class AssetAdd extends AppCompatActivity {
     public void assetToCreate() {
         //Pull info from fields
         String name = adapter.getItem(1).getDescription();
-        String category = assetCategory;//adapter.getItem(2).getDescription();
+        String category = adapter.getItem(2).getDescription();
         String categoryDescription = assetCategoryDescription;
-        String typeName = assetType;//adapter.getItem(3).getDescription();
+        String typeName = adapter.getItem(3).getDescription();
         String description = adapter.getItem(6).getDescription();
-        ArrayList<AssetLocation> locations = new ArrayList<AssetLocation>();
+        ArrayList<AssetLocation> locations = new ArrayList<>();
 
         for(int i = 0; i < asset_locations.size(); i++){
             LatLng loc = asset_locations.get(i);
@@ -876,7 +871,7 @@ public class AssetAdd extends AppCompatActivity {
                         public void onResponse(Boolean success) {
                             if (success)
                             {
-                                Toast.makeText(getApplicationContext(), "SUCCESS!!!", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), "SUCCESS", Toast.LENGTH_LONG).show();
                                 dismissView();
                             }
                         }
