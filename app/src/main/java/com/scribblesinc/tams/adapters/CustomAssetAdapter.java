@@ -1,37 +1,31 @@
 package com.scribblesinc.tams.adapters;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.view.ViewGroup.LayoutParams;
-import java.io.File;
 import java.util.ArrayList;
 
 import android.graphics.Bitmap;
-
-
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.scribblesinc.tams.R;
-import com.scribblesinc.tams.androidcustom.Item;
-import com.scribblesinc.tams.backendapi.Assets;
 import com.scribblesinc.tams.network.AppRequestManager;
+import com.scribblesinc.tams.util.Item;
 
-import static android.R.attr.bitmap;
 
 /**
  * Created by Joel on 10/26/2016.
+ *
+ * INFORMATION: This is a simple ArrayAdapter that is use to display the ListView for
+ * AssetAdd class. This arrayAdapter uses an Arraylist of Items to create the list shown on  AssetAdd
+ * ListView.
+ *
  */
-
-//custom ArrayAdapter
 public class CustomAssetAdapter extends ArrayAdapter<Item>{
     private final Context context;
     private final ArrayList<Item> itemsArrayList;
@@ -60,35 +54,31 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
         if(imageloader==null)
             imageloader = AppRequestManager.getInstance().getImageLoader();
 
-            if(position == 0){
+        if(position == 0){
 
-                if(ImageBitmap != null) {
-                    convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
-                }else {
-                    if (URL != null) {
-                        NetworkImageView imgAsset = (NetworkImageView) convertView.findViewById(R.id.img_asset);
-                        imgAsset.setImageUrl(URL, imageloader);
-                    }
-
+            if(ImageBitmap != null) {
+                convertView.setBackground(new BitmapDrawable(getContext().getResources(), ImageBitmap));
+            }else {
+                if (URL != null) {
+                    NetworkImageView imgAsset = (NetworkImageView) convertView.findViewById(R.id.img_asset);
+                    imgAsset.setImageUrl(URL, imageloader);
                 }
+
             }
+        }
 
 
 
 
-            //Get the two text view from the rowView
-            // ImageView imageView_c = (ImageView) rowView.findViewById(R.id.mic_camera);
-            ImageView imgView = (ImageView) convertView.findViewById(R.id.mic_icon);
-            //ImageView imgTestView = (ImageView) convertView.findViewById(R.id.background_test);
-            TextView valueView = (TextView) convertView.findViewById(R.id.value);
-            TextView labelView = (TextView) convertView.findViewById(R.id.label);
+        //Get the widget with id name which is defined in the xml of the row
+        ImageView imgView = (ImageView) convertView.findViewById(R.id.mic_icon);
+        TextView valueView = (TextView) convertView.findViewById(R.id.value);
+        TextView labelView = (TextView) convertView.findViewById(R.id.label);
 
-            //set the text from textView
-            //imgView.setImageResource(itemsArrayList.get(position).getIcon());
-            imgView.setImageResource(itemsArrayList.get(position).getIcon());
-            //imgTestView.setImageResource(itemsArrayList.get(position).getIcon());
-            valueView.setText(itemsArrayList.get(position).getDescription());
-            labelView.setText(itemsArrayList.get(position).getTitle());
+        //Set the text from textView
+        imgView.setImageResource(itemsArrayList.get(position).getIcon());
+        valueView.setText(itemsArrayList.get(position).getDescription());
+        labelView.setText(itemsArrayList.get(position).getTitle());
 
         //return rowView
         return convertView;
@@ -102,20 +92,17 @@ public class CustomAssetAdapter extends ArrayAdapter<Item>{
     }
     /*These handle the case where you want different types of view for different rows*/
 
-    //Returns the number of types of Views that will be created by getView(int,View, ViewGroup)
+
     @Override
     public int getViewTypeCount() {
-        //Returns the # of types of Views that wil be created by this adapter each type
-        //represents a set of views that can be converted
+        //Returns the number of types of Views that will be created by getView(int,View, ViewGroup)
         return 3;
     }
 
-    //Get the type of view that will be created by getView for the specified item
     @Override
     public int getItemViewType(int position) {
-        //Return an integer here representing the type of View, due note that integer must be in the
-        //range 9 to getViewTypeCount()-1
-        return 1;//Item.ColorValues.values().length;
+        //return the type of view that will be created by getView for the specified item
+        return 1;
     }
 
     public void setBitMap(Bitmap imageBitmap){

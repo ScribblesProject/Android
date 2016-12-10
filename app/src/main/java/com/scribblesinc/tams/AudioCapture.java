@@ -24,14 +24,21 @@ import android.view.View.OnClickListener;
 import java.io.IOException;
 import android.Manifest;
 
+/*
+*INFORMATION: This class takes care of recording, updating or playing a memo,
+* it has very basic functionality allowing an audio to play, record and stop a recording.
+* When user selects to listen to an existing audio, the User needs to first Play
+* the audio before it can choose to Stop it or update the audio with a new record.
+*
+ */
 
 public class AudioCapture extends AppCompatActivity{
     //View buttons
-    Button play, stop, record, replay;
+    private Button play, stop, record;
+    //Declaring the MediaRecording to be use by this activity
     private MediaRecorder appAudioRecorder;
     private MediaPlayer appPlayer;
-    //data storage as
-    private String outputFile = null;
+    private String outputFile = null; //data storage as
     //Flag for to check if SD present
     Boolean isSDPresent;
     private static final int REQUEST_MIC = 200;
@@ -67,8 +74,8 @@ public class AudioCapture extends AppCompatActivity{
         record = (Button)findViewById(R.id.record_sound);
 
         //Get the information sent via intent
-        intent = getIntent();
-        outputFile = intent.getStringExtra(REC_AUDIO);
+          intent = getIntent();
+           outputFile = intent.getStringExtra(REC_AUDIO);
 
 
         //if outputFile has something
@@ -247,10 +254,6 @@ public class AudioCapture extends AppCompatActivity{
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         int id = item.getItemId();
         //if the back button is pressed
         if(item.getItemId() == android.R.id.home){
@@ -260,7 +263,7 @@ public class AudioCapture extends AppCompatActivity{
         //if done button is pressed
         if(id == R.id.action_done||id==R.id.action_update){
             //get recording
-            if(outputFile.isEmpty()){
+            if(outputFile.isEmpty()|| !ismic){
                 Toast.makeText(this,"No recording has been made",Toast.LENGTH_LONG).show();
             }else{
                 if(id==R.id.action_update) {

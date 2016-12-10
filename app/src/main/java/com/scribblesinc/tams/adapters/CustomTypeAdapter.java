@@ -8,7 +8,6 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.scribblesinc.tams.R;
-import com.scribblesinc.tams.backendapi.AssetCategory;
 import com.scribblesinc.tams.backendapi.AssetType;
 
 import java.util.ArrayList;
@@ -19,6 +18,10 @@ import java.util.ArrayList;
 
 /**
  * Created by skenn on 12/7/2016.
+ *
+ * INFORMATION: This is a simple ArrayAdapter that is use to display the ListView for
+ * ListType class. This arrayAdapter uses an AssetType arraylist of Items to create the list shown on  ListType's
+ * ListView.
  */
 
 public class CustomTypeAdapter  extends ArrayAdapter<AssetType>{

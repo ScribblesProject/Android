@@ -21,7 +21,12 @@ import java.util.ArrayList;
 import android.app.ProgressDialog;
 
 
-
+/*
+*INFORMATOIN: AssetList displays current Assets that the backend has, it uses Assets class to get the information
+* arrayList for populating the listview. Note that most of the parsing is done by a call of the one of the functions in
+* Assets not parsing is done by this class it just handles the final arrayList.
+*
+ */
 public class AssetList extends AppCompatActivity {
     //Declaring the listAdapter and listview to be use
     private CustomListAdapter listAdapter;
@@ -29,10 +34,6 @@ public class AssetList extends AppCompatActivity {
     //Declaring new intent to be initialize
     private Intent intent;
     static final String ARRAY_LIST = "com.scribblesinc.tams";
-
-    private ProgressDialog listDialog;
-    private static final String TAG = AssetList.class.getSimpleName();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +52,6 @@ public class AssetList extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        /* want to show loading sign, but doing it here causes loading to go forever til touch
-        //Showing progress dialog
-        listDialog = new ProgressDialog(this);
-        listDialog.setMessage("Loading...");
-        listDialog.show();
-        */
         fetchAssets();
 
     }
@@ -75,16 +69,16 @@ public class AssetList extends AppCompatActivity {
                     //attach adapter to listview
                     listview.setAdapter(listAdapter);
                     findViewById(R.id.loadingPanel).setVisibility(View.GONE);
-                    //listAdapter.notifyDataSetChanged();
                     //onclick listener to be use when user touches a view for more information,
                     //user then can update or delete view.
                     listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                                         @Override
                                                         public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
-                                                            intent  = new Intent(AssetList.this,AssetAdd.class);
-                                                            intent.putExtra(ARRAY_LIST, response.get(position));
 
-                                                            startActivityForResult(intent,1);
+                                                            //set the intent for passing arrayList data to AssetAdd
+                                                            intent  = new Intent(AssetList.this,AssetAdd.class);
+                                                            intent.putExtra(ARRAY_LIST, response.get(position));//just send the Asset selected
+                                                            startActivityForResult(intent,1);//
 
                                                         }
                                                     }
@@ -105,21 +99,12 @@ public class AssetList extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //when the edit button is pressed
-        if(id == R.id.action_edit_asset){
-            Toast.makeText(getApplicationContext(), "Not Working Yet",
-                    Toast.LENGTH_SHORT).show();
-        }
-
-        //if the add asset button is pressed
+        //if the AddAsset button is pressed
         if(id == R.id.action_add_asset){
-            /*Toast.makeText(getApplicationContext(), "Not Working Yet",
-                    Toast.LENGTH_SHORT).show();*/
+            //
             Intent intent = new Intent(this, AssetAdd.class);
             startActivity(intent);
         }

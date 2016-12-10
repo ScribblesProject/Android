@@ -1,29 +1,19 @@
 package com.scribblesinc.tams.backendapi;
 
-import android.app.ProgressDialog;
 import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.ImageView;
 
 import com.android.volley.Request;
-import com.android.volley.Response;
 import com.android.volley.Response.Listener;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
-import com.scribblesinc.tams.androidcustom.Locations;
-import com.scribblesinc.tams.network.AppRequestManager;
 import com.scribblesinc.tams.network.HttpJSON;
 import com.scribblesinc.tams.network.HttpResponse;
 
-import java.io.Serializable;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
