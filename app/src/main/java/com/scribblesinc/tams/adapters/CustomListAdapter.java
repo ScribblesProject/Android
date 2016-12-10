@@ -21,13 +21,17 @@ import java.util.List;
  *
  * Adapter which provides data to list view for AssetList, using BaseAdapter and
  * not ArrayAdapter
+ * INFORMATION: This is a BaseAdapter that is use to display the ListView for
+ * AssetList class. This BaseAdapter uses an Assets List of Items to create the list shown on  AssetList's
+ * ListView.
  */
 public class CustomListAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private Activity activity;
     private List<Assets> assetList;
-    ImageLoader imageloader = AppRequestManager.getInstance().getImageLoader();
     //ImageLoader imageLoader
+    ImageLoader imageloader = AppRequestManager.getInstance().getImageLoader();
+
 
     public CustomListAdapter(Activity activity, List<Assets> assetList) {
         this.assetList = assetList;
@@ -38,7 +42,7 @@ public class CustomListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         //we inflate the xml which gives us a view
         if(inflater == null)
-                inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
             convertView = inflater.inflate(R.layout.content_asset_list, parent, false);//will inflate with given parent bu won't attach it to it
         //if imageloader is not initialize
@@ -64,16 +68,16 @@ public class CustomListAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return assetList.size();
+        return assetList.size();//return size of list
     }
 
     @Override
     public long getItemId(int position) {
-        return position;
+        return position;//return postion of item
     }
 
     @Override
     public Object getItem(int location) {
-        return assetList.get(location);
+        return assetList.get(location);//return location of item
     }
 }

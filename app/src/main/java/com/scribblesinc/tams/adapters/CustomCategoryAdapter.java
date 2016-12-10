@@ -14,6 +14,9 @@ import java.util.ArrayList;
 
 /**
  * Created by Joel on 11/30/2016.
+ * INFORMATION: This is a simple ArrayAdapter that is use to display the ListView for
+ * ListCategory class. This arrayAdapter uses an AssetCategory arraylist of Items to create the list shown on  ListCategory's
+ * ListView.
  */
 
 public class CustomCategoryAdapter extends ArrayAdapter<AssetCategory> {
@@ -47,9 +50,11 @@ public class CustomCategoryAdapter extends ArrayAdapter<AssetCategory> {
 
         return convertView;
     }
+    //return size of ArrayList
     public int getCount(){
         return assetcategorylist.size();
     }
+    //return position in Arraylist
     public long getItemId(int position){
         return position;
     }
