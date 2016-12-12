@@ -8,13 +8,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.TextView;;
 import com.android.volley.Response;
 import com.scribblesinc.tams.adapters.CustomAssetFilterAdapter;
 import com.scribblesinc.tams.backendapi.AssetCategory;
 import java.util.ArrayList;
+
+/*
+ * This is the "Asset Category" view. It display the types of categories available to the user.
+ *
+ * fetchAssetCategoryFilter() first gets the type of categories from the server via the response method in AssetCategory (located in backend api)
+ * It then simply sends this response to the myFilterAdapter for which handles the display. After that the adapter listens to see what row gets tapped
+ * and sends that information, category selected/category id, via intent back to Asset Filter, which then ungrays out Asset Type
+ */
 
 public class AssetFilterCategories extends AppCompatActivity {
     private static final String ASSET_FILTER_CATEGORY = "ASSET_FILTER_CATEGORY"; //send the data to the previous activity
@@ -25,7 +31,6 @@ public class AssetFilterCategories extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asset_filter_categories);
 
-        //gets action bar that's supported if null
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -33,12 +38,18 @@ public class AssetFilterCategories extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        fetchAssetFilter();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_asset_filter_categories, menu);
+        return true;
     }
 
-    private void fetchAssetFilter() {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchAssetCategoryFilter();
+    }
+
+    private void fetchAssetCategoryFilter() {
         AssetCategory.list(new Response.Listener<ArrayList<AssetCategory>>() {
             @Override
             public void onResponse(final ArrayList<AssetCategory> response) { //this is where we get the AssetCategory Responses
@@ -66,21 +77,11 @@ public class AssetFilterCategories extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_asset_filter_categories, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        //if the back button is pressed
         if(id == android.R.id.home){
-            finish(); //goes back to the previous activity
+            finish();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }
