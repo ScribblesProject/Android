@@ -14,6 +14,10 @@ import java.util.ArrayList;
 
 /**
  * Created by Aaron Williams on 12/2/2016.
+ *
+ * CustomAssetFilterAdapter handles the display of the Asset Filter, Asset Category, and Asset Type. Comments here will be left
+ * in-line as it makes it easier to understand what's going on. getView() is basically were all the display is happening. If you
+ * want to add on to this specific adapter you will have to add a construct like below and modify the getView() method to handle it.
  */
 
 public class CustomAssetFilterAdapter extends ArrayAdapter {
@@ -63,7 +67,7 @@ public class CustomAssetFilterAdapter extends ArrayAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) { //Where all the displaying happens
         if(myInflater == null) { //Implements View Holder Pattern, below is used to inflate the the layout from a .xml file
             myInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -82,8 +86,7 @@ public class CustomAssetFilterAdapter extends ArrayAdapter {
 
         if (rLayoutID == R.layout.content_asset_filter) { //asset filter layout is made here
             assetFilterRowName = categoryTypeArray[position].toString();
-
-            if(assetFilterRowName.equalsIgnoreCase("Asset Type") && categorySelected.isEmpty()) { //checks to see if an Asset Category has been picked. If not Asset Type will remain grayed out
+            if(assetFilterRowName.equalsIgnoreCase(getContext().getString(R.string.title_asset_filter_type)) && categorySelected.isEmpty()) { //checks to see if an Asset Category has been picked. If not Asset Type will remain grayed out
                 viewHolder.myTextView1.setText(assetFilterRowName);
                 viewHolder.myTextView1.setTextColor(Color.GRAY);
                 viewHolder.myTextView1.setEnabled(false);
@@ -120,7 +123,7 @@ public class CustomAssetFilterAdapter extends ArrayAdapter {
 
     @Override
     public boolean isEnabled(int position) { //overrides the enable method so that it keeps Asset Type disabled until a user chose a category
-        if(position == 1 && assetFilterRowName.equalsIgnoreCase("Asset Type") && categorySelected.isEmpty()) {
+        if(position == 1 && assetFilterRowName.equalsIgnoreCase(getContext().getString(R.string.title_asset_filter_type)) && categorySelected.isEmpty()) {
             typeSelected = "";
             return false;
         }

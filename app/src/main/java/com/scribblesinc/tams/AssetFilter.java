@@ -14,6 +14,18 @@ import android.widget.ListView;
 import android.widget.Toast;
 import com.scribblesinc.tams.adapters.CustomAssetFilterAdapter;
 
+
+/*
+ * This is the "Asset Filter" view. It handles sending the user to Asset Category and Asset Type via intent. It also handles displays the selected
+ * category and type a user has picked. Lastly, a user is able to clear the selected filter or apply it. Applying the filter sends a user back to
+ * the "Asset Map" which then displays which assets meet the applied filter. These are both handled in
+ *
+ * onOptionsItemSelected(MenuItem item) handles both "Clear" and Apply. Notice that clicking Apply brings up an Alert dialog so that a user can
+ * make the choice to apply the filter or not.
+ *
+ * onActivityResult(int requestCode, int resultCode, Intent data) handles all the intent data being sent back
+ */
+
 public class AssetFilter extends AppCompatActivity { //Filter Map ist stored here
     private static final String ASSET_FILTER = "ASSET_FILTER";
     private static final String ASSET_FILTER_CATEGORY = "ASSET_FILTER_CATEGORY"; //Used as a key for AssetFilter Types to see what category was selected
@@ -34,18 +46,15 @@ public class AssetFilter extends AppCompatActivity { //Filter Map ist stored her
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //gets action bar that's supported if null
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        //Used to display the category and type listview entriess
         listView = (ListView) findViewById(R.id.content_filter_list_view);
         myFilterAdapter = new CustomAssetFilterAdapter(AssetFilter.this, categorySelected, R.layout.content_asset_filter, R.id.content_filter_text_view_1, R.id.content_filter_text_view_2);
         listView.setAdapter(myFilterAdapter);
 
-        //Listener to determine which options gets tapped
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
@@ -68,24 +77,30 @@ public class AssetFilter extends AppCompatActivity { //Filter Map ist stored her
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_asset_filter, menu);
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //when the edit button is pressed
-        if(id == R.id.action_clear){
+        if(id == R.id.action_clear){  //when the edit button is pressed
             categorySelected = "";
             myFilterAdapter.setCategorySelected(categorySelected);
             listView.setAdapter(myFilterAdapter);
         }
 
-        //if the add asset button is pressed
-        if(id == R.id.action_apply_filter){
+        if(id == R.id.action_apply_filter){ //if the add asset button is pressed
             if(categorySelected == null || categorySelected.isEmpty() || typeSelected == null || typeSelected.isEmpty()) { //if either category or type is null display message
-                Toast.makeText(this, "Please select both a category and a type to apply the filter", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.check_category_type_selection , Toast.LENGTH_LONG).show();
             }else { //display dialog to ask a user if they would like to apply the filter to the map
                 AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ConfirmationAlertDialogStyle);
-                builder.setTitle("Apply Filter");
-                builder.setMessage("Filter assets on the map to see which ones are in the same category and type?");
+                builder.setTitle(R.string.apply_filter_title);
+                builder.setMessage(R.string.apply_filter_message);
                 builder.setNegativeButton(android.R.string.cancel, null); //cancel
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { //if ok
                     @Override
@@ -103,18 +118,10 @@ public class AssetFilter extends AppCompatActivity { //Filter Map ist stored her
             }
         }
 
-        //if the back button is pressed
         if(id == android.R.id.home){
             finish(); //goes back to the previous activity
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_asset_filter, menu);
-        return true;
     }
 
     @Override

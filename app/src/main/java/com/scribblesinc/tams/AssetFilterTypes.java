@@ -13,6 +13,15 @@ import com.scribblesinc.tams.adapters.CustomAssetFilterAdapter;
 import com.scribblesinc.tams.backendapi.AssetType;
 import java.util.ArrayList;
 
+/*
+ * This is the "Asset Type" view. It display the types availabe for the specific category specified by the user
+ *
+ * fetchAssetTypeFilter() gets the typeFilter which olds the previous selected category along with its id. After that we check to see
+ * if the category selected matches the type's category. We then display it with the adapter (just like in Asset Category). The adapter again
+ * listens for the user to touch a row, and sends it back to Asset Filter
+
+ */
+
 public class AssetFilterTypes extends AppCompatActivity {
 
     private static final String ASSET_FILTER_CATEGORY = "ASSET_FILTER_CATEGORY"; //key for the category to be received
@@ -24,7 +33,6 @@ public class AssetFilterTypes extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_asset_filter_types);
 
-        //gets action bar that's supported if null
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -32,12 +40,12 @@ public class AssetFilterTypes extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() { //this happens right after start so now we can fetch the assets
+    protected void onResume() {
         super.onResume();
-        fetchAssetFilter();
+        fetchAssetTypeFilter();
     }
 
-    private void fetchAssetFilter() { //the server response for getting the asset types is here
+    private void fetchAssetTypeFilter() { //the server response for getting the asset types is here
         Intent assetCategorySelected = getIntent(); //get the intent from the last activity
         final String[] typeFilter = assetCategorySelected.getStringArrayExtra(ASSET_FILTER_CATEGORY); //get the category selected that was store int the last activity
         String categorySelectedID = typeFilter[1];
@@ -70,12 +78,9 @@ public class AssetFilterTypes extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-        //if the back button is pressed
         if(id == android.R.id.home){
-            finish(); //goes back to the previous activity
+            finish();
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

@@ -434,11 +434,9 @@ public class AssetAdd extends AppCompatActivity {
         }
         //reset activity
         if (id == R.id.action_reset) {
-
             Intent intent = new Intent(this, AssetAdd.class);
             startActivity(intent);
             finish(); // This opens a new AssetAdd and closes the current one.
-
         }
         //update asset
         if (id == R.id.action_update) {
@@ -446,7 +444,6 @@ public class AssetAdd extends AppCompatActivity {
         }
         //Delete asset
         if (id == R.id.action_delete) {
-
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ConfirmationAlertDialogStyle);
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
@@ -593,7 +590,6 @@ public class AssetAdd extends AppCompatActivity {
 
     //methods to delete and update asset
     public void assetToDelete() {
-
         if (asset == null) {
             Toast.makeText(getApplicationContext(), "Error! Asset Does Not Exist!", Toast.LENGTH_LONG).show();
             return;
@@ -701,8 +697,7 @@ public class AssetAdd extends AppCompatActivity {
         asset.update(new Response.Listener<Boolean>() {
             @Override
             public void onResponse(Boolean success) {
-                if (success)
-                {
+                if (success) {
                     //Upload image & voice. Progress Updates & Errors handled in respective functions.
                     updateAssetMedia(new Response.Listener<Boolean>() {
                         @Override
@@ -714,9 +709,7 @@ public class AssetAdd extends AppCompatActivity {
                             }
                         }
                     });
-                }
-                else
-                {
+                } else {
                     Toast.makeText(getApplicationContext(), "Unable to update asset! An unknown error occurred!", Toast.LENGTH_LONG).show();
                 }
             }
@@ -732,8 +725,7 @@ public class AssetAdd extends AppCompatActivity {
     }
 
     //Error Messages produced in individual
-    public void updateAssetMedia(final Response.Listener<Boolean> listener)
-    {
+    public void updateAssetMedia(final Response.Listener<Boolean> listener) {
         uploadImageIfNeeded(new Response.Listener<Boolean>() {
             @Override
             public void onResponse(final Boolean imageSuccess) {
@@ -751,10 +743,8 @@ public class AssetAdd extends AppCompatActivity {
         });
     }
     //Function called if for updating or loading new image to the backend
-    public void uploadImageIfNeeded(final Response.Listener<Boolean> listener)
-    {
-        if (imageWasModified())
-        {
+    public void uploadImageIfNeeded(final Response.Listener<Boolean> listener) {
+        if (imageWasModified()) {
             //NOTE: The attachImage method hasnt been implemented. Lets work on this together.
             // We can change this parameter type to bitmap or w/e.. so long as I can get it into raw bytes.
 
@@ -795,11 +785,8 @@ public class AssetAdd extends AppCompatActivity {
         }
     }
     //Function called if for updating or loading new memo to the backend
-    public void uploadMemoIfNeeded(final Response.Listener<Boolean> listener)
-    {
-        if (memoWasModified())
-        {
-
+    public void uploadMemoIfNeeded(final Response.Listener<Boolean> listener) {
+        if (memoWasModified()) {
             asset.attachVoiceMemo(assetMedia_voice, new Response.Listener<Double>() {
                 @Override
                 public void onResponse(Double progress) {
@@ -846,21 +833,18 @@ public class AssetAdd extends AppCompatActivity {
     }
 
     //check if data has been modified
-    public boolean memoWasModified()
-    {
+    public boolean memoWasModified() {
         if(!isDescriptionModified)return false;
         else return true;
     }
 
     //check is data has been modified
-    public boolean imageWasModified()
-    {
+    public boolean imageWasModified() {
         if(!isImageModified) return false;
         else return false;
     }
     //dismisses activity
-    public void dismissView()
-    {
+    public void dismissView() {
         this.finish();
     }
 }
